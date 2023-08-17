@@ -1,0 +1,203 @@
+defaults: &defaults
+  # idle timeout settings
+  idle_timeout_enabled: true
+  idle_timeout: 300000
+  # user should have the staff role by default when created (this allows users to see data accross all providers)
+  default_user_staff_role: false
+  # user should be approved by default when created
+  default_user_approved: true
+  # display logout link
+  logout_enabled: true
+  # should the account link be displayed in the header
+  edit_account_enabled: true
+  # should new accounts be creatable, and should a user be able to edit their account
+  allow_user_update: true
+  # add patient management link
+  patient_management_enabled: true
+  # add job management link
+  job_management_enabled: true
+  # title of the practice
+  practice_name: 'General Hospital'
+  disable_provider_filters: false
+  ccr_system_name: popHealth
+  # force the system to allow HTTP connections
+  force_unsecure_communications: true
+  use_map_reduce_prefilter: true
+  enable_map_reduce_rationale: false
+  enable_map_reduce_logging: false
+  #use practice-based system instead of provider opml hierarchy
+  use_opml_structure: false
+  # Number of Threads for Patient Import
+  patient_import_threads: 1
+  # use workaround for new measure bundle 2.6.0 to get measure results
+  ignore_provider_performance_dates: true
+
+   # Enable/disable the viewing of the measure baseline report
+  show_measure_baseline_report: false
+
+  # Enable/disable csrf for API by default is true
+  enable_csrf_for_apis: false
+
+  # Define the ranges to color-code the provider's results in the baseline report
+  measure_baseline_ranges:
+    good: 70.0
+    medium: 50.0
+    poor: 0.0
+  default_negation_codes:
+    2.16.840.1.113883.3.526.3.1184:
+      code: "854901"
+      codeSystem: "2.16.840.1.113883.6.88"
+    2.16.840.1.113883.3.526.3.1174:
+      code: "854901"
+      codeSystem: "2.16.840.1.113883.6.88"
+  default_practice_npi: 12345
+  default_practice_tin: 
+  default_practice_ccn: 12345
+  # QRDA CMS program
+    # VALUES:
+    # CMS REPORTING PROGRAM (DEFAULT): NONE
+    # MIPS INDIVIDUAL: MIPS
+    # CPC +: CPCPLUS
+    # FOR EH PROGRAM : EH_PROGRAM
+    # Specify the EH PROGRAM Code in Information Recipient Extension 
+  qrda_cms_program: MIPS_INDIV
+  # These eCQMs store a list of "Results" within the statement_results of an Individual Result
+  result_measures:
+    # CMS529
+    - hqmf_set_id : 'FA75DE85-A934-45D7-A2F7-C700A756078B'
+      statement_name : 'Results'
+  # Specify the types of events that you would like to record in the log
+  log_to_database:
+    controller: false
+    admin: false
+    api: false
+    is_sensitive: true
+
+  #provider type to exclude EH measures from
+  eh_exclusion_type: "Division"
+  orphan_provider:
+    root: "popHealth"
+    extension: "Orphans"
+  value_sets:
+    ticket_url: https://vsac.nlm.nih.gov/vsac/ws/Ticket
+    #Yockler: FIXED THIS URL
+    api_url: https://vsac.nlm.nih.gov/vsac/svs/RetrieveValueSet
+  cda_header:
+    :identifier:
+      :root: "2.16.840.1.113883.3.1234.0"
+      :extension: "osehraext"
+    :authors:
+    - :ids:
+      - :root: "2.16.840.1.113883.3.1234.1"
+        :extension: "osehra"
+      :device:
+        :name: 'PopHealth'
+        :model: '6.0.0'
+      :addresses:
+      - :street: ['authors_addr_street']
+        :use:
+        :city:
+        :state:
+        :zip:
+        :country:
+      :telecoms:
+      - :value: author_telecom
+        :use:
+      :time:
+      :organization:
+        :ids:
+        - :root: "1.3.6.1.4.1.37553.8.8.2"
+          :extension: "omniwound"
+        :name:
+    :legal_authenticator:
+      :ids:
+      - :root: "2.16.840.1.113883.3.1234.5"
+        :extension: "osehra"
+      :addresses:
+      - :street: ['legal_authenticator_addr_street']
+        :use:
+        :city:
+        :state:
+        :zip:
+        :country:
+      :telecoms:
+      - :value: author_telecom
+        :use:
+      :time:
+      :person:
+        :given:
+        :family:
+      :organization:
+        :ids:
+        - :root: "2.16.840.1.113883.3.1234.6"
+          :extension: "osehra"
+        :name: ''
+    :participant:
+      :identifier:
+        :root:
+        :extension: 'T2OR234'
+      :addresses: []
+    # Replace information recipient extension with the program code for CMS programs
+
+     # Hospital Quality Reporting for the Promoting Interoperability Program: HQR_PI
+
+     # Hospital Quality Reporting for the Inpatient Quality Reporting Program: HQR_IQR
+
+     # Hospital Quality Reporting for the Promoting Interoperability Program and the Inpatient Quality Reporting Program: HQR_PI_IQR
+
+     # Hospital Quality Reporting for Inpatient Quality Reporting Program  voluntary submissions: HQR_IQR_VOL
+
+    :information_recipient:
+      :identifier:
+        :root: "2.16.840.1.113883.3.249.14.101"
+        :extension: HQR_EHR
+    :custodian:
+      :ids:
+      - :root: "2.16.840.1.113883.3.1234.3"
+        :extension: "osehra"
+      :person:
+        :given: ''
+        :family: ''
+      :organization:
+        :ids:
+        - :root: "2.16.840.1.113883.3.1234.4"
+          :extension: "osehra"
+        :name: ''
+        :addresses:
+        - :street: ['custodian_addr_street']
+          :use:
+          :city:
+          :state:
+          :zip:
+          :country: 
+        :telecoms:
+        - :value:
+          :use:
+
+
+development:
+  <<: *defaults
+  idle_timeout_enabled: false
+  default_user_staff_role: false
+  patient_management_enabled: true
+  log_to_database:
+    controller: true
+    admin: true
+    api: true
+    is_sensitive: true
+
+test:
+  <<: *defaults
+  default_user_approved: false
+  # we do not want to force unsecure when testing
+  force_unsecure_communications: true
+  log_to_database:
+    controller: true
+    admin: true
+    api: true
+    is_sensitive: true
+
+production:
+  <<: *defaults
+  default_user_staff_role: false
+  default_user_approved: false
