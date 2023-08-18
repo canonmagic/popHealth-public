@@ -1,24 +1,15 @@
-# README
+# PopHealth
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+popHealth is an open source tool that allows healthcare providers to calculate quality measures. A quality measure is a calculation of the number of individuals in a population that meet a specific standard of care.
 
-Things you may want to cover:
+popHealth can import patient summaries in either [QRDA Cat I](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=35) or [C-CDA](http://www.hl7.org/implement/standards/product_brief.cfm?product_id=379) format. popHealth will extract information from the patient summaries and calculate quality reports.
 
-* Ruby version
+* Ruby version: 3.1.0
 
 * System dependencies
+    * Ubuntu 22.04
+    * Rails 7.0.4.3
+    * Ruby 3.1.0
+    * MongoDB 6.0
 
-* Configuration
-
-* Database creation
-
-* Database initialization
-
-* How to run the test suite
-
-* Services (job queues, cache servers, search engines, etc.)
-
-* Deployment instructions
-
-* ...
+* [Installation](docs/installation.md)

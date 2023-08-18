@@ -30,7 +30,7 @@ class Bundle
   scope :available, -> { where(:deprecated.ne => true) }
 
   def results
-    CQM::IndividualResult.where(correlation_id: id.to_s)
+    IndividualResult.where(correlation_id: id.to_s)
   end
 
   def title
