@@ -85,18 +85,16 @@ gem "font-awesome-rails", "~> 4.7"
 gem 'handlebars_assets', git: "https://github.com/canonmagic/handlebars_assets"
 #gem "handlebars_assets", "~> 0.23.9"
 gem "d3-rails", "~> 7.8"
-gem "numeraljs-rails", git: "https://github.com/canonmagic/numeraljs-rails"
-#gem "numeraljs-rails", "~> 1.4"
+gem "numeraljs-rails", "~> 1.4"
 gem "jquery-knob-rails", "~> 1.2"
-gem 'momentjs-rails', git: "https://github.com/canonmagic/momentjs-rails"
-#gem "momentjs-rails", "~> 2.29"
+gem "momentjs-rails", "~> 2.29"
 gem "tag-it-rails", "~> 2.0"
 gem "select2-rails", "~> 4.0"
 gem "jquery-datatables-rails", "~> 3.4"
 
 #THORAX REPLACEMENT
-gem 'rails-backbone', git: "https://github.com/canonmagic/rails-backbone"
-#gem "rails-backbone", "~> 1.2"
+#gem 'rails-backbone', git: "https://github.com/canonmagic/rails-backbone"
+gem "rails-backbone", "~> 1.2"
 gem 'thorax-rails', git: "https://github.com/canonmagic/thorax-rails"
 
 #HQMF2JS

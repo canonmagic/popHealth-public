@@ -16,8 +16,16 @@
 # Ignore cqm-execution-service
 /cqm-execution-service
 
-# Ignore vendor folder
-/vendor
+# Ignore vendor folder except for some libraries customized
+/vendor/javascript
+/vendor/bundle/*
+!/vendor/bundle/ruby
+/vendor/bundle/ruby/3.1.0/*
+!/vendor/bundle/ruby/3.1.0/gems
+/vendor/bundle/ruby/3.1.0/gems/*
+!/vendor/bundle/ruby/3.1.0/gems/numeraljs-rails-1.4.5.0
+!/vendor/bundle/ruby/3.1.0/gems/momentjs-rails-2.29.4.1
+!/vendor/bundle/ruby/3.1.0/gems/rails-backbone-1.2.0
 
 # Ignore all logfiles and tempfiles.
 /log/*
