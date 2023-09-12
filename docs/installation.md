@@ -214,7 +214,7 @@ bundle config path 'vendor/bundle' --local
 ```
 
 
-Step 2: Install vendor libraries
+Step 3: Install vendor libraries
 
 ```
 
