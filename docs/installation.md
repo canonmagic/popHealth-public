@@ -18,28 +18,28 @@ sudo -i
 
 Step 2:
 
-Creating user popHealth
+Creating user pophealth
 
 ```
 
-sudo adduser popHealth
+sudo adduser pophealth
 
 ```
 
-Step 3: Enabling popHealth as sudo user
+Step 3: Enabling pophealth as sudo user
 
 ```
 
-usermod -aG sudo popHealth
+usermod -aG sudo pophealth
 
 ```
 
-Step 4: Log as popHealth user
+Step 4: Log as pophealth user
 
 ```
 
 exit
-su - popHealth
+su - pophealth
 
 ```
 
@@ -290,7 +290,7 @@ Step 1: Configure delayed job to start up on server startup
 ```
 
 cd ~
-echo -e '#!/bin/bash\ncd /home/popHealth/popHealth\n. /usr/share/rvm/scripts/rvm\nbundle exec rake jobs:work RAILS_ENV=development\n' > start_delayed_job.sh
+echo -e '#!/bin/bash\ncd /home/pophealth/popHealth\n. /usr/share/rvm/scripts/rvm\nbundle exec rake jobs:work RAILS_ENV=development\n' > start_delayed_job.sh
 chmod +x start_delayed_job.sh
 
 cat << DELAYED_WORKER_END | sudo dd of=/etc/systemd/system/pophealth_delayed_worker.service
@@ -302,8 +302,8 @@ cat << DELAYED_WORKER_END | sudo dd of=/etc/systemd/system/pophealth_delayed_wor
   [Service]
   Type=simple
   User=root
-  WorkingDirectory=/home/popHealth/popHealth
-  ExecStart=/home/popHealth/start_delayed_job.sh
+  WorkingDirectory=/home/pophealth/popHealth
+  ExecStart=/home/pophealth/start_delayed_job.sh
   TimeoutSec=120
 
   [Install]
@@ -331,7 +331,7 @@ cat << CQM_EXECUTION_END | sudo dd of=/etc/systemd/system/cqm-execution.service
 
     [Service]
     User=root
-    WorkingDirectory=/home/popHealth/cqm-execution-service
+    WorkingDirectory=/home/pophealth/cqm-execution-service
     ExecStart=node server.js
     Restart=always
 
@@ -363,8 +363,8 @@ cat << POPHEALTH_END | sudo dd of=/etc/systemd/system/pophealth.service
     [Service]
     Type=simple
     User=root
-    WorkingDirectory=/home/popHealth/popHealth
-    ExecStart=/bin/bash -lc 'bundle exec puma -C /home/popHealth/popHealth/config/puma.rb'
+    WorkingDirectory=/home/pophealth/popHealth
+    ExecStart=/bin/bash -lc 'bundle exec puma -C /home/pophealth/popHealth/config/puma.rb'
     Environment="PORT=80"
 
     TimeoutSec=15
