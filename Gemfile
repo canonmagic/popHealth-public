@@ -56,9 +56,11 @@ group :development do
 end
 
 #CYPRESS v7.0.0 DEPENDENCIES
-gem 'cqm-models', git: "https://github.com/projecttacoma/cqm-models", tag: "cypress_v7.0.0"
+gem 'cqm-models', git: "https://github.com/canonmagic/cqm-models"
+#gem 'cqm-models', git: "https://github.com/projecttacoma/cqm-models", tag: "cypress_v7.0.0"
 gem 'cqm-parsers', "~> 4.1.0.2"
-gem 'cqm-reports', git: "https://github.com/projecttacoma/cqm-reports", tag: "cypress_v7.0.5.1"
+gem 'cqm-reports', git: "https://github.com/canonmagic/cqm-reports"
+#gem 'cqm-reports', git: "https://github.com/projecttacoma/cqm-reports", tag: "cypress_v7.0.5.1"
 gem 'cqm-validators', "~> 4.0.4"
 
 #MONGODB
@@ -80,17 +82,21 @@ gem "sassc-rails", "~> 2.1"
 gem "bootstrap-sass", "~> 3.4"
 gem "bootstrap-datepicker-rails", "~> 1.10"
 gem "font-awesome-rails", "~> 4.7"
-gem "handlebars_assets", "~> 0.23.9"
+gem 'handlebars_assets', git: "https://github.com/canonmagic/handlebars_assets"
+#gem "handlebars_assets", "~> 0.23.9"
 gem "d3-rails", "~> 7.8"
-gem "numeraljs-rails", "~> 1.4"
+gem "numeraljs-rails", git: "https://github.com/canonmagic/numeraljs-rails"
+#gem "numeraljs-rails", "~> 1.4"
 gem "jquery-knob-rails", "~> 1.2"
-gem "momentjs-rails", "~> 2.29"
+gem 'momentjs-rails', git: "https://github.com/canonmagic/momentjs-rails"
+#gem "momentjs-rails", "~> 2.29"
 gem "tag-it-rails", "~> 2.0"
 gem "select2-rails", "~> 4.0"
 gem "jquery-datatables-rails", "~> 3.4"
 
 #THORAX REPLACEMENT
-gem "rails-backbone", "~> 1.2"
+gem 'rails-backbone', git: "https://github.com/canonmagic/rails-backbone"
+#gem "rails-backbone", "~> 1.2"
 gem 'thorax-rails', git: "https://github.com/canonmagic/thorax-rails"
 
 #HQMF2JS

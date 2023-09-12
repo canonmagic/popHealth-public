@@ -43,6 +43,8 @@ su - popHealth
 
 ```
 
+Note: In some cases a reboot might be neccesary to load sudo privilegies correctly
+
 
 # RVM Installation
 
@@ -85,6 +87,13 @@ Step 5: Add RVM to source and reboot
 ```
 echo 'source "/etc/profile.d/rvm.sh"' >> ~/.bashrc
 sudo reboot
+
+```
+
+Note: In case of errors during RVM installation due missing permissions, try the following
+
+```
+rvm fix-permissions system; rvm fix-permissions user
 
 ```
 
@@ -150,10 +159,19 @@ sudo systemctl status mongod
 ```
 
 
-# NodeJS Installation
+# NPM and NodeJS Installation
 
 
-Step 1: Install NodeJS
+Step 1: Install NPM
+
+```
+
+sudo apt-get install npm
+
+```
+
+
+Step 2: Install NodeJS
 
 ```
 
@@ -195,6 +213,14 @@ bundle install
 
 ```
 
+
+Note: In case bundle is not recognize, try the following to add bundle path
+
+```
+
+bundle config path 'vendor/bundle' --local
+
+```
 
 # CQM-Execution Source Code
 
@@ -264,7 +290,7 @@ Step 1: Configure delayed job to start up on server startup
 ```
 
 cd ~
-echo -e '#!/bin/bash\ncd /home/popHealth/popHealth\n. /usr/share/rvm/rubies/ruby-3.1.0/bin\nbundle exec rake jobs:work RAILS_ENV=development\n' > start_delayed_job.sh
+echo -e '#!/bin/bash\ncd /home/popHealth/popHealth\n. /usr/share/rvm/scripts/rvm\nbundle exec rake jobs:work RAILS_ENV=development\n' > start_delayed_job.sh
 chmod +x start_delayed_job.sh
 
 cat << DELAYED_WORKER_END | sudo dd of=/etc/systemd/system/pophealth_delayed_worker.service
@@ -275,7 +301,7 @@ cat << DELAYED_WORKER_END | sudo dd of=/etc/systemd/system/pophealth_delayed_wor
 
   [Service]
   Type=simple
-  User=popHealth
+  User=root
   WorkingDirectory=/home/popHealth/popHealth
   ExecStart=/home/popHealth/start_delayed_job.sh
   TimeoutSec=120
