@@ -204,6 +204,16 @@ git clone https://github.com/canonmagic/popHealth-public popHealth
 
 ```
 
+
+Step 2: Setup bundle to install gems locally
+
+```
+
+bundle config path 'vendor/bundle' --local
+
+```
+
+
 Step 2: Install vendor libraries
 
 ```
@@ -213,14 +223,6 @@ bundle install
 
 ```
 
-
-Note: In case bundle is not recognize, try the following to add bundle path
-
-```
-
-bundle config path 'vendor/bundle' --local
-
-```
 
 # CQM-Execution Source Code
 
