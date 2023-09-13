@@ -209,6 +209,7 @@ Step 2: Setup bundle to install gems locally
 
 ```
 
+cd ~/popHealth
 bundle config path 'vendor/bundle' --local
 
 ```
@@ -218,7 +219,6 @@ Step 3: Install vendor libraries
 
 ```
 
-cd ~/popHealth
 bundle install
 
 ```
