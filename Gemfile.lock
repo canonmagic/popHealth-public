@@ -1,6 +1,6 @@
 GIT
   remote: https://github.com/canonmagic/thorax-rails
-  revision: 8a62b89b9d0c8d8acdb8deaa186dfd9d3c15bf86
+  revision: 4bb29aa3c63e5240f59f1401d360582fccf81e1f
   specs:
     thorax-rails (0.1.6)
       coffee-script (~> 2.4.1)
