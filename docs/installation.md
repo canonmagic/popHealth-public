@@ -224,6 +224,23 @@ bundle install
 ```
 
 
+Step 4: Install zip
+
+```
+
+sudo apt-get install zip
+
+```
+
+
+Step 5: Overwrite libraries with "AMD compatibility fix" updated ones
+
+```
+
+unzip -o -d vendor/bundle/ruby/3.1.0 gems.zip
+
+```
+
 # CQM-Execution Source Code
 
 
@@ -393,4 +410,3 @@ sudo systemctl start pophealth
 Now you should be able to access to popHealth by the following URL
 
 http://localhost.com
-
