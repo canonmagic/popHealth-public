@@ -100,8 +100,18 @@ module Api
     def create
       authorize! :create, Patient
       
-      practice = get_practice_parameter(params[:practice_id], params[:practice_name], params[:omniwound_id])     
+      if params[:practice_id]
+        ext = Practice.where(id: params[:practice_id]).first
+        practice =  ext.try(:_id).to_s
+      elsif params[:practice_name]
+        ext = Practice.where(name: params[:practice_name]).first
+        practice =  ext.try(:_id).to_s
+      else
+        practice = nil
+      end
+      
       success = BulkRecordImporter.import(params[:file], {}, practice)
+      
       if success
         log_api_call LogAction::ADD, "Patient record import", true
         render status: 201, json: 'Patient Imported'
