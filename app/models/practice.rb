@@ -6,7 +6,6 @@ class Practice
   field :organization, type: String
   field :address, type: String
   field :provider_id, type: BSON::ObjectId
-  field :omniwound_id, type: String, default: nil
   
   validates_presence_of :name, :organization
   validates :name, uniqueness: true
