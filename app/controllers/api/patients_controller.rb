@@ -25,6 +25,7 @@ module Api
     before_action :load_patient, :only => [:show, :delete, :toggle_excluded, :results]
     before_action :set_pagination_params, :only => :index
     before_action :set_filter_params, :only => :index
+    skip_before_action :verify_authenticity_token # API doesn't need CSRF
 
     def_param_group :pagination do
       param :page, /\d+/
@@ -35,7 +36,7 @@ module Api
     param_group :pagination
     formats ['json']
     def index
-      records = CQM::Patient.where(@query)
+      records = Patient.where(@query)
       validate_record_authorizations(records)
       
       log_api_call LogAction::VIEW, "Patient list viewed", true
@@ -97,7 +98,7 @@ module Api
     param :practice_name, String, :desc => "Name for the patient's Practice", :required => false
     description "Upload a QRDA Category I document for a patient into popHealth."
     def create
-      authorize! :create, CQM::Patient
+      authorize! :create, Patient
       
       practice = get_practice_parameter(params[:practice_id], params[:practice_name], params[:omniwound_id])     
       success = BulkRecordImporter.import(params[:file], {}, practice)
@@ -140,13 +141,13 @@ module Api
 
     def load_patient
       #qdm_patient_converter = CQM::Converter::QDMPatient.new
-      @patient = CQM::Patient.find(params[:id])
+      @patient = Patient.find(params[:id])
       #@hds_record = qdm_patient_converter.to_hds(@patient)
       authorize! :read, @patient
     end
 
     def validate_authorization!
-      authorize! :read, CQM::Patient
+      authorize! :read, Patient
     end
 
     def validate_record_authorizations(records)
@@ -158,7 +159,7 @@ module Api
     def set_filter_params
       @query = {}
       if params[:quality_report_id]
-        @quality_report = QME::QualityReport.find(params[:quality_report_id])
+        @quality_report = QualityReport.find(params[:quality_report_id])
         authorize! :read, @quality_report
         @query["provider.npi"] = {"$in" => @quality_report.filters["providers"]}
       elsif current_user.admin?
@@ -172,7 +173,7 @@ module Api
       results.to_a.map do |result|
         hqmf_id = result['extendedData']['hqmf_id']
         #sub_id = result['value']['sub_id']
-        measure = CQM::Measure.where("hqmf_id" => hqmf_id).only(:title, :description).first
+        measure = Measure.where("hqmf_id" => hqmf_id).only(:title, :description).first
         result['extendedData'].merge(measure_title: measure.title, measure_subtitle: measure.description)
         result
       end
