@@ -1,0 +1,456 @@
+// Import bootstrap
+@import "bootstrap";
+/*
+.nav-sidebar {
+    width: 300px;
+    height: 100vh;
+    position: fixed;
+    z-index: 1;
+    top: 0;
+    left: 0;
+    background-color: #111;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 20px;
+}
+*/
+
+//New
+
+.container-pophealth {
+    margin: 10px;
+}
+
+th {
+    text-align: center !important;
+}
+
+
+.nav-sidebar {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 300px;
+    position: fixed !important;
+    overflow: auto;
+    z-index: 1;
+    transition: 0.5s;
+}
+
+
+.main-measure-dashboard {
+    margin-left: 300px !important;
+}
+
+//
+
+.nav-link-inside {
+    border-radius: 6px;
+    padding-left: 20px;
+    text-align: left;
+    
+}
+
+.nav-link-inside:hover {
+    background: #f6f8fa;
+
+}
+
+.list-sidebar {
+    width: 100%;
+    padding-top: 90px;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    background: ghostwhite;
+}
+
+.list-item, .list-inside {
+    list-style: none;
+    width: 100%;
+    overflow: hidden;
+    padding-bottom: 10px;
+
+}
+
+
+.list-item-click {
+    cursor: pointer;
+}
+
+.list-button {
+    display: flex;
+    align-items: center;
+    gap: 1em;
+    width: 70%;
+    margin: 0 auto;
+}
+
+.arrow .span-icon{
+    transform: rotate(90deg);
+
+}
+
+.span-icon {
+    margin-left: auto;
+    transition: transform .3s;
+
+}
+
+.nav-link {
+    color: #303440;
+    display: block;
+    padding: 10px 0;
+    text-decoration: none !important;
+}
+
+.list-show {
+    width: 80%;
+    margin-left: auto;
+    border-left: 2px solid #303440;
+    list-style: none;
+    transition: height .4s;
+    height: 0;
+
+}
+
+h2 {
+    text-align: center !important;
+}
+
+li {
+    list-style: none !important;
+}
+
+.panel-filter {
+    text-align: center;
+
+}
+.provider-table {
+    text-align: center !important;
+    
+}
+
+.provider-table .a {
+    cursor: pointer !important;
+}
+
+/* Queries  */
+
+@media screen and (max-width: 700px) {
+    .nav-sidebar {
+        width: 100%;
+        height: auto;
+        position: relative;
+    }
+
+    .nav-sidebar .a {
+        float: left;
+    }
+
+    div.main-measure-dashboard {
+        margin-left: 0;
+    }
+}
+
+
+@media screen and (max-width: 400px) {
+    .nav-sidebar a {
+        text-align: center;
+        float: none;
+    }
+}
+
+.body-date, .reset-filter-button {
+    width: 100% !important;
+    text-align: center;
+}
+
+.search-measure {
+    width: 100% !important;
+    margin-bottom: 10px;
+}
+
+
+.nav-link-inside {
+    display: inline;
+    padding: 8px 16px;
+    //margin: 4px;
+    font-size: 14px;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid #337ab7;
+    border-radius: 4px;
+    width: 100%;
+    color: #337ab7;
+    background-color: #fff;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.nav-link-inside:hover {
+    background-color: #337ab7;
+    color: #fff;
+}
+
+.ul-measure {
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+#headingMeasure, #headingDate {
+    padding: 3px 15px;
+    margin: 0;
+};
+
+#headingProviderDetails,#headingProviderRoles, #headingProviderInformation {
+    padding: 5px 15px;
+    margin: 0;
+}
+#collapseMeasure {
+    transition: 1s;
+}
+
+.panel-body {
+    margin: 0;
+    padding: 0;
+}
+
+.measure-balance {
+    text-align: center;
+};
+
+.measure-details-ul, .patient-details-ul {
+    padding: 0;
+};
+
+.measure-details-li , .patient-details-li {
+    margin-bottom: 10px;
+};
+
+
+.link-on:hover {
+    text-decoration: underline !important;
+
+};
+
+.select2 {
+    width: 100% !important;
+}
+
+.pointer-link {
+    cursor: pointer;
+}
+
+/* Estilo para el overlay de carga */
+
+#loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1000;
+}
+
+.loading-message {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.loading-dots {
+    display: flex;
+    margin-bottom: 10px;
+}
+
+.dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background-color: #333;
+    margin: 0 5px;
+    animation: pulse 1s infinite;
+}
+
+.loading-text {
+    margin-top: 5px;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 0.3;
+    }
+
+    50% {
+        opacity: 1;
+    }
+}
+
+caption {
+    caption-side: top;
+    font-weight: bold;
+    font-size: 1.2em;
+    color: #333;
+    background-color: #f2f2f2;
+    padding: 10px;
+}
+
+
+.spinner {
+    border: 4px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top: 4px solid #3498db;
+    width: 20px;
+    height: 20px;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.btn-pratices {
+    display: list-item;
+
+}
+
+.btn-practices-actions {
+    display: grid !important;
+}
+
+.btn-practices-actions .dropdown-menu {
+    width: 100%;
+    grid-template-columns: repeat(auto-fill, minmax(100%, 1fr));
+}
+
+.btn-patients {
+    display: flex;
+}
+
+.nav-link-inside.active {
+    background-color: #337ab7;
+    color: #fff;
+};
+
+#filter-container {
+    display: flex;
+    flex-wrap: wrap;
+}
+
+#filter-container p {
+    font-weight: bold;
+    margin-bottom: 10px;
+    font-size: 16px;
+}
+
+.filter-label {
+    display: inline-block;
+    margin-right: 3px;
+    margin-bottom: 3px;
+    padding: 3px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 4px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s;
+    font-weight: 300;
+}
+
+.filter-label:hover {
+    background-color: #45a049;
+}
+
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+tr,th,td {
+    text-align: center;
+}
+
+.fraction {
+    display: inline-block;
+    text-align: center;
+}
+
+.numerator, .denominator {
+    display: block;
+    font-size: 1.5em;
+    font-weight: bold;
+    padding: 2px;
+}
+
+.fraction-line {
+    display: block;
+    border-top: 1px solid;
+    margin: 2px 0;
+    width: 100%;
+}
+
+#panelHeadingDashboard, #btnAddTeam, #headingTeamDetail {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    flex-wrap: nowrap;
+    justify-content: space-between;
+}
+
+.btn-teams-options {
+    display: flex;
+    gap: 0.5rem;
+}
+
+
+.data-user-list {
+    padding: 0;
+    list-style: none;
+}
+
+.data-user-list li {
+    margin-bottom: 10px;
+    background-color: #f5f5f5;
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.data-user-list-link {
+    display: inline-block;
+    margin-top: 10px;
+}
+
+.data-user-list-link:hover {
+    text-decoration: underline;
+
+}
+
+//Center elements of the table
+
+
+.table-group-divider tr td {
+    vertical-align: middle !important;
+}
+
+//Tooltip-icon
+
+.icon-measure-result {
+    font-size: 18px;
+    padding-left: 5px;
+    color: #4285f4;
+    cursor: pointer;
+}

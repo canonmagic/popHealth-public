@@ -1,0 +1,41 @@
+<div class="section-login">
+	<div class="container-login">
+		<div class="row">
+			<div class="form-login">
+				<h1>&reg;PopHealth</h1>
+				<header>
+					<%  current_user.to_json   %>
+					<%= content_tag(:div, flash[:error], id: "flash_error", class: "alert alert-error") if flash[:error] %>
+					<%= content_tag(:div, flash[:notice], id: "flash_notice", class: "alert alert-info") if flash[:notice] %>
+					<%= content_tag(:div, flash[:alert], id: "flash_alert", class: "alert alert-warning") if flash[:alert] %>
+				</header>
+				<h3>Welcome Back!</h3>
+				<p>Please enter your details</p>
+					<%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:name=>"login_form"}) do |f| %>
+					<div class="form-group">
+						<%= f.text_field :username, class: "form-control", placeholder: "Enter your username" %>
+					</div>
+					<div class="form-group">
+						<%= f.password_field :password, class: "form-control", placeholder: "Enter your password" %>
+					</div>
+					<% if resource.errors.present? %>
+						<div class="alert alert-danger">
+						<%= devise_error_messages! %>
+						</div>
+					<% end %>
+					
+					<%= f.submit "Login", class: "btn btn-primary btn-block" %>
+					<% end %>
+				<div class="custom-divider">
+    				<hr class="flex-grow-1">
+    				<span class="custom-divider-text">OR</span>
+    				<hr class="flex-grow-1">
+				</div>
+				<%= button_to "Log in with Azure AD",     
+            		user_azure_activedirectory_v2_omniauth_authorize_path, method: :post,
+            		:data => {turbo: "false"},
+           			 class: 'btn btn-primary btn-block' %>
+			</div>
+		</div>
+	</div>
+</div>

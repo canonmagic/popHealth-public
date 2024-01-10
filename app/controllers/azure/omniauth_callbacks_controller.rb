@@ -1,5 +1,7 @@
 class Azure::OmniauthCallbacksController < Devise::OmniauthCallbacksController
+
     def azure_activedirectory_v2
+
         puts 'AJA!!!!'
         response_params = request.env['omniauth.auth']['info']
         @user = User.find_by(email: response_params['email'])
@@ -13,6 +15,13 @@ class Azure::OmniauthCallbacksController < Devise::OmniauthCallbacksController
             #"https://login.windows.net/2159ca91-1fc3-43e2-8ade-4f1dbf0385c0/oauth2/logout?post_logout_redirect_uri=https://pophealthtest.com/azure_auth/processLogin"
             #redirect_to "https://login.windows.net/2159ca91-1fc3-43e2-8ade-4f1dbf0385c0/oauth2/logout?post_logout_redirect_uri=https://pophealthtest.com/users/sign_in"
         end
+    end
+
+    def azure_auth
+
+        super()
+
+
     end
 
     def logout

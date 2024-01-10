@@ -10,6 +10,17 @@ class TeamsController < ApplicationController
     log_controller_call LogAction::VIEW, "View all teams"
     @teams = @current_user.teams
     validate_authorization!(@teams)
+
+    #Code added by Jose Melendez (10/14/2023)
+    #This code snippet makes the 'providers' variable available in index.html.erb to open a popup with the data.
+
+    if current_user.admin? || APP_CONFIG['use_opml_structure']
+    @providers = Provider.all
+      else
+    @providers = Provider.where(parent_id: current_user.try(:practice).try(:provider_id))
+    end
+
+    
   end
 
   # GET /teams/1
@@ -24,6 +35,7 @@ class TeamsController < ApplicationController
   # GET /teams/new
   def new
     log_controller_call LogAction::VIEW, "View page to create new team"
+    @providers = Provider.all
     if current_user.admin? || APP_CONFIG['use_opml_structure']
       @providers = Provider.all
     else
@@ -73,7 +85,9 @@ class TeamsController < ApplicationController
 
   # post /teams/1
   def update
-    name = params[:name]
+    #Add Jose Melendez, el nombre del equipo esta anidado al parametro team
+    name = params[:team][:name]
+    #name = params[:name]
     provider_ids = params[:provider_ids]
 
     if name.strip.length > 0  && !provider_ids.blank?
@@ -110,6 +124,20 @@ class TeamsController < ApplicationController
     log_controller_call LogAction::DELETE, "Deleted team"
     redirect_to teams_url, notice: 'Team was successfully destroyed.'
   end
+
+  #Add Jose Melendez: poder obtener la información del team por el ID
+
+  def show_by_id
+
+    @team = Team.find(params[:id])
+
+    validate_authorization!([@team])
+
+    render json: @team
+
+  end
+
+  #
 
   private
     # Use callbacks to share common setup or constraints between actions.

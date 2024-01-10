@@ -1,0 +1,44 @@
+<div data-controller="measures" class="col-md-12">
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Measures</h3>
+        </div>
+
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th></th>
+                        <th>CMS ID</th>
+                        <th>HQMF ID</th>
+                        <th>Name</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @measures.each do |measure| %>
+                        <tr>
+                            <td><%= link_to edit_measure_path(measure), class: "btn btn-primary btn-sm" do %>
+                                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <% end %>
+                            </td>
+                            <td><%= measure.cms_id %></td>
+                            <td><%= measure.hqmf_id %></td>
+                            <td><%= measure.title %></td>
+                            <td><%= measure.description %></td>
+                        </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer panel-primary">
+            <%= will_paginate @measures, class:"pager" %>
+        </div>
+    
+    </div>
+
+    
+</div>
+

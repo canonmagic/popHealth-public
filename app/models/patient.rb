@@ -260,11 +260,11 @@ module CQM
     end
 
   end
-end
 
-class VendorPatient < CQM::Patient; end
-class ProductTestPatient < CQM::Patient; end
-class TestExecutionPatient < CQM::Patient; end
+  class VendorPatient < Patient; end
+  class ProductTestPatient < Patient; end
+  class TestExecutionPatient < Patient; end
+end
 
 Patient = CQM::Patient
 VendorPatient = CQM::Patient

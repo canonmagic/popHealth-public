@@ -1,23 +1,72 @@
-<div class="main userTeams">
-  <h1>User Teams</h1>
-  <%= button_to 'New Team', new_team_path, :method=> 'get', :class => "btn btn-primary pull-right btn-margin" %> <% if @current_user.staff_role && !APP_CONFIG['use_opml_structure'] %> <%= button_to 'Create Default Team', "teams/create_default", :method=> 'post', :class => "btn btn-primary pull-right" %> <% end %>
-  <table class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th colspan="3"></th>
-      </tr>
-    </thead>
-    <tbody>
-      <% @teams.each do |team| %>
-        <tr>
-          <td><%= team.name %></td>
-          <td><%= link_to 'View Providers', team %></td>
-          <td><%= link_to 'Edit', edit_team_path(team) %></td>
-          <td><%= link_to 'Delete', team, method: :delete, data: { confirm: 'Are you sure?' } %></td>
-        </tr>
-      <% end %>
-    </tbody>
-  </table>
-  <br>
+<div data-controller="teams" class="col-md-12">
+    <div class="form-group">
+        <input type="text" class="form-control" id="inputSearchTeam"  placeholder="Search team..."></input>
+    </div>
+    <div class="panel panel-primary">
+
+        <div class="panel-heading" id="headingTeams">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> User Teams</h3>
+        </div>
+
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:5%;"></th>
+                        <th>Name</th>
+                    </tr>
+                </thead>
+                <tbody id="teamTable">
+                    <% @teams.each do |team| %>
+                            <tr>
+                            <td>
+                                <div class="btn-teams-options">
+                                <%= link_to team_path(team), class: 'btn btn-warning btn-xs' do %>
+                                    <i class="glyphicon glyphicon-eye-open"></i>
+                                <% end %>
+                                
+                                <%= link_to edit_team_path(team), class: 'btn btn-info btn-xs' do %>
+                                    <i class="glyphicon glyphicon-pencil"></i>
+                                <% end %>
+
+                                <%= button_to team, method: :delete, data: { confirm: 'Are you sure?' }, class: 'btn btn-danger btn-xs' do %>
+                                    <i class="glyphicon glyphicon-trash"></i>
+                                <% end %>
+                                </div>
+                            </td>
+                            <td><%= team.name %></td>
+                            </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="panel-footer panel-primary">
+            <%= link_to new_team_path, class: "btn btn-success" do %>
+                <span class="glyphicon glyphicon-plus"></span> New Team
+            <% end %>
+            <% if @current_user.staff_role && !APP_CONFIG['use_opml_structure'] %>
+                <%= link_to "teams/create_default", method: 'post', class: "btn btn-success" do %>
+                    <span class="glyphicon glyphicon-plus"></span> Create Default Team
+                <% end %>
+            <% end %>
+        </div>
+
+    </div>
+    
 </div>
+
+<script>
+
+    $(document).ready(function(){
+        $("#inputSearchTeam").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+    $("#teamTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+
+  });
+
+});
+</script>

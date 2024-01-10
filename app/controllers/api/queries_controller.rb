@@ -22,6 +22,7 @@ module Api
     before_action :authenticate_user!
     before_action :set_pagination_params, :only => [:patient_results, :patients]
     # HACK alert: should probably move these class methods to a helper.
+    
     def self.get_svs_value(key, cval)
       id = cval[:id]
       code=cval[:code]
@@ -38,7 +39,6 @@ module Api
         puts "id or code not found"
       end
     end
-
 
     @@filter_mapping = {
         'ethnicities' => method(:get_svs_value),
@@ -90,14 +90,14 @@ module Api
         }
     }
 
-
     def index
       filter = {}
       filter["hqmf_id"] = {"$in" => params["measure_ids"]} if params["measure_ids"]
       providers = collect_provider_id
       filter["filters.providers"] = {"$in" => providers} if providers
       log_api_call LogAction::VIEW, "View all queries"
-      render json: QME::QualityReport.where(filter)
+      render json: QualityReport.where(filter)
+      #render json: QME::QualityReport.where(filter)
     end
 
     api :GET, '/queries/:id', "Retrieve clinical quality measure calculation"
@@ -132,6 +132,11 @@ module Api
     param :effective_date, ->(effective_date) { effective_date.present? }, :desc => 'Time in seconds since the epoch for the end date of the reporting period', :required => true
     param :effective_start_date, ->(effective_start_date) { effective_start_date.present? }, :desc => 'Time in seconds since the epoch for the start date of the reporting period'
     param :providers, Array, :desc => 'An array of provider IDs to filter the query by', :allow_nil => true
+
+    #Add Jose Melendez
+
+    param :filter_preferences, Array, :desc => 'An array of user preferences to filter the query by', :required => false, :allow_nil => true
+
     example '{"_id":"52fe409bb99cc8f818000001", "status":{"state":"queued", ...}, ...}'
     description <<-CDESC
       This action will create a clinical quality measure calculation. If the measure has already been calculated,
@@ -177,31 +182,51 @@ module Api
       options[:effective_date] = end_date
       options[:test_id] = rp._id
       options['requestDocument'] = true
+
       begin
-        qc = QualityReport.where('measure_id' => params[:measure_id], 'effective_date' => options[:effective_date],'start_date' => options[:start_date],  "filters.providers" => {'$in': params[:providers]}).first
+
+        qc = QualityReport.where('measure_id' => params[:measure_id], 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "filters.providers" => {'$in': params[:providers]},'filter_preferences' => current_user.preferences['c4filters']).first
         
         if qc.nil?
+
           measure = Measure.where(hqmf_id: params[:measure_id]).first
-          qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "filters.providers" => {'$in': params[:providers]}).first if measure.present?
+
+          qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "filters.providers" => {'$in': params[:providers]}, 'filter_preferences' => current_user.preferences['c4filters']).first if measure.present?
+
         end
 
         if qc
-          if qc.status["state"] == "pending"
+
+          if qc.status["state"] == "pending" && (qc.filter_preferences == current_user.preferences['c4filters'] || (qc.filter_preferences.nil? && current_user.preferences['c4filters']))
+
             Delayed::Worker.logger.info("calculation is pending and returning nothing")
-          elsif qc.status["state"] == "completed"
+
+          elsif qc.status["state"] == "completed" && (qc.filter_preferences == current_user.preferences['c4filters'] || (qc.filter_preferences.nil? && current_user.preferences['c4filters']))
+
             if params[:sub_id]
+
               Delayed::Worker.logger.info("calculation is already available in cache for measure #{measure.cms_id} with sub id #{params[:sub_id]}")
-              qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], 'sub_id' => params[:sub_id], "filters.providers" => {'$in': params[:providers]}).first 
+
+              qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], 'sub_id' => params[:sub_id], "filters.providers" => {'$in': params[:providers]}, 'filter_preferences' => current_user.preferences['c4filters'] 
+              ).first
+
               render json: qc
+
             else
+
               Delayed::Worker.logger.info("calculation is already available in cache")
               render json: qc
+
             end
+
           end
+
         else
+
           #CQM::QualityReport.where('measure_id' => params[:measure_id]).destroy_all
           #CQM::IndividualResult.where('measure_id' => params[:measure_id]).destroy_all
-          qc = QualityReport.new('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "status" => {"state"=>"pending"}, "filters" => options[:filters])
+          qc = QualityReport.new('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "status" => {"state"=> "pending"}, "filters" => options[:filters], 'filter_preferences' => current_user.preferences['c4filters'])
+
           qc.save!
 
           providers = params[:providers]
@@ -244,13 +269,23 @@ module Api
               sub_id = msr['sub_id'].nil? ? nil : msr['sub_id']
               ManualExclusion.apply_manual_exclusions(msr._id,sub_id)
             end
-            erc = Cypress::ExpectedResultsCalculator.new(@patients,options[:test_id],options[:effective_date],options[:start_date],params[:sub_id], options[:filters], true)
+
+            options[:filter_preferences] = current_user.preferences['c4filters']
+
+            erc = Cypress::ExpectedResultsCalculator.new(@patients,options[:test_id],options[:effective_date],options[:start_date],params[:sub_id], options[:filters], true, options[:filter_preferences])
+
             @results = erc.aggregate_results_for_measures(@msrs)
-            qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "sub_id" => params[:sub_id], "filters.providers" => {'$in': params[:providers]}).first 
-            if qc.status["state"] == "completed"
+
+            qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "sub_id" => params[:sub_id], "filters.providers" => {'$in': params[:providers]},'filter_preferences' => current_user.preferences['c4filters']).first
+
+            if qc.status["state"] == "completed" && (qc.filter_preferences == current_user.preferences['c4filters'] || (qc.filter_preferences.nil? && current_user.preferences['c4filters']))
+
               render json: qc
+
             else
+
               render false
+
             end
 
             log_api_call LogAction::ADD, "Create a clinical quality calculation"
@@ -390,8 +425,13 @@ module Api
                                           :rationale => namekey, :user => current_user['_id'])
       }
       # new let page recalc
-      IndividualResult.delete_all
-      QualityReport.delete_all
+
+      #Edit Jose Melendez:
+
+      #IndividualResult.delete_all
+      #QualityReport.delete_all
+
+      #
       #convert_measure_id = HealthDataStandards::CQM::Measure.where("_id" => params[:id]).first
       # force recalculate has no effect if the patients are cached !!!!!!!!!!!!!!
       #measure_id = Measure.where(hqmf_id: params[:measure_id]).first
@@ -419,7 +459,9 @@ module Api
     def clearfilters
       begin
         reset_patient_cache
-        delete_patient_cache
+        #Edit Jose Melendez
+        #delete_patient_cache
+        #
         current_user.preferences['c4filters'] = nil
         current_user.save
       rescue Exception => e
@@ -429,7 +471,7 @@ module Api
         Delayed::Worker.logger.info(e.backtrace.inspect)
       end
       
-      redirect_to '/#providers/'+params[:default_provider_id]
+      #redirect_to '/#providers/'+params[:default_provider_id] #corregir
     end
 
     def reset_patient_cache
@@ -459,14 +501,17 @@ module Api
     end
 
     def delete_patient_cache
+
       log_admin_controller_call LogAction::DELETE, "Remove caches"
+
       QualityReport.delete_all
+
       IndividualResult.delete_all
+
       Mongoid.default_client["rollup_buffer"].drop()
     end
 
-    api :GET, '/queries/:id/patient_results[?population=true|false]',
-        "Retrieve patients relevant to a clinical quality measure calculation"
+    api :GET, '/queries/:id/patient_results[?population=true|false]',"Retrieve patients relevant to a clinical quality measure calculation"
     param :id, String, :desc => 'The id of the quality measure calculation', :required => true
     param :ipp, /true|false/, :desc => 'Ensure patients meet the initial patient population for the measure', :required => false
     param :denom, /true|false/, :desc => 'Ensure patients meet the denominator for the measure', :required => false
@@ -501,7 +546,6 @@ module Api
       log_api_call LogAction::VIEW, "Get patients for measure calculation", true
       render :json => Patient.where({:'extendedData.medical_record_number'.in => ids})
     end
-
 
     private
     def build_filter

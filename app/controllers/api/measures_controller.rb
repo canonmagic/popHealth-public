@@ -4,20 +4,28 @@ require 'cql_bundle_importer.rb'# Añadido por yockler
 require './contrib/measure_dates.rb' # Añadido por yockler
 require './app/models/tracker.rb' # Añadido por yockler
 
-module Api  
+module Api
+
   class LightMeasureSerializer
-    include ActiveModel::Serialization    
+
+    include ActiveModel::Serialization  
+
         attr_accessor :_id, :name, :category, :hqmf_id, :type, :cms_id, :nqf_id, :hqmf_set_id, :hqmf_version_number, :sub_id, :subtitle, :description
+
   end
   
   class MeasuresController < ApplicationController
+
     resource_description do
       short 'Measures'
       formats ['json']
       description "This resource allows for the management of clinical quality measures in the popHealth application."
     end
+
     include PaginationHelper
+
     include LogsHelper
+
     before_action :authenticate_user!
     before_action :validate_authorization!
     before_action :set_pagination_params, :only=> :index
@@ -27,7 +35,9 @@ module Api
     
     #api :GET, "/measureslight", "Get a list of measures light"
     param_group :pagination, Api::PatientsController
+
     def measureslight
+
       log_api_call LogAction::VIEW, "View list of measures"
       
       measures = Measure.where(@filter)
@@ -35,6 +45,7 @@ module Api
       measLight = Array.new
 
       measures.each do |item|
+
         p = LightMeasureSerializer.new
         p._id = item._id
         p.name = item.title
@@ -50,14 +61,19 @@ module Api
         p.description = item.description
 
         measLight << p
+
       end
      
        render json: measLight
+
     end
 
     api :GET, "/measures", "Get a list of measures"
+
     param_group :pagination, Api::PatientsController
+    
     def index
+
       log_api_call LogAction::VIEW, "View list of measures"
       measures = Measure.where(@filter)
       #m = Measure.first
@@ -65,12 +81,15 @@ module Api
       #Delayed::Worker.logger.info(m)
       render json: measures
       #paginate(api_measures_url, measures), each_serializer: HealthDataStandards::CQM::MeasureSerializer
+
     end
 
     api :GET, "/measures/:id", "Get an individual clinical quality measure"
     param :id, String, :desc => 'The HQMF id for the CQM to calculate', :required => true
     param :sub_id, String, :desc => 'The sub id for the CQM to calculate. This is popHealth specific.', :required => false
+
     def show
+      
       log_api_call LogAction::VIEW, "View measure"
       #measure = Measure.where({"hqmf_id" => params[:id], "sub_id"=>params[:sub_id]}).first
       measure = Measure.where({"hqmf_id" => params[:id]}).first
@@ -130,7 +149,6 @@ module Api
       render :status=>204, :text=>""
     end
 
-
     def update_metadata
       authorize! :update, CQM::Measure
       measures = CQM::Measure.where({ hqmf_id: params[:hqmf_id]})
@@ -144,7 +162,6 @@ module Api
         log_api_call LogAction::UPDATE, "Failed to update measure, with error #{e.to_s}"
         render text: e.to_s, status: 500
     end
-
 
     def finalize
       measure_details = {
@@ -174,7 +191,7 @@ module Api
       @filter = measure_ids.nil? || measure_ids.empty? ? {} : {:hqmf_id.in => measure_ids}
     end
 
-    def update_metadata_params
+    def update
       params[:measure][:lower_is_better] = nil if params[:measure][:lower_is_better].blank?
     end
 

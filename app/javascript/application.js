@@ -1,3 +1,4 @@
+
 //= require_self
 //= require jquery
 //= require jquery.knob
@@ -11,9 +12,12 @@
 //= require thorax
 //= require bootstrap-sprockets
 //= require bootstrap-datepicker/core
+//= require bootstrap-datepicker
 //= require d3
 //= require numeral
 //= require moment
-//= require select2
+//= require select2-full
 //= require tag-it
 //= require backbone/pophealth
+
+import "controllers"

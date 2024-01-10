@@ -1,0 +1,43 @@
+<div data-controller="teams">
+    <%= form_tag("/teams") do %>
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>NPI</th>
+                    <% if @current_user.admin %>
+                        <th>Affiliation</th>
+                    <% end %>
+                    <th>Select</th>
+                </tr>
+            </thead>
+            <tbody>
+                <% @providers.each do |provider| %>
+                    <tr>
+                        <td>
+                            <%= provider.givenNames %> <%= (provider.familyName) ? provider.familyName : "" %>
+                            <%= (provider.children.length > 0) ? "(Group)" : "" %>
+                        </td>
+                        <td><%= (provider.npi)? provider.npi : 'N/A' %></td>
+                        <% if @current_user.admin %>
+                            <td><%= provider.try(:parent).try(:givenNames) %></td>
+                        <% end %>
+                        <td id="<%=provider._id%>">
+                            <%= check_box_tag 'provider_ids[]', provider._id %> 
+                        </td>
+                    </tr>
+                <% end %>
+            </tbody>
+        </table>
+        <hr/>
+        <form>
+            <div class="form-group">
+                <%= label_tag "team", "Team Name" %>
+                <%= text_field_tag :name, nil, class:"form-control", id:"teamName" %>
+            </div>
+            <hr/>
+            <%= submit_tag "Create Team", class:"btn btn-success", data: { action:"click->teams#confirmSubmit" } %>
+        </form>
+        <br/>
+    <% end %>
+</div>

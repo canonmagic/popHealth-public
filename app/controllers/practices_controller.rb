@@ -1,4 +1,6 @@
 class PracticesController < ApplicationController
+  #add Jose Melendez, 05/12/2023
+  before_action :set_practice, only: [:edit, :update, :destroy]
   include LogsHelper 
   include ApplicationHelper
 
@@ -16,6 +18,9 @@ class PracticesController < ApplicationController
   def index
     log_controller_call LogAction::VIEW, "View all practices"
     @practices = Practice.all
+    #Add Jose Melendez: Create a variable that counts the practices that have an associated provider_id
+    @practices_with_provider = Practice.where(:provider_id.ne => nil).count
+    #
 		@practice = Practice.new
 		@users = User.all.map {|user| [user.username, user.id]}
     respond_to do |format|
@@ -81,23 +86,43 @@ class PracticesController < ApplicationController
 
   # PUT /practices
   # PUT /practices.json
+
+  #Modify by Jose Melendez, 05/12/2023
   def update
     @practice = Practice.find(params[:id])
-    @practice.update_attributes(params[:practice]) unless @practice.nil?
-
-    respond_to do |format|
-      if @practice.save
+    if @practice.update(practice_params)
+      respond_to do |format|
         log_controller_call LogAction::UPDATE, "Update practice"
         format.html { redirect_to practices_path, notice: 'Practice was successfully updated.' }
         format.json { render json: @practice, status: :created, location: @practice }
-      else
+      end
+    else
+      respond_to do |format|
         log_controller_call LogAction::UPDATE, "Failed to update practice, with errors #{get_errors_for_log(@practice)}"
         format.html { redirect_to practices_path }
         format.json { render json: @practice.errors, status: :unprocessable_entity }
       end
     end
   end
-  
+
+
+  # def update
+  #   @practice = Practice.find(params[:id])
+  #   @practice.update_attributes(params[:practice]) unless @practice.nil?
+
+  #   respond_to do |format|
+  #     if @practice.save
+  #       log_controller_call LogAction::UPDATE, "Update practice"
+  #       format.html { redirect_to practices_path, notice: 'Practice was successfully updated.' }
+  #       format.json { render json: @practice, status: :created, location: @practice }
+  #     else
+  #       log_controller_call LogAction::UPDATE, "Failed to update practice, with errors #{get_errors_for_log(@practice)}"
+  #       format.html { redirect_to practices_path }
+  #       format.json { render json: @practice.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+  # end
+
   def remove_patients
     log_controller_call LogAction::DELETE, "Remove all patients for practice", true
     #Record.where(practice_id: params[:id]).delete 
@@ -142,6 +167,11 @@ class PracticesController < ApplicationController
 private
 def practice_params
   params.require(:practice).permit('name', 'organization', 'address')
+end
+
+#add Jose Melendez, 05/12/2023
+def set_practice
+  @practice = Practice.find(params[:id])
 end
 
 end

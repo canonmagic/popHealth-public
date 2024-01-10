@@ -1,0 +1,531 @@
+<div data-controller="dashboard-result">
+<div id="loading-overlay" style="display: none;">
+    <div class="loading-message">
+        <div class="loading-dots">
+            <span class="dot"></span>
+            <span class="dot"></span>
+            <span class="dot"></span>
+        </div>
+        <div class="loading-message">
+            <p>Calculating</p>
+        </div>
+    </div>
+</div>
+    <div class="col-md-3">
+        
+        <!-- Balance -->
+
+        <!--
+        <div class="panel panel-primary">
+            <div class="panel-heading" id="headingMeasureStatics">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Quality Metrics</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="list-unstyled measure-balance">
+                    <li>
+                        <canvas id="canvasQualityMetrics" width="100" height="100"></canvas>
+                    </li>
+                    <li><span class="glyphicon glyphicon-user" aria-hidden="true"></span></li>
+                    <li>
+                        <div class="fraction">
+                            <span class="numerator" data-dashboard-result-target="numerator"></span>
+                            <span class="fraction-line"></span>
+                            <span class="denominator" data-dashboard-result-target="denominator"></span>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+        </div>
+        -->
+        <div class="panel panel-primary">
+            <div class="panel-heading" id="headingMeasureStatics">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-stats" aria-hidden="true"></span> Quality Metrics</h3>
+            </div>
+            <div class="panel-body">
+                <div class="measure-balance">
+                        <div class="canvas-container">
+                            <canvas id="canvasQualityMetrics" width="100" height="100"></canvas>
+                        </div>
+                        <div class="fraction-container">
+                            <div class="fraction">
+                                <span class="numerator" data-dashboard-result-target="numerator"></span>
+                                <span class="fraction-line"></span>
+                                <span class="denominator" data-dashboard-result-target="denominator"></span>
+                            </div>
+                        </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters Measure-->
+        <div class="panel-group" id="accordionFilterMeasure" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+                <div class="panel-heading" role="tab" id="headingFilterMeasure">
+                    <h4 role="tab"><a role="button" data-toggle="collapse" data-parent="#accordionFilterMeasure" href="#collapseFilterMeasure" aria-expanded="true" aria-controls="collapseFilterMeasure" style="color: white;"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Measure Filter</a></h4>
+                </div>
+                <div id="collapseFilterMeasure" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseFilterMeasure">
+                    <div class="panel-body">
+                        <ul class="ul-measure list-unstyled population-criteria">
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Patients and Provider -->
+        <div class="panel-group" id="accordionFilterProviderPatients" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+                <div class="panel-heading" role="tab" id="headingFilterProviderPatients">
+                    <h4 role="tab"><a role="button" data-toggle="collapse" data-parent="#accordionFilterProviderPatients" href="#collapseFilterProviderPatients" aria-expanded="true" aria-controls="collapseFilterProviderPatients" style="color: white;"><span class="glyphicon glyphicon-filter" aria-hidden="true"></span> Provider and Patients Filter</a></h4>
+                </div>
+                <div id="collapseFilterProviderPatients" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseFilterProviderPatients">
+                    <div class="panel-body">
+                        <ul class="ul-measure">
+                            <li class="list-inside"><button class="nav-link nav-link-inside link-on" data-toggle="modal" data-target="#providerFilterModal">Define Provider Filter</button></li>
+                            <li class="list-inside"><button class="nav-link nav-link-inside link-on" data-toggle="modal" data-target="#patientsFilterModal">Define Patients Filter</button></li>
+                        </ul>
+                        <div id="filter-container">
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-danger reset-filter-button" disabled="disabled" id="resetFilterButton" data-action="click->dashboard-result#clearProviderAndPatientFilter"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Clear all patient/provider filters</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modals -->
+
+        <!-- Provider Modal -->
+        <div class="modal fade" id="providerFilterModal" tabindex="-1" role="dialog" aria-labelledby="providerFilterModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="providerFilterModalLabel">Provider Filters</h4>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <label for="providerNPI">Provider NPI</label>
+                                <select class="form-control provider-input-filter" id="providerNPI" placeholder="Select" data-filter-type="npi" multiple data-dashboard-result-target="providerNpi"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="providerTIN">Provider TIN</label>
+                                <select class="form-control provider-input-filter" id="providerTIN" placeholder="Select" data-filter-type="tin" multiple data-dashboard-result-target="providerTin"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="providerType">Provider Type</label>
+                                <select class="form-control provider-input-filter" id="providerType" placeholder="Select" data-filter-type="taxonomy" multiple data-dashboard-result-target="providerType"></select>
+                            </div>
+                            <div class="form-group">
+                                <label for="providerPracticeAddress">Practice Address</label>
+                                <select id="providerPracticeAddress" class="form-control provider-input-filter" placeholder="Select" data-filter-type="address" multiple data-dashboard-result-target="providerAddress"></select>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-action="click->dashboard-result#extractDataFilterProvider">Apply</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        
+
+        <!-- Patients Modal-->
+        <div class="modal fade" id="patientsFilterModal" tabindex="-1" role="dialog" aria-labelledby="patientsFilterModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title" id="patientsFilterModalLabel">Patient Filters</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="patientPayer">Payer</label>
+                            <select class="form-control" id="patientPayer" placeholder="Select" multiple data-dashboard-result-target="patientPayer"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientAge">Age</label>
+                            <select class="form-control" id="patientAge" placeholder="Age" data-dashboard-result-target="patientAge" multiple></select>
+                            <p class="help-block">Enter the age range or the minimum value for the filter, for example, 18-25 or greater than or equal to 30. Alternatively, you can specify the age from a date of birth by selecting the <strong>"AGE FROM"</strong> option and providing the desired date.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientAgeFrom">Age from</label>
+                            <input type="text" class="form-control" id="patientAgeFrom" placeholder="MM/DD/YYYY" data-dashboard-result-target="patientAgeFrom" value="10/29/2021" readonly="readonly">
+                            <p class="help-block">Enter a valid date.</p>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientGender">Gender</label>
+                            <select id="patientGender" class="form-control" multiple="multiple" data-dashboard-result-target="patientGender" >
+                                <option value="M">Male</option>
+                                <option value="F">Female</option>
+                                <option value="U">Unknown</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientRace">Race</label>
+                            <select class="form-control" id="patientRace" placeholder="Select" multiple data-dashboard-result-target="patientRace"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientEthnicity">Ethnicity</label>
+                            <select class="form-control" id="patientEthnicity" placeholder="Select" multiple data-dashboard-result-target="patientEthnicity"></select>
+                        </div>
+                        <div class="form-group">
+                            <label for="patientProblems">Problems List</label>
+                            <select class="form-control" id="patientProblems" placeholder="Select" multiple data-dashboard-result-target="patientProblems"></select>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-primary" data-action="click->dashboard-result#extractDataFilterPatients">Apply</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Sidebar -->
+    <div class="col-md-9">
+        <div class="panel panel-primary">
+            <div class="panel-heading" id="headingMeasureDetails">
+                <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Measure Details</h3>
+            </div>
+            <div class="panel-body">
+                <ul class="measure-details-ul">
+                    <li class="measure-details-li"><strong>MEASURE ID:</strong> <span data-dashboard-result-target="measureId"></span></li>
+                    <li class="measure-details-li"><strong>MEASURE NAME:</strong> <span data-dashboard-result-target="measureName"></span> </li>
+                    <li class="measure-details-li"><strong>MEASUREMENT PERIOD:</strong> <span data-dashboard-result-target="measurePeriod"></span> </li>
+                    <li class="measure-details-li"><strong>DESCRIPTION:</strong> <span data-dashboard-result-target="measureDescription"></span> </li>
+                </ul>
+            </div>
+        </div>
+
+
+
+        <div class="panel panel-primary">
+            <div class="panel-heading" id="panelHeadingDashboard">
+                <a type="button" class="btn btn-default" id="btnBackToDashboard"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Back to Dashboard</a>
+                <div class="btn-group">
+                    <button type="button" class="btn btn-success" aria-expanded="false" id="exportButtonPatients" data-toggle="dropdown" aria-haspopup="true"><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export Patients</button>
+                    <ul class="dropdown-menu" aria-labelledby="exportButtonPatients">
+                        <li><a href="#" data-action="click->dashboard-result#generateReportPatients" data-report-patient-id="1">Initial Population</a></li>
+                        <li><a href="#" data-action="click->dashboard-result#generateReportPatients" data-report-patient-id="2">Numerator</a></li>
+                        <li><a href="#" data-action="click->dashboard-result#generateReportPatients" data-report-patient-id="3">Denominator</a></li>
+                        <li><a href="#" data-action="click->dashboard-result#generateReportPatients" data-report-patient-id="4">Outliers</a></li>
+                        <li><a href="#" data-action="click->dashboard-result#generateReportPatients" data-report-patient-id="5">Exclusions</a></li>
+                        <li><a href="#" data-action="click->dashboard-result#generateReportPatients" data-report-patient-id="6">QRDA Category I (Zip - XML)</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="panel-body">
+                <ul class="nav nav-tabs nav-justified" id="tabs-data">
+            <li role="presentation" class="active"><a data-toggle="tab" href="#measuretab">Measure</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#patientstab">Patients(<span id="patients-count"></span>)</a></li>
+            <li role="presentation"><a data-toggle="tab" href="#providerstab">Provider Teams</a></li>
+        </ul>
+        <div class="tab-content">
+            <div id="measuretab" class="tab-pane fade in active">
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <ul class="measure-details-ul">
+                            <li class="measure-details-li"><strong>Population Criteria:</strong> <span data-dashboard-result-target=""></span></li>
+                            <li class="measure-details-li"><strong>Terminology:</strong> <span data-dashboard-result-target=""></span> </li>
+                            <li class="measure-details-li"><strong>Data Criteria:</strong> <span data-dashboard-result-target=""></span> </li>
+                            <li class="measure-details-li"><strong>Definition:</strong> <span data-dashboard-result-target=""></span> </li>
+                        </ul>
+                    </div>
+                </div>
+                <!--
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Population Criteria</th>
+                            <th>Terminology</th>
+                            <th>Data Criteria</th>
+                            <th>Definition</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
+                -->
+            </div>
+            <div id="patientstab" class="tab-pane fade">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Patient Id</th>
+                            <th>Last Name</th>
+                            <th>First Name</th>
+                            <th>Age</th>
+                            <th>DOB</th>
+                            <th>Gender</th>
+                            <th>Test</th>
+                        </tr>
+                    </thead>
+                    <tbody id="patientResult">
+                    </tbody>
+                </table>
+            </div>
+            <div id="providerstab" class="tab-pane fade">
+                <div class="panel panel-info">
+                    <div class="panel-body">
+                        <ul class="measure-details-ul">
+                            <li class="measure-details-li"><strong>Team Name:</strong> <span data-dashboard-result-target="teamName"></span></li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!--
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Team Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                        </tr>
+                    </tbody>
+                </table>
+                -->
+            </div>
+        </div>
+            </div>
+        
+        </div>
+        
+    </div>
+    
+
+</div>
+
+<script>
+
+    $(document).ready(function() {
+
+        //Provider Filter
+        $(".provider-input-filter").select2({
+            theme: "bootstrap",
+            tags: false,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 2,
+            ajax: {
+                url: function (params) {
+                    var filterType = $(this).data("filter-type");
+                    return `/api/providers/search?`;
+                },
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    var filterType = $(this).data("filter-type");
+                    var requestData = {};
+                    requestData[filterType] = params.term;
+                    return requestData;
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item.id || item._id,
+                                text: item.name || item.display_name,
+                                title: item.code || ''
+                            };
+                        }),
+                    };
+                },
+            },
+            language: {
+                noResults: function() {
+                    return 'No results found';
+                },
+            },
+        });
+
+        //Patients Filter
+
+        //Payer
+
+        $("#patientPayer").select2({
+            theme: "bootstrap",
+            tags: false,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 1,
+            ajax: {
+                url: "/api/value_sets/2.16.840.1.114222.4.11.3591.json?",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term && params.term.display_name
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item._id,
+                                text: item.display_name,
+                                title: item.code
+                            };
+                        }),
+                    };
+                },
+            },
+            language: {
+                noResults: function() {
+                    return 'No results found';
+                },
+            },
+        });
+
+        //Age
+
+        $("#patientAge").select2({
+            theme: "bootstrap",
+            tags: true,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 1,
+            multiple: true,
+            createTag: function(params) {
+                return {
+                    id: params.term,
+                    text: params.term,
+                    newOption: true
+                }
+            }
+
+
+        })
+
+        //Race
+
+        $("#patientRace").select2({
+            theme: "bootstrap",
+            tags: false,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 2,
+            ajax: {
+                url: "/api/value_sets/2.16.840.1.114222.4.11.836.json?",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item._id,
+                                text: item.display_name,
+                                title: item.code
+                            };
+                        }),
+                    };
+                },
+            },
+            language: {
+                noResults: function() {
+                    return 'No results found';
+                },
+            },
+        });
+
+        //Ethnicity
+
+        $("#patientEthnicity").select2({
+            theme: "bootstrap",
+            tags: false,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 2,
+            ajax: {
+                url: "/api/value_sets/2.16.840.1.114222.4.11.837.json?",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    return {
+                        results: data.map(function(item) {
+                            return {
+                                id: item._id,
+                                text: item.display_name,
+                                title: item.code
+                            };
+                        }),
+                    };
+                },
+            },
+            language: {
+                noResults: function() {
+                    return 'No results found';
+                },
+            },
+        });
+
+        //Problems
+
+        $("#patientProblems").select2({
+            theme: "bootstrap",
+            tags: false,
+            tokenSeparators: [',', ' '],
+            minimumInputLength: 2,
+            ajax: {
+                url: "/api/value_sets/xxx.json?",
+                dataType: 'json',
+                delay: 250,
+                data: function(params) {
+                    return {
+                        search: params.term
+                    };
+                },
+                processResults: function(data) {
+                    var results = [];
+                    data.forEach(function(item) {
+                        item.concepts.forEach(function(concept) {
+                            results.push({
+                                id: concept._id,
+                                text: concept.display_name,
+                                code: concept.code || ''
+                            });
+                        });
+                    });
+                    return { results: results };
+                },
+            },
+            language: {
+                noResults: function() {
+                    return 'No results found';
+                    }
+                }
+        });
+
+        //Gender
+
+        $("#patientGender").select2({
+            theme: "bootstrap",
+            tags: false,
+            tokenSeparators: [',', ' '],
+            placeholder: "Select",
+        });
+
+    });
+
+    window.serverData = {
+
+        currentUser: <%= raw current_user.to_json(include: [:preferences, :practice]) %>,
+        rootProvider: <%= raw Provider.root.to_json(include: :children) %>
+    };
+
+</script>

@@ -1,9 +1,26 @@
 Rails.application.routes.draw do
-  # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
-
   # Defines the root path route ("/")
-  root :to => 'home#index'
 
+  #New root: Jose Melendez
+  root :to => 'dashboard#index'
+  #
+
+  #root :to => 'home#index'
+
+  resources :providers
+
+  #New Dashboard
+
+  get 'dashboard(/:_id)', to: 'dashboard#index', as: 'dashboard';
+
+  get 'dashboard/measure-result/:values', to: 'dashboard#measure_result', as: 'dashboard_measure_result'
+
+  get 'dashboard/measure-result/patient-details/:patient_id', to: 'dashboard#patient_details', as: 'dashboard_patient_details'
+
+  #add Jose Melendez, 10/23/2023
+  resources :measures
+
+  #
   apipie
 
   # devise_for :users, :controllers => {:registrations => "registrations"}
@@ -28,7 +45,9 @@ Rails.application.routes.draw do
 
   get 'home/check_authorization'
   post 'home/set_reporting_period'
-
+  
+  #add Jose Melendez:
+  post "dashboard/set_reporting_period"
   get "admin/users"
   post "admin/promote"
   post "admin/demote"
@@ -37,6 +56,7 @@ Rails.application.routes.draw do
   post "admin/update_npi"
   get "admin/patients"
   get "admin/jobs"
+  get "admin/providers"
   put "admin/upload_patients"
   put "admin/upload_providers"
   delete "admin/remove_patients"
@@ -54,6 +74,8 @@ Rails.application.routes.draw do
   post "teams/:id/update", :to => 'teams#update'
   post "teams/create"
   post "teams/create_default"
+
+  get 'teams/show_by_id/:id', to: 'teams#show_by_id', as: :show_team_by_id
   
   resources :practices
 
@@ -62,11 +84,19 @@ Rails.application.routes.draw do
     resource :caches do
       collection do
         get :count
+
+        #Edit Jose Melendez (descomentar)
         #get :spinner
         #get :static_measure
         #get 'static_measure/:id', :to => :static_measure
+        #
       end
     end
+
+
+    #Add Jose Melendez, 10/17/2023
+    get "patients/patient_count", to: "patients#patient_count", defaults: { format: :json }
+    
 
     resource :patients do
       collection do
@@ -146,6 +176,9 @@ Rails.application.routes.draw do
       end
     end
 
+
+
+
     resources :measures
 
     resources :queries do
@@ -163,6 +196,7 @@ Rails.application.routes.draw do
       resource :caches do
         collection do
           get :count
+          get :show_all
           #get :spinner REMOVE ME
           #get :static_measure REMOVE ME
           #get 'static_measure/:id', :to => :static_measure REMOVE ME
@@ -193,4 +227,14 @@ Rails.application.routes.draw do
       end
     end
   end
+
+  namespace :api do
+    resources :patients, only: [:index, :show]
+  end
+
+
+
+  # config/routes.rb
+
+
 end

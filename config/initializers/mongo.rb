@@ -1,5 +1,6 @@
 # THIS IS ONLY FOR DEBUG, REMOVE ON PRODUCTION
 Mongoid.logger = Logger.new($stdout)
+#Mongoid.logger.level = Logger::FATAL
 Mongo::Logger.logger = Logger.new($stdout)
 # THIS IS ONLY FOR DEBUG, REMOVE ON PRODUCTION
 

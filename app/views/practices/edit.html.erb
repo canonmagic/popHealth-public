@@ -1,0 +1,58 @@
+
+<div data-controller="practices" class="col-md-12">
+    <div class="panel panel-primary">
+
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Edit Practice: <%= @practice.name  %></h3>
+            <% if @practice.errors.any? %>
+                <div>
+                    <h2><%= pluralize(@practice.errors.count, "error") %> prohibited this practice from being saved:</h2>
+                    <ul>
+                        <% @practice.errors.full_messages.each do |msg| %>
+                            <li><%= msg %></li>
+                        <% end %>
+                    </ul>
+                </div>
+            <% end %>
+        </div>
+        <div class="panel-body">
+
+            <%= form_for @practice do |f| %>
+            
+                <div class="form-group">
+                    <%= f.label :name, "Name" %>
+                    <%= f.text_field :name, class:"form-control" %>
+                </div>
+                <div class="form-group">
+                    <%= f.label :organization, "Organization" %>
+                    <%= f.text_field :organization, class:"form-control"%>
+                </div>
+                <div class="form-group">
+                    <%= f.label :address %>
+                    <%= f.text_area :address, class:"form-control", style: "resize: vertical;"%>
+                </div>
+                <% if @practice.new_record? %>
+                    <div class="form-group">
+                        <%= f.label :user, "User" %>
+                        <%= select_tag :user, options_for_select(@users), include_blank: true, class:"form-control" %>        
+                    </div>
+                <% end %>
+            
+        </div>
+        <div class="panel-footer panel-primary">
+            <!--<%= f.submit class: "btn btn-primary" %>-->
+            <%= link_to '/practices', class: 'btn btn-primary' do %>
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to List
+            <% end %>
+            <%= f.button type: "submit", class: "btn btn-success" do %>
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+            <% end %>
+        </div>
+
+        <% end %>
+    </div>
+</div>
+
+
+
+

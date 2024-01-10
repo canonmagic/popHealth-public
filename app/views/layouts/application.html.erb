@@ -3,18 +3,21 @@
   <head>
     <meta charset="utf-8" />
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta http-equiv="x-ua-compatible" content="IE=edge">
     <meta http-equiv="content-script-type" content="text/javascript">
 
-    <title>popHealth : An Open Source Quality Measure Reference Implementation</title>
+    <title>PopHealth : An Open Source Quality Measure Reference Implementation</title>
     <link rel="shortcut icon" href="/favicon.ico"/>
 
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
-
-    <%= stylesheet_link_tag "application", "data-turbo-track": "reload" %>
     <%= javascript_importmap_tags %>
+    <%= stylesheet_link_tag 'application' %>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="//code.jquery.com/jquery-1.11.2.min.js"></script>
+    
+
 
     <% if @definition %>
       <!-- TODO remove global variables; deal with state locally in a model/view -->
@@ -30,8 +33,17 @@
   </head>
 
   <body>
+
     <%= render :partial => 'shared/header' %>
-    <div id="container" class="container"></div>
-    <%= yield %>
+
+	  <!--div class="container" id="container">-->
+    <div id="container">
+
+
+    	<%= yield %>
+
+	</div>
+
   </body>
+
 </html>

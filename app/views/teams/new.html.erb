@@ -1,3 +1,88 @@
+<div data-controller="teams" class="col-md-12">
+    <div class="form-group">
+        <input type="text" class="form-control" id="inputSearchProvider"  placeholder="Search providers..."></input>
+    </div>
+    <%= form_tag("/teams", :class => "form-inline newTeamForm") do%>
+
+        <div class="panel panel-primary">
+
+            <div class="panel-heading">
+                <label for="name" class="sr-only">Team Name</label>
+                <%= text_field_tag :name, nil, class: "form-control", placeholder: "Team Name" %>
+                <%= submit_tag "Create Team", class: "btn btn-success" %>
+            </div>
+
+            <div class="panel-body" id="providerTable">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>NPI</th>
+                            <% if @current_user.admin %>
+                                <th>Affiliation</th>
+                            <% end %>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <% @providers.each do |provider| %>
+                        <tr>
+                            <td><%= provider.givenNames %><%= (provider.familyName)? provider.familyName : ''%>
+                                <%=(provider.children.length > 0)? "(Group)" : '' %>
+                            </td>    
+                            <td><%= (provider.npi)? provider.npi : 'N/A' %></td>
+                            <% if @current_user.admin %> 
+                                <td><%= provider.try(:parent).try(:givenNames) %></td> 
+                            <% end %>
+                            <td class='teamProviderCheck' id="<%=provider._id%>"> 
+                            <%= check_box_tag 'provider_ids[]', provider._id %>
+                            </td>
+                        </tr>
+                        <% end %>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="panel-footer panel-primary">
+
+                <div class="btn-teams-option">
+                    <%= link_to teams_path, class: "btn btn-primary" do %>
+                        <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to List
+                    <% end %>
+                </div>
+
+            </div>
+
+        </div>
+    <% end %>
+</div>
+
+<script>
+  $(document).ready(function() {
+    $(".newTeamForm").submit(function(e) {
+      if (this.name.value == "") {
+        alert("Please enter a name for the team and choose at least one provider.");
+        e.preventDefault();
+      } else {
+        if (!confirm("Create new team with chosen name and providers?")) {
+          e.preventDefault();
+        }
+      }
+    });
+
+    $("#inputSearchProvider").on("keyup", function() {
+      var value = $(this).val().toLowerCase();
+
+      $("#providerTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+      });
+    });
+  });
+</script>
+
+
+
+<!--
 <div class="main">
   <%= button_to "Back to Team List", teams_path, :method => 'get', :class => "btn btn-primary pull-right" %>
   <h1><b>New team</b></h1>
@@ -34,7 +119,7 @@
       <br/>
       <hr/>
       <div class="fluid row-inline">
-        <%= label_tag "team", "TEAM NAME" %> : <%= text_field_tag :name, nil, :class => "teamNameField" %>
+        <%= label_tag "team", "Team Name" %> : <%= text_field_tag :name, nil, :class => "teamNameField" %>
         <div class="pull-right">
           <%= submit_tag "Create Team", :class => "btn btn-success teamSaveBtn" %>
         </div>
@@ -44,19 +129,4 @@
   <br/>
 </div>
 
-<script>
-  $(document).ready(function() {
-    
-    $(".newTeamForm").submit(function(e) {
-      if(this.name.value == "") {
-        alert("Please enter a name for the team and choose at least one provider.");
-        e.preventDefault();
-      } else {
-        if(! confirm("Create new team with chosen name and providers?") ){
-          e.preventDefault();
-        }
-      }
-    });
-    
-  });
-</script>
+-->

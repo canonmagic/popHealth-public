@@ -13,6 +13,8 @@ class QualityReportResult
   field :OBSERV, type: Float
   field :supplemental_data, type: Hash
 
+
+
   embedded_in :quality_report, inverse_of: :result
 end
 
@@ -32,10 +34,12 @@ class QualityReport
   field :status, type: Hash, default: {"state" => "unknown", "log" => []}
   field :measure_id, type: String
   field :sub_id, type: String
-  field :test_id
   field :effective_date, type: Integer
   field :filters, type: Hash
   field :prefilter, type: Hash
+
+  #Add Jose Melendez
+  field :filter_preferences, type: Array, default:[]
 
   embeds_one :result, class_name: "QualityReportResult", inverse_of: :quality_report
 
@@ -83,7 +87,6 @@ class QualityReport
     end
       QME::PatientCache.where(query).first()
   end
-
 
   def patient_cache_matcher
     measure_id = Measure.where(id: self.measure_id).pluck(:_id).first.to_s

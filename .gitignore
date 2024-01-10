@@ -43,3 +43,10 @@
 
 # Ignore Devise setup
 /config/initializers/devise_backup.rb
+/app/assets/builds/*
+!/app/assets/builds/.keep
+
+# Ignore results
+/results
+
+/CHANGES.md

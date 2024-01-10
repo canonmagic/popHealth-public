@@ -1,10 +1,9 @@
-<div class="navbar navbar-default" role="navigation">
-  <div class="container">
-    <div class="navbar-header col-lg-4">
-      <a class="logo"  href="/" style="max-width: initial"><%= image_tag "pophealth_logo_small-trans.png" %></a>
-    </div>
+<div class="navbar navbar-default navbar-static-top" role="navigation">
+  <div class="container-fluid">
+
     <div class="collapse navbar-collapse in">
-      <ul class="nav navbar-nav pull-left" style="margin-top: 10px">
+	<!--
+      <ul class="nav navbar-nav pull-left">
         <li class="location"><%# if Provider.root %><%#= Provider.root.given_name %><%# else %><%#= APP_CONFIG['practice_name'] %><%# end %>
           <%=
             if APP_CONFIG['use_opml_structure']
@@ -19,15 +18,31 @@
           %>
         </li>
       </ul>
-       <ul class="nav pull-right">
-        <li class="divider-vertical"></li>
-        <li class="profile">
-          <div class="dropdown">
-            <a class="dropdown-toggle" data-toggle="dropdown" href="#">
+	  -->
+
+
+      <div class="navbar-header">
+        <a class="navbar-brand h1" style="margin: 0;" href="/">PopHealth</a>
+      </div>
+
+      <ul class="nav navbar-nav navbar-right">
+
+
+
+    <form class="navbar-form navbar-left">
+			<div class="form-group">
+				<input type="text" class="form-control" id="search-nav" placeholder="Search..">
+			</div>
+			<button type="submit" class="btn btn-primary">Search</button>
+		</form>
+
+
+        <li class="dropdown">
+            <a class="dropdown-toggle" data-toggle="dropdown" role="button" href="#" aria-haspopup="true" aria-expanded="false">
               <i class="glyphicon glyphicon-user"></i>
-              <%= current_user.first_name.to_s %>
+              <%= current_user.first_name.to_s %> <span class="caret"></span>
             </a>
-            <ul class="dropdown-menu pull-right" role="menu" aria-labelledby="User">
+            <ul class="dropdown-menu" aria-labelledby="User">
               <% if APP_CONFIG['edit_account_enabled']%>
                 <li><%=link_to raw('<i class="glyphicon glyphicon-edit"></i> Edit Account'), edit_user_registration_path(current_user) %></li>
               <% end %>
@@ -35,12 +50,13 @@
                 <li><%= link_to raw('<i class="glyphicon glyphicon-log-out"></i> Logout'), destroy_user_session_path, :method => :delete %></li>
               <% end %>
               <% if current_user.staff_role? || current_user.admin? %>
-                <li class="divider"></li>
+                <li role="separator" class="divider"></li>
                 <li role="presentation" class="dropdown-header">Admin</li>
                 <% if current_user.admin? && !APP_CONFIG['use_opml_structure']%> 
                   <li><%= link_to raw('<i class="glyphicon glyphicon-th-large"></i> Practices'), practices_path %></li> 
                 <% end %>
                 <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> Providers'), '/#providers'%></li>
+                <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> New Providers'), '/providers'%></li>
                 <li><%= link_to raw('<i class="glyphicon glyphicon-list"></i> Manage Teams'), '/teams'%></li>
                 <% if current_user.admin? %>
                   <% if (APP_CONFIG['patient_management_enabled']) %>
@@ -51,14 +67,14 @@
                   <% end %>
                   <li><%= link_to raw('<i class="glyphicon glyphicon-user"></i> Users'), admin_users_path%></li>
                   <li><%= link_to raw('<i class="glyphicon glyphicon-list-alt"></i> Logs'), logs_index_path%></li>
+                  <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> New Measures'), measures_path%></li>
                   <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> Measures'), '/#admin/measures'%></li>
                 <% end %>
               <% end %>
             </ul>
-          </div>
         </li>
-        <li class="divider-vertical"></li>
       </ul>
     </div>
   </div>
 </div>
+

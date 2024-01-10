@@ -1,87 +1,37 @@
-<script type='text/javascript'>
-  $(document).ready(function() {
-    $('.practice_select').change( function(){
-      var userId = $(this).data("user");
-      var practice = $(this).val();
-      var confs = "Change user's assigned practice?";
-      
-      if ( confirm(confs) == true ){
-        $.post('set_user_practice', {'user': userId, 'practice': practice}, function(d){
-        });
-      };     
-    });
-    
-    $('.practice_provider_select').change( function() {
-      var userId = $(this).data("user");
-      var provider = $(this).val();
-      var confs = "Change user's assigned provider?";   
-      if ( confirm(confs) == true ){
-        $.post('set_user_practice_provider', {'user': userId, 'provider': provider}, function(d){
-        }); 
-      };
-    });
-    
-  });
-</script>
-<div class='main' >
-  <h1>User Profile:  <strong><%= @user.full_name%> </strong></h1>
-
-  <table class="table table-hover user-profile">
-	<% unless APP_CONFIG['use_opml_structure'] %>
-	  <tr>
-		  <% if @user.staff_role %>
-		    <td> <h4> Practice: </h4> </td>
-		    <td> <h4> <%= select_tag "practice", options_for_select(@practices, @user.practice_id), prompt: 'None', data: {user: @user.id.to_s}, class: "practice_select" %> </h4> </td>
-		  <% elsif @user.provider_id && Provider.valid_npi?(@user.npi)%>
-		    <td> <h4> Provider: </h4> </td>
-		    <td> <h4>         
-          <%= select_tag "practice_provider_select", options_for_select(@practice_pvs, @user.provider_id), prompt: 'None', data: {user: @user.id.to_s}, class: 'practice_provider_select'%> 
-		    </h4> </td>
-		  <% end %>
-	  <tr>
-    <% end %>
-
-	  <tr>
-		  <td class='up-col'> Username: </td>
-		  <td> <%= @user.username %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> Email: </td>
-		  <td> <%= @user.email %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> Organization: </td>
-		  <td> <%= @user.company %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> Organization URL: </td>
-		  <td> <%= @user.company_url %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> Registry Name: </td>
-		  <td> <%= @user.registry_name %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> Registry ID: </td>
-		  <td> <%= @user.registry_id %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> National Provider Id: </td>
-		  <td> <%= @user.npi %> </td>
-	  <tr>
-
-	  <tr>
-		  <td class='up-col'> Tax Identifier: </td>
-		  <td> <%= @user.tin %> </td>
-	  <tr>
-  </table>		
-
-  <%= link_to "Back to Users", "/admin/users", :class=>"btn btn-success" %>
+<div data-controller="users" class="col-md-12">
+	<div class="panel panel-primary">
+  		<div class="panel-heading">
+    		<h<h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> User Profile: <%= @user.full_name%></h3>
+  		</div>
+		<div class="panel-body">
+			<ul class="data-user-list">
+					<% unless APP_CONFIG['use_opml_structure'] %>
+						<% if @user.staff_role %>
+						<li>
+							<strong>Practice:</strong>
+							<%= select_tag "practice", options_for_select(@practices, @user.practice_id), prompt: 'None', data: {user: @user.id.to_s, practiceId: @user.practice_id, action:"users#changePractice", url:"set_user_practice"}, class:"form-control" %>
+							<% elsif @user.provider_id && Provider.valid_npi?(@user.npi)%>
+								<strong>Provider:</strong>       
+							<%= select_tag "practice_provider_select", options_for_select(@practice_pvs, @user.provider_id), prompt: 'None', data: {user: @user.id.to_s}, class: 'practice_provider_select'%> 
+						</li>
+						<% end %>
+					<% end %>
+				<li><strong>Username: </strong> <%= @user.username %></li>
+				<li><strong>Email: </strong><%= @user.email %></li>
+				<li><strong>Organization: </strong><%= @user.company %></li>
+				<li><strong>Organization Url: </strong><%= @user.company_url %></li>
+				<li><strong>Registry Name: </strong><%= @user.registry_name %></li>
+				<li><strong>Registry Id: </strong><%= @user.registry_id %></li>
+				<li><strong>National Provider Id: </strong><%= @user.npi %></li>
+				<li><strong>Tax Identifier: </strong><%= @user.tin %></li>
+			</ul>
+  		</div>
+		<div class="panel-footer panel-primary">
+			<%= link_to "/admin/users", class: "btn btn-primary" do %>
+				<span class="glyphicon glyphicon-chevron-left"></span> Back to Users
+			<% end %>
+		</div>
+	</div>
 </div>
+
 

@@ -1,0 +1,344 @@
+<div class="navbar navbar-default" role="navigation">
+  <div class="container">
+    <div class="navbar-header col-lg-4">
+      <a class="logo" href="/" style="max-width: initial"><%= image_tag "pophealth_logo_small-trans.png" %></a>
+    </div>
+  </div>
+</div>
+<div class="register-body">
+  <h1>Register</h1>
+  <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {name: "register_form", class: "registration"}) do |f| %>
+    <% if resource.errors.present? %>
+    <div class="alert alert-danger">
+      <%= devise_error_messages! %>
+    </div>
+    <% end %>
+    <div class="form-group row">
+      <div class="col-md-6">
+        <div class="input-group input-group-lg required">
+          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
+          <%= f.text_field :first_name, class: "form-control", placeholder: "first name*" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group input-group-lg required">
+          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
+          <%= f.text_field :last_name, class: "form-control", placeholder: "last name*" %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-6">
+        <div class="input-group input-group-lg required">
+          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
+          <%= f.text_field :username, class: "form-control", placeholder: "username*" %>
+        </div>
+        <p class="help-block">Must be at least 3 characters long.</p>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group input-group-lg required">
+          <span class="input-group-addon"><i class="fa fa-envelope fa-lg fa-fw"></i></span>
+          <%= f.email_field :email, class: "form-control", placeholder: "email@example.com*" %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-6">
+        <div class="input-group input-group-lg required">
+          <span class="input-group-addon"><i class="fa fa-lock fa-lg fa-fw"></i></span>
+          <%= f.password_field :password, class: "form-control", placeholder: "password*" %>
+        </div>
+        <p class="help-block">Must be at least 6 characters long.</p>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group input-group-lg required">
+          <span class="input-group-addon"><i class="fa fa-lock fa-lg fa-fw"></i></span>
+          <%= f.password_field :password_confirmation, class: "form-control", placeholder: "confirm password*" %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
+          <%= f.text_field :company, class: "form-control", placeholder: "company" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-link fa-lg fa-fw"></i></span>
+          <%= f.text_field :company_url, class: "form-control", placeholder: "www.company.com" %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-h-square fa-lg fa-fw"></i></span>
+          <%= f.text_field :registry_name, class: "form-control", placeholder: "registry name" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-archive fa-lg fa-fw"></i></span>
+          <%= f.text_field :registry_id, class: "form-control", placeholder: "registry identifier" %>
+        </div>
+      </div>
+    </div>
+    <div class="form-group row">
+      <div class="col-md-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-hospital-o fa-lg fa-fw"></i></span>
+          <%= f.text_field :npi, class: "form-control", placeholder: "national provider id" %>
+        </div>
+      </div>
+      <div class="col-md-6">
+        <div class="input-group input-group-lg">
+          <span class="input-group-addon"><i class="fa fa-folder fa-lg fa-fw"></i></span>
+          <%= f.text_field :tin, class: "form-control", placeholder: "tax id number" %>
+        </div>
+      </div>
+    </div>
+    <div id="termsAndConditions">
+      <% @bundles.each do |bundle| -%>
+      <%= raw bundle.license %>
+      <% end -%>
+    </div>
+    <div class="required">
+      <%= check_box_tag :agree_license %>
+      <%= label_tag :agree_license, "I agree to the above Terms and Conditions of use*", class: "control-label" %>
+    </div>
+
+    <div class="form-group row" style="margin-top: 30px">
+      <div class="col-md-6">
+        <%= render :partial => "devise/shared/links" %>
+      </div>
+
+      <div class="col-md-6">
+        <div class="row">
+        <div class="col-xs-6"><a class="btn btn-default btn-block btn-lg" href="/">Cancel</a></div>
+        <div class="col-xs-6"><%= f.submit "REGISTER", class: "btn btn-primary btn-block btn-lg", disabled: true %></div>
+        </div>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded", function(event) {
+    $(function() {
+      $('#agree_license').on('change', function(e) {
+        var $checkbox = $(e.target),
+            $form = $checkbox.closest('form'),
+            $submit = $form.find(':submit');
+        $submit.prop('disabled', !$checkbox.is(':checked'));
+      });
+    });
+  });
+</script>
+
+
+<!--
+New Jose Melendez
+
+
+<%= render 'shared/header_user' %>
+
+<div data-controller="session" class="sign-up-container">
+
+    <div class="col-md-12">
+
+        <div class="panel panel-primary">
+
+            <div class="panel-heading">
+
+                <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Register</h3>
+
+            </div>
+
+            <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {name: "register_form", class: "registration"}) do |f| %>
+
+                <% if resource.errors.present? %>
+
+                    <div class="alert alert-danger">
+
+                        <%= devise_error_messages! %>
+
+                    </div>
+
+                <% end %>
+
+                <div class="panel-body">
+
+
+                        <div class="form-group">
+
+                            <label for="firstName">First Name</label>
+
+                            <%= f.text_field :first_name, class: "form-control", id:"firstName", required: true %>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="lastName">Last Name</label>
+
+                            <%= f.text_field :last_name, class: "form-control", id:"lastName", required: true %>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="username">Username</label>
+
+                            <%= f.text_field :username, class: "form-control", id:"username", required: true %>
+
+                            <p class="help-block">Must be at least 3 characters long.</p>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="email">Email</label>
+
+                            <%= f.email_field :email, class: "form-control", id:"email", required: true %>
+                        
+                        
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="password">Password</label>
+
+                            <%= f.password_field :password, class: "form-control", id:"password", required: true %>
+
+                            <p class="help-block">Must be at least 6 characters long.</p>
+                        
+                        
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="passwordConfirm">Confirm Password</label>
+
+                            <%= f.password_field :password_confirmation, class: "form-control", id:"passwordConfirm", required: true %>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="company">Company</label>
+
+                            <%= f.text_field :company, class: "form-control", id:"company" %>
+                        
+                        
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="companyUrl">Company Url</label>
+
+                            <%= f.text_field :company_url, class: "form-control", id:"companyUrl" %>
+                        
+                        
+                        </div>
+
+                        <div class="form-group">
+
+                            <label for="registryName">Registry Name</label>
+
+                            <%= f.text_field :registry_name, class: "form-control", id:"registryName" %>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="registryId">Registry Id</label>
+
+                            <%= f.text_field :registry_id, class: "form-control", id:"registryId" %>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="npi">National Provider Id</label>
+
+                            <%= f.text_field :npi, class: "form-control", id:"npi" %>
+                        
+                        
+                        </div>
+
+
+                        <div class="form-group">
+
+                            <label for="tix">Tax Id Number</label>
+
+                            <%= f.text_field :tin, class: "form-control", id:"tin" %>
+                        
+                        
+                        </div>
+
+                        <div id="termsAndConditions">
+
+                            <% @bundles.each do |bundle| -%>
+                                <%= raw bundle.license %>
+                            <% end -%>
+
+                        </div>
+
+                        <div>
+
+                            <%= check_box_tag :agree_license %>
+
+                            <%= label_tag :agree_license, "I agree to the above Terms and Conditions of use", class: "control-label" %>
+
+                        </div>
+                    
+
+                </div>
+
+
+                <div class="panel-footer">
+
+                    <%= f.submit "Register", class: "btn btn-success", disabled: true %>
+
+                    <button class="btn btn-default" href="/">Cancel</button>
+                    
+                </div>
+
+            <% end %>
+
+        </div>
+    </div>
+
+</div>
+
+
+<script>
+  document.addEventListener("DOMContentLoaded",     function(event) {
+    $(function() {
+      $('#agree_license').on('change', function(e) {
+        var $checkbox = $(e.target),
+            $form = $checkbox.closest('form'),
+            $submit = $form.find(':submit');
+        $submit.prop('disabled', !$checkbox.is(':checked'));
+      });
+    });
+  });
+</script>
+
+
+-->

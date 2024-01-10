@@ -1,0 +1,204 @@
+<div data-controller="dashboard">
+
+    <!-- Sidebar - Filters -->
+
+    <div class="col-md-3" id="measureSidebar">
+
+        <!-- Date -->
+
+        <div class="panel-group" id="accordionDate" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+            <div class="panel-heading" role="tab" id="headingDate">
+                <h4 role="tab" id="headingDate"><a role="button" data-toggle="collapse" data-parent="#accordionDate" href="#collapseDate" aria-expanded="true" aria-controls="collapseDate" style="color: white;"><span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Reporting Period</a></h4>
+            </div>
+            <div id="collapseDate" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseDate">
+                <div class="panel-body">
+                    <form class="body-date">
+                        <div class="form-group">
+                            <label class="sr-only" for="startDate">Start</label>
+                            <input type="text" data-provide='datepicker' data-date-format="dd/mm/yyyy" class="form-control" placeholder="Start Date" id="startDate" data-dashboard-target="start" data-action="blur->dashboard#handleBlur"/>
+                        </div>
+                        <div class="form-group">
+                            <label class="sr-only" for="endDate">End</label>
+                            <input type="text" data-provide='datepicker' data-date-format="dd/mm/yyyy" class="form-control" placeholder="End Date" id="endDate" data-dashboard-target="end" data-action="blur->dashboard#handleBlur"/>
+                        </div>
+                        <div class="form-group">
+                            <button type="button" class="btn btn-warning" data-action="click->dashboard#setReportinRecord" id="resetButton"><span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Recalculate</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+        <!-- Measures Filter -->
+        
+        <div class="panel-group" id="accordionMeasure" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+            <div class="panel-heading" role="tab" id="headingMeasure">
+                <h4 role="tab" id="headingMeasure"><a role="button" data-toggle="collapse" data-parent="#accordionMeasure" href="#collapseMeasure" aria-expanded="true" aria-controls="collapseMeasure" style="color: white;"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Measures</a></h4>
+            </div>
+                <div id="collapseMeasure" class="panel-collapse collapse in " role="tabpanel" aria-labelledby="collapseMeasure">
+                    <div class="panel-body">
+
+                    <!-- Search -->
+                    <div class="input-group search-measure">
+                        <input type="text" id="searchMeasure" data-action="input->dashboard#filterMeasures" placeholder="Search..." class="form-control" />
+                    </div>
+
+                    <hr/>
+
+                    <!-- List of Measures -->
+
+                    
+
+                    <% collapse_id_counter = 1 %>
+
+                    <% @categories_cms_ids.each do |category, measures| %>
+                    
+                    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                        <div class="panel panel-default">
+                            <div class="panel-heading" role="tab" id="heading<%= collapse_id_counter %>">
+                                <h4 class="panel-heading" role="tab" id="heading<%= collapse_id_counter %>"><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne<%= collapse_id_counter %>" aria-expanded="false" aria-controls="collapseOne<%= collapse_id_counter %>"><%= category %></a></h4>
+                            </div>
+                            <div id="collapseOne<%= collapse_id_counter %>" class="panel-collapse collapse panel-measures-filters" role="tabpanel" aria-labelledby="heading<%= collapse_id_counter %>">
+                            <div class="panel-body">
+                                <ul class="ul-measure">
+                                    <% measures.each do |measure| %>
+                                        <li class="list-inside">
+                                            <button type="button" href="#" class="nav-link nav-link-inside" data-action="click->dashboard#extractHqmf" data-measure-hqmf-id="<%= measure[:hqmf_id] %>" data-cms-id="<%= measure[:cms_id] %>" data-measure-title="<%= measure[:title] %>" data-measure-id="<%= measure[:id] %>" id="btn-measure-<%= measure[:cms_id] %>"><%= measure[:cms_id] %> <%= measure[:title] %></button>
+                                        </li>
+                                        <% collapse_id_counter += 1 %>
+                                    <% end %>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <% end %>
+
+
+
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Panel -->
+    <div class="col-md-9">
+
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="headingProviderInformation">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Provider Information</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li data-dashboard-target="dataProviderFullName"></li>
+                        <li>Phone: N/A</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="headingProviderDetails">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Provider Details</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li data-dashboard-target="dataProviderNpi"></li>
+                        <li data-dashboard-target="dataProviderSpecialty"></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="headingProviderRoles">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-home" aria-hidden="true"></span> Provider Roles</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li>Role: Provider</li>
+                        <li>Team: N/A</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <!--
+
+        <div class="col-md-12">
+            <div class="btn-group pull-right" style="margin-bottom:5px;">
+                <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="exportButton" disabled><span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" data-action="click->dashboard#generateReport" data-report-id="1">QRDA Cat 3</a></li>
+                    <li><a href="#" data-action="click->dashboard#generateReport" data-report-id="2">QRDA Cat 1 Zip</a></li>
+                    <li><a href="#">Spreadsheet</a></li>
+                </ul>
+            </div>
+        </div>
+
+        -->
+
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="panelHeadingDashboard">
+                    <h4>MEASUREMENTS RESULT PANEL</h4>
+                    <div class="btn-group">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="exportButton" disabled>
+                        <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export
+                        </button>
+                        <ul class="dropdown-menu">
+                            <li><a href="#" data-action="click->dashboard#generateReport" data-report-id="1">QRDA Cat 3</a></li>
+                            <li><a href="#" data-action="click->dashboard#generateReport" data-report-id="2">QRDA Cat 1 Zip</a></li>
+                            <li><a href="#">Spreadsheet</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>CMS</th>
+                                <th>Measure Name</th>
+                                <th>Percentage</th>
+                                <th>Numerator/Denominator</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+    window.serverData = {
+
+        currentUser: <%= raw current_user.to_json(include: [:preferences, :practice]) %>,
+        rootProvider: <%= raw Provider.root.to_json(include: :children) %>
+    };
+
+    $(document).ready(function () {
+        $("#searchMeasure").on("input", function () {
+            var value = $(this).val().toLowerCase();
+            $(".ul-measure button").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+    
+</script>

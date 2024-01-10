@@ -1,0 +1,118 @@
+
+<div class="login">
+  <header>
+    <%  current_user.to_json   %>
+    <%= image_tag "pophealth_welcome.png", :id => 'imgLogo', :title => 'popHealth welcomes you!', :alt => 'popHealth logo' %>
+    <%= content_tag(:div, flash[:error], id: "flash_error", class: "alert alert-error") if flash[:error] %>
+    <%= content_tag(:div, flash[:notice], id: "flash_notice", class: "alert alert-info") if flash[:notice] %>
+    <%= content_tag(:div, flash[:alert], id: "flash_alert", class: "alert alert-warning") if flash[:alert] %>
+  </header>
+
+  <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:name=>"login_form"}) do |f| %>
+  <div class="form-group input-group input-group-lg">
+      <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
+      <%= f.text_field :username, class: "form-control", placeholder: "username" %>
+  </div>
+  <div class="form-group input-group input-group-lg">
+      <span class="input-group-addon"><i class="fa fa-lock fa-lg fa-fw"></i></span>
+      <%= f.password_field :password, class: "form-control", placeholder: "password" %>
+  </div>
+
+  <% if resource.errors.present? %>
+  <div class="alert alert-danger">
+     <%= devise_error_messages! %>
+  </div>
+  <% end %>
+  <!-- <a class="btn btn-primary form-control btn-lg">Login</a> -->
+  <%= f.submit "Login", class: "btn btn-login" %>
+<% end %>
+   <%= button_to "Log in with Azure AD",     
+            user_azure_activedirectory_v2_omniauth_authorize_path, method: :post,
+            :data => {turbo: "false"},
+            class: 'btn btn-login' %>
+
+  <%= render :partial => "devise/shared/links" %>
+</div>
+
+<!--
+
+<div class="login">
+<div class="container-login">
+  <header>
+    <%  current_user.to_json   %>
+    <%= image_tag "pophealth_welcome.png", :id => 'imgLogo', :title => 'popHealth welcomes you!', :alt => 'popHealth logo' %>
+    <%= content_tag(:div, flash[:error], id: "flash_error", class: "alert alert-error") if flash[:error] %>
+    <%= content_tag(:div, flash[:notice], id: "flash_notice", class: "alert alert-info") if flash[:notice] %>
+    <%= content_tag(:div, flash[:alert], id: "flash_alert", class: "alert alert-warning") if flash[:alert] %>
+  </header>
+
+  <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:name=>"login_form"}) do |f| %>
+  <div class="form-group-input">
+    <label>Username</label>
+      <%= f.text_field :username, class: "form-control-login", placeholder: "Type your username" %>
+  </div>
+  <div class="form-group-input">
+    <label>Password</label>
+      <%= f.password_field :password, class: "form-control-login", placeholder: "Type your password" %>
+  </div>
+
+  <% if resource.errors.present? %>
+  <div class="alert alert-danger">
+     <%= devise_error_messages! %>
+  </div>
+  <% end %>
+  <a class="btn btn-primary form-control btn-lg">Login</a>
+  <%= f.submit "Login", class: "btn btn-login" %>
+<% end %>
+<span>Or Sign In Using<span>
+<hr/>
+   <%= button_to "Log in with Azure AD",     
+            user_azure_activedirectory_v2_omniauth_authorize_path, method: :post,
+            :data => {turbo: "false"},
+            class: 'btn btn-login' %>
+
+  <%= render :partial => "devise/shared/links" %>
+</div>
+</div>
+
+-->
+
+<!--
+<div class="login">
+  <div class="container-login">
+    <header>
+      <%  current_user.to_json   %>
+      <h1>PopHealth<span>&#174;</span></h1>
+      <%= content_tag(:div, flash[:error], id: "flash_error", class: "alert alert-error") if flash[:error] %>
+      <%= content_tag(:div, flash[:notice], id: "flash_notice", class: "alert alert-info") if flash[:notice] %>
+      <%= content_tag(:div, flash[:alert], id: "flash_alert", class: "alert alert-warning") if flash[:alert] %>
+    </header>
+
+    <%= form_for(resource, :as => resource_name, :url => session_path(resource_name), :html => {:name=>"login_form"}) do |f| %>
+    <div class="form-group-input">
+      <label>USERNAME</label>
+        <%= f.text_field :username, class: "form-control-login", placeholder: "Type your username" %>
+    </div>
+    <div class="form-group-input">
+      <label>PASSWORD</label>
+        <%= f.password_field :password, class: "form-control-login", placeholder: "Type your password" %>
+    </div>
+
+    <% if resource.errors.present? %>
+    <div class="alert alert-danger">
+      <%= devise_error_messages! %>
+    </div>
+    <% end %>
+    <%= f.submit "Login", class: "btn btn-login" %>
+    <%# <a class="btn btn-primary form-control btn-lg">Login</a> %>
+  <% end %>
+  <span class="text-gray-100">Or Sign In Using</span>
+  <%= button_to "Log in with Azure AD",     
+    user_azure_activedirectory_v2_omniauth_authorize_path, method: :post,
+    :data => {turbo: "false"},
+    class: 'btn btn-login' %>
+
+    <%# <%= render :partial => "devise/shared/links" %>
+  </div>
+</div>
+-->

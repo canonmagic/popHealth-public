@@ -31,6 +31,26 @@ class AdminController < ApplicationController
     @practice_pvs = Provider.by_npi(@user.npi).map {|pv| [pv.parent.practice.name + " - " + pv.full_name, pv.id]}
   end
 
+  #Add Jose Melendez. Modify: response json format
+  def set_user_practice
+    @user = User.find(params[:user])
+    
+    log_admin_controller_call LogAction::UPDATE, "Set user practice"
+    
+    if params[:practice].present?
+        @user.practice = Practice.find(params[:practice])
+    else
+        @user.practice = nil
+    end
+    
+    if @user.save
+        render json: { success: true, message: 'Practice changed successfully' }
+    else
+        render json: { success: false, message: 'Failed to change practice. Please try again.' }, status: :unprocessable_entity
+    end
+    end
+
+=begin
   def set_user_practice
     @user = User.find(params[:user])
     log_admin_controller_call LogAction::UPDATE, "Set user practice"
@@ -38,7 +58,7 @@ class AdminController < ApplicationController
     @user.save
     redirect_to action: 'user_profile', :id => params[:user]
   end
-
+=end
   def set_user_practice_provider
     @user = User.find(params[:user])
     log_admin_controller_call LogAction::UPDATE, "Set user practice provider"
@@ -128,6 +148,7 @@ class AdminController < ApplicationController
     log_admin_controller_call LogAction::UPDATE, "Demote user"
   end
 
+=begin
   def disable
     @user = User.by_username(params[:username]);
     log_admin_controller_call LogAction::UPDATE, "Disable user"
@@ -143,6 +164,29 @@ class AdminController < ApplicationController
       render :text => "User not found"
     end
   end
+=end
+    #Change by Jose Melendez, 06/12/2023
+    # Switching from render :text (deprecated in Rails 6) to render plain:
+    # for compatibility with the latest versions of Rails.
+    # JSON provides a clearer and extensible data structure, enhancing code readability and maintainability.
+
+    def disable
+        @user = User.by_username(params[:username])
+        log_admin_controller_call(LogAction::UPDATE, "Disable user")
+        disabled = params[:disabled].to_i == 1
+
+        if @user
+            @user.update_attribute(:disabled, disabled)
+            if disabled
+                render json: { status: 'success', message: 'User disabled', action: 'enable' }
+            else
+                render json: { status: 'success', message: 'User enabled', action: 'disable' }
+            end
+        else
+            render json: { status: 'error', message: 'User not found' }
+        end
+    end
+
 
   def approve
     @user = User.where(:username => params[:username]).first
@@ -177,21 +221,47 @@ class AdminController < ApplicationController
 
   private
 
-  def toggle_privilidges(username, role, direction)
-    @user = User.by_username username
+=begin
+
+    def toggle_privilidges(username, role, direction)
+        @user = User.by_username username
+
+        if @user
+        if direction == :promote
+            @user.update_attribute(role, true)
+            render :text => "Yes - <a href=\"#\" class=\"demote\" data-role=\"#{role}\" data-username=\"#{CGI::escapeHTML(username)}\">revoke</a>"
+        else
+            @user.update_attribute(role, false)
+            render :text => "No - <a href=\"#\" class=\"promote\" data-role=\"#{role}\" data-username=\"#{CGI::escapeHTML(username)}\">grant</a>"
+        end
+        else
+        render :text => "User not found"
+        end
+    end
+
+=end
+
+    #Change by Jose Melendez, 06/12/2023
+    # Switching from render :text (deprecated in Rails 6) to render plain:
+    # for compatibility with the latest versions of Rails.
+    # JSON provides a clearer and extensible data structure, enhancing code readability and maintainability.
+
+    def toggle_privilidges(username, role, direction)
+        @user = User.by_username(username)
 
     if @user
-      if direction == :promote
+        if direction == :promote
         @user.update_attribute(role, true)
-        render :text => "Yes - <a href=\"#\" class=\"demote\" data-role=\"#{role}\" data-username=\"#{CGI::escapeHTML(username)}\">revoke</a>"
-      else
+        render json: { status: 'success', message: 'User promoted', action: 'revoke' }
+        else
         @user.update_attribute(role, false)
-        render :text => "No - <a href=\"#\" class=\"promote\" data-role=\"#{role}\" data-username=\"#{CGI::escapeHTML(username)}\">grant</a>"
-      end
+        render json: { status: 'success', message: 'User demoted', action: 'grant' }
+        end
     else
-      render :text => "User not found"
+        render json: { status: 'error', message: 'User not found' }
     end
-  end
+    end
+
 
   def validate_authorization!
     authorize! :admin, :users

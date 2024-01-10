@@ -1,0 +1,229 @@
+<div data-controller="dashboard">
+
+    <!-- Sidebar - Filters -->
+    <div class="col-md-3" id="measureSidebar">
+
+        <!-- Date -->
+        <div class="panel-group" id="accordionDate" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+                <div class="panel-heading" role="tab" id="headingDate">
+                    <h4 role="tab" id="headingDate">
+                        <a role="button" data-toggle="collapse" data-parent="#accordionDate" href="#collapseDate" aria-expanded="true" aria-controls="collapseDate" style="color: white;">
+                            <span class="glyphicon glyphicon-calendar" aria-hidden="true"></span> Reporting Period
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseDate" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="collapseDate">
+                    <div class="panel-body">
+                        <form class="body-date">
+                            <div class="form-group">
+                                <label class="sr-only" for="startDate">Start</label>
+                                <input type="text" data-provide='datepicker' data-date-format="dd/mm/yyyy" class="form-control" placeholder="Start Date" id="startDate" data-dashboard-target="start" data-action="blur->dashboard#handleBlur" />
+                            </div>
+                            <div class="form-group">
+                                <label class="sr-only" for="endDate">End</label>
+                                <input type="text" data-provide='datepicker' data-date-format="dd/mm/yyyy" class="form-control" placeholder="End Date" id="endDate" data-dashboard-target="end" data-action="blur->dashboard#handleBlur" />
+                            </div>
+                            <div class="form-group">
+                                <button type="button" class="btn btn-warning" data-action="click->dashboard#setReportinRecord" id="resetButton">
+                                    <span class="glyphicon glyphicon-refresh" aria-hidden="true"></span> Recalculate
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Measure Filter v2 -->
+
+        <div class="panel-group" id="accordionMeasure" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+                <div class="panel-heading" role="tab" id="headingMeasure">
+                    <h4 role="tab" id="headingMeasure">
+                        <a role="button" data-toggle="collapse" data-parent="#accordionMeasure" href="#collapseMeasure" aria-expanded="true" aria-controls="collapseMeasure" style="color: white;">
+                            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Measures
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseMeasure" class="panel-collapse collapse in " role="tabpanel" aria-labelledby="collapseMeasure">
+                    <div class="panel-body">
+                        <div class="input-group search-measure">
+                            <input type="text" id="searchMeasure" placeholder="Search..." class="form-control" />
+                        </div>
+                        <% collapse_counter = 1 %>
+                        <% @categories_cms_ids.each do |category, measures| %>
+                            <div class="category panel panel-info">
+                                <div class="panel-heading" data-toggle="collapse" data-target="#category<%= collapse_counter %>">
+                                    <h4><a role="button" class="panel-title"><%= category %></a>    <span class="badge"><%= measures.length %></span></h4>
+                                </div>
+                                <div id="category<%= collapse_counter %>" class="list-group collapse">
+                                    <ul class="list-group ul-measure">
+                                        <% measures.each do |measure| %>
+                                            <li class="list-group-item"><button type="button" href="#" class="nav-link nav-link-inside" data-action="click->dashboard#extractHqmf" data-measure-hqmf-id="<%= measure[:hqmf_id] %>" data-cms-id="<%= measure[:cms_id] %>" data-measure-title="<%= measure[:title] %>" data-measure-id="<%= measure[:id] %>" id="btn-measure-<%= measure[:cms_id] %>"><%= measure[:cms_id] %> <%= measure[:title] %></button></li>
+                                        <% end %>
+                                    </ul>
+                                </div>
+                            </div>
+                        <% collapse_counter += 1 %>
+                        <% end %>
+                    </div>
+                
+                </div>
+
+            </div>
+        
+        </div>
+
+
+    </div>
+
+    <!-- Panel -->
+    <div class="col-md-9">
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="headingProviderInformation">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Provider Information</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li><strong>Full Name:</strong> <span data-dashboard-target="dataProviderFullName"></span></li>
+                        <li><strong>Phone</strong>: N/A</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="headingProviderDetails">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Provider Details</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li><strong>NPI: </strong><span data-dashboard-target="dataProviderNpi"></span></li>
+                        <li><strong>Specialty: </strong><span data-dashboard-target="dataProviderSpecialty"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="headingProviderRoles">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> User Roles</h3>
+                </div>
+                <div class="panel-body">
+                    <ul>
+                        <li><strong>Description:</strong> <span data-dashboard-target="userRole"></span></li>
+                        <li><strong>Team Name:</strong> <span data-dashboard-target="dataUserTeam"></span></li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel panel-primary">
+                <div class="panel-heading" id="panelHeadingDashboard">
+                    <h4>MEASUREMENTS RESULT PANEL</h4>
+                    <div class="btn-group dropup">
+                        <button type="button" class="btn btn-success dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" id="exportButton" disabled>
+                            <span class="glyphicon glyphicon-download-alt" aria-hidden="true"></span> Export
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-right">
+                            <li><a href="#" data-action="click->dashboard#generateReport" data-report-id="1">QRDA Cat 3</a></li>
+                            <li><a href="#" data-action="click->dashboard#generateReport" data-report-id="2">QRDA Cat 1 Zip</a></li>
+                            <li><a href="#">Spreadsheet</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th style="width:3%;"><input type="checkbox" id="selectMeasure" data-action="change->dashboard#selectAllMeasureToExport"></input></th>
+                                <th>CMS</th>
+                                <th>Measure Name</th>
+                                <th>Percentage</th>
+                                <th>Numerator/Denominator</th>
+                            </tr>
+                        </thead>
+                        <tbody class="table-group-divider" id="measureResultTable">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+
+    window.serverData = {
+
+        currentUser: <%= raw current_user.to_json(include: [:preferences, :practice]) %>,
+
+        rootProvider: <%= raw Provider.root.to_json(include: :children) %>
+    };
+
+    $(document).ready(function(){
+        
+        $("#searchMeasure").on("keyup", function() {
+
+            var value = $(this).val().toLowerCase();
+
+            if (value.trim() === "") {
+
+                $(".category").show();
+
+                $(".category .collapse").collapse("hide"); 
+
+                $(".category .list-group-item").show();
+
+                return;
+            };
+
+            $(".category").hide();
+
+            $(".category").each(function() {
+
+                var category = $(this);
+
+                var listItems = category.find(".list-group-item");
+
+                var matches = false;
+
+                listItems.each(function() {
+
+                    var item = $(this);
+
+                    var itemText = item.text().toLowerCase();
+
+                    var hasMatch = itemText.indexOf(value) > -1;
+
+                    item.toggle(hasMatch);
+
+                    matches = matches || hasMatch;
+
+                });
+
+                if (matches) {
+
+                    category.show();
+
+                    category.find(".collapse").collapse("show");
+
+                } else {
+
+                    category.find(".collapse").collapse("show");
+                }
+
+            });
+
+        });
+
+    });
+
+
+</script>

@@ -1,0 +1,61 @@
+        <!-- Measures Filter -->
+        <div class="panel-group" id="accordionMeasure" role="tablist" aria-multiselectable="true">
+            <div class="panel panel-primary">
+                <div class="panel-heading" role="tab" id="headingMeasure">
+                    <h4 role="tab" id="headingMeasure">
+                        <a role="button" data-toggle="collapse" data-parent="#accordionMeasure" href="#collapseMeasure" aria-expanded="true" aria-controls="collapseMeasure" style="color: white;">
+                            <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> Measures
+                        </a>
+                    </h4>
+                </div>
+                <div id="collapseMeasure" class="panel-collapse collapse in " role="tabpanel" aria-labelledby="collapseMeasure">
+                    <div class="panel-body">
+
+                    
+                        <!-- Search -->
+                        <div class="input-group search-measure">
+                            <input type="text" id="searchMeasure" data-action="input->dashboard#filterMeasures" placeholder="Search..." class="form-control" />
+                        </div>
+
+                        
+
+                        <hr />
+
+                        <!-- List of Measures -->
+                        <% collapse_id_counter = 1 %>
+
+
+
+                        <% @categories_cms_ids.each do |category, measures| %>
+                        
+                            <div class="panel-group" id="accordion<%= collapse_id_counter %>" role="tablist" aria-multiselectable="true">
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="heading<%= collapse_id_counter %>">
+                                        <h4 class="panel-heading" role="tab" id="heading<%= collapse_id_counter %>">
+                                            <a role="button" data-toggle="collapse" data-parent="#accordion<%= collapse_id_counter %>" href="#collapseOne<%= collapse_id_counter %>" aria-expanded="false" aria-controls="collapseOne<%= collapse_id_counter %>">
+                                                <%= category %>
+                                            </a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne<%= collapse_id_counter %>" class="panel-collapse collapse panel-measures-filters" role="tabpanel" aria-labelledby="heading<%= collapse_id_counter %>">
+                                        <div class="panel-body">
+                                            <ul class="ul-measure">
+                                                <% measures.each do |measure| %>
+                                                    <li class="list-inside">
+                                                        <button type="button" href="#" class="nav-link nav-link-inside" data-action="click->dashboard#extractHqmf" data-measure-hqmf-id="<%= measure[:hqmf_id] %>" data-cms-id="<%= measure[:cms_id] %>" data-measure-title="<%= measure[:title] %>" data-measure-id="<%= measure[:id] %>" id="btn-measure-<%= measure[:cms_id] %>">
+                                                            <%= measure[:cms_id] %> <%= measure[:title] %>
+                                                        </button>
+                                                    </li>
+                                                    <% collapse_id_counter += 1 %>
+                                                <% end %>
+                                            </ul>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                        <% end %>
+                    </div>
+                </div>
+            </div>
+        </div>

@@ -1,3 +1,45 @@
+<div data-controller="logs" class="col-md-12">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-list" aria-hidden="true"></span> Logs</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered table-hover">
+                <thead>
+                    <tr>
+                        <th><%= link_to "Timestamp (#{Time.zone.now.zone})", time_range_params_plus(:sort => 'created_at') %></th>
+                        <th><%= link_to 'Username', time_range_params_plus(:sort => 'username') %></</th>
+                        <th><%= link_to 'Event', time_range_params_plus(:sort => 'event') %></th>
+                        <th><%= link_to 'Description', time_range_params_plus(:sort => 'description') %></th>
+                        <th><%= link_to 'Patient Id', time_range_params_plus(:sort => 'medical_record_number') %></th>
+                        <% if current_user.admin? %>
+                            <th><%= link_to 'Affected User', time_range_params_plus(:sort => 'affected_user') %></th>
+                        <% end %>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% @logs.each do |log| %>
+                        <tr>
+                            <td><%= log.created_at.iso8601.in_time_zone %></td>
+                            <td><%= log.username %></td>
+                            <td><%= log.event %></td>
+                            <td><%= log.description %></td>
+                            <td><%= log.medical_record_number %></td>
+                            <td><%= log.affected_user %></td>
+                        </tr>
+                    <% end %>    
+                </tbody>
+            </table>
+        </div>
+        <div class="panel-footer panel-primary">
+            <%= will_paginate @logs, class:"pager" %>
+        </div>
+    </div>
+</div>
+
+<!--
+
+
 <% content_for :head do -%>
   <script type="text/javascript">
   var popHealth = popHealth || {};
@@ -60,7 +102,7 @@
         <% if current_user.admin? %>
           <th><%= link_to 'Affected User', time_range_params_plus(:sort => 'affected_user') %></th>
         <% end %>
-        <!-- <th><%= link_to 'File SHA1 Hash', time_range_params_plus(:sort => 'checksum') %></th> -->
+         <th><%= link_to 'File SHA1 Hash', time_range_params_plus(:sort => 'checksum') %></th> 
       </tr>
       <% @logs.each do |log| -%>
       <tr>
@@ -70,13 +112,15 @@
         <td><%= log.description %></td>
         <td><%= log.medical_record_number %></td>
         <td><%= log.affected_user %></td>
-        <!-- <td><%= log.checksum %></td> -->
+         <td><%= log.checksum %></td> 
       </tr>
       <% end -%>
     </table>
 
     <%= will_paginate @logs %>
-</div> <!-- pageContent -->
+</div>  pageContent -
+
+
 
 <script>
   $(document).ready(function() {
@@ -84,3 +128,5 @@
     $('#resetFilter').on('click', popHealth.resetFilter);
   });
 </script>
+
+-->

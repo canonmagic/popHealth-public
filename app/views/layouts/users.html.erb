@@ -4,22 +4,15 @@
   <meta charset="utf-8">
   <meta http-equiv="Cache-Control" content="no-cache">
   <meta http-equiv="x-ua-compatible" content="IE=edge">
-  <title>popHealth : An Open Source Quality Measure Reference Implementation</title>
+  <title> PopHealth : An Open Source Quality Measure Reference Implementation</title>
   <link rel="shortcut icon" href="/favicon.ico">
 
+  <!--<%= javascript_include_tag "application" %>-->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
   <%= stylesheet_link_tag 'application' %>
-  <%= javascript_include_tag "application" %>
+  <%= javascript_importmap_tags %>
 </head>
-
-<body class="user">
-
-<%= yield %>
-
-<script>
-  $(function() {
-    $('input, textarea').placeholder();
-  });
-</script>
-
+<body>
+    <%= yield %>
 </body>
 </html>

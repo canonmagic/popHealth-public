@@ -1,0 +1,41 @@
+<div data-controller="providers" class="col-md-12">
+    <div class="form-group">
+        <input type="text" class="form-control" id="inputSearchProvider"  placeholder="Search provider..."></input>
+    </div>
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Providers</h3>
+        </div>
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Provider NPI</th>
+                        <th>Provider Type</th>
+                        <th>Provider Extension</th>
+                        <th>Provider Name</th>
+                        <th>Tax Id</th>
+                        <th>Phone</th>
+                        <th>Practice Name</th>
+                    </tr>
+                </thead>
+                <tbody data-providers-target="tableBody" class="provider-table" id="providerTableSearch"></tbody>
+            </table>
+        </div>
+    </div>  
+</div>
+
+<script>
+
+    $(document).ready(function(){
+        $("#inputSearchProvider").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+    $("#providerTableSearch tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+
+  });
+
+});
+</script>

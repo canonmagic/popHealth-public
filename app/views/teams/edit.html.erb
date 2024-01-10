@@ -1,3 +1,85 @@
+<div data-controller="teams" class="col-md-12">
+    <div class="form-group">
+        <input type="text" class="form-control" id="inputSearchProvider"  placeholder="Search provider..."></input>
+    </div>
+    <%= form_tag team_path(@team), class:"form-inline", method: :patch do %>
+
+        <div class="panel panel-primary">
+
+            <div class="panel-heading" id="headingTeamDetail">
+
+                <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Edit Team: <%= @team.name  %></h3>
+                <%= form_for @team, url: team_path(@team), method: :patch do |f| %>
+                    <div class="form-group">
+                        <%= f.text_field :name, class: "form-control" %>
+                        <%= f.submit "Save Team", class: "btn btn-success", data: { confirm: "Confirm providers and team name?" } %>
+                    </div>
+                <% end %>
+            </div>
+
+            <div class="panel-body" id="providerTable">
+                <table class="table table-bordered">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>NPI</th>
+                            <% if @current_user.admin%>
+                                <th>Affiliation</th> 
+                            <% end %>
+                            <th>Selected</th>
+                            <th>Select</th>
+                        </tr>
+                    </thead>
+                    <tbody id="providerTable">
+                        <% @providers.each do |provider| %>
+                            <tr>
+                                <td><%= provider.givenNames %> <%= (provider.familyName)? provider.familyName : ''%><%= (provider.children.length > 0)? "(Group)" : '' %></td>
+                                <td><%= (provider.npi)? provider.npi : 'N/A' %></td>
+                                <% if @current_user.admin %> 
+                                    <td><%= provider.try(:parent).try(:givenNames) %> </td> 
+                                <% end %>
+                                <% inc = @team.providers.include? provider._id.to_s %>
+                                <td><%= inc ? "Yes" : "No" %></td>
+                                <td><%= check_box_tag 'provider_ids[]', provider._id, inc %></td>
+                            </tr>
+                        <% end %>
+                    </tbody>            
+                </table>
+            </div>
+
+            <div class="panel-footer panel-primary">
+                <div class="btn-teams-option">
+
+                    <%= link_to teams_path, class: 'btn btn-primary' do %>
+                    <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to List
+                    <% end %>
+
+                    <%= link_to @team, class: 'btn btn-success' do %>
+                    <span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> View Providers
+                    <% end %>
+                    
+                </div>
+            </div>
+        </div>
+
+    <% end %>
+</div>
+
+<script>
+
+    $(document).ready(function(){
+        $("#inputSearchProvider").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+        $("#providerTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+        });
+
+        });
+
+});
+</script>
+<!--
 <div class='main'>
 
   <h1><b>Edit Team: </b> <%=@team.name%> </h1>
@@ -46,3 +128,4 @@
   <% end %>
 
 </div>
+-->

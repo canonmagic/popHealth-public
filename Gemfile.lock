@@ -1,24 +1,12 @@
 GIT
-  remote: https://github.com/canonmagic/thorax-rails
-  revision: 8a62b89b9d0c8d8acdb8deaa186dfd9d3c15bf86
-  specs:
-    thorax-rails (0.1.6)
-      coffee-script (~> 2.4.1)
-      handlebars_assets (~> 0.23.9)
-      jquery-rails
-      railties (>= 3.1.0)
-
-GIT
-  remote: https://github.com/projecttacoma/cqm-models
-  revision: 2c76e5f30e77fb71c7f55a260db64b7c1ace5e0b
-  tag: cypress_v7.0.0
+  remote: https://github.com/canonmagic/cqm-models
+  revision: 717d00485def7f66218af629d4dfd1c06549590a
   specs:
     cqm-models (4.0.2)
 
 GIT
-  remote: https://github.com/projecttacoma/cqm-reports
-  revision: e6c0e3aa62282043d337c11dcfd1fda5eea5c755
-  tag: cypress_v7.0.5.1
+  remote: https://github.com/canonmagic/cqm-reports
+  revision: f3620f852b459ec2ae38e8fa57829839bd550717
   specs:
     cqm-reports (4.0.0)
       cqm-models (> 3.0)
@@ -31,6 +19,25 @@ GIT
       nokogiri (>= 1.8.5, < 1.15.0)
       uuid (~> 2.3)
       zip-zip (~> 0.3)
+
+GIT
+  remote: https://github.com/canonmagic/handlebars_assets
+  revision: 1add76227262ff68e923fe1c44f89da1a98b5a8d
+  specs:
+    handlebars_assets (0.23.9)
+      execjs (~> 2.0)
+      sprockets (>= 2.0.0)
+      tilt (>= 1.2)
+
+GIT
+  remote: https://github.com/canonmagic/thorax-rails
+  revision: 8a62b89b9d0c8d8acdb8deaa186dfd9d3c15bf86
+  specs:
+    thorax-rails (0.1.6)
+      coffee-script (~> 2.4.1)
+      handlebars_assets (~> 0.23.9)
+      jquery-rails
+      railties (>= 3.1.0)
 
 GEM
   remote: https://rubygems.org/
@@ -100,9 +107,6 @@ GEM
       i18n (>= 1.6, < 2)
       minitest (>= 5.1)
       tzinfo (~> 2.0)
-    ajax-datatables-rails (1.4.0)
-      rails (>= 5.2)
-      zeitwerk
     apipie-rails (1.2.1)
       actionpack (>= 5.0)
       activesupport (>= 5.0)
@@ -183,10 +187,6 @@ GEM
       railties (>= 3.2, < 8.0)
     globalid (1.1.0)
       activesupport (>= 5.0)
-    handlebars_assets (0.23.9)
-      execjs (~> 2.0)
-      sprockets (>= 2.0.0)
-      tilt (>= 1.2)
     hashie (5.0.0)
     highline (1.7.10)
     http-accept (1.7.0)
@@ -338,6 +338,7 @@ GEM
       http-cookie (>= 1.0.2, < 2.0)
       mime-types (>= 1.16, < 4.0)
       netrc (~> 0.8)
+    ruby-ole (1.2.12.2)
     ruby2_keywords (0.0.5)
     rubyzip (1.3.0)
     sass-rails (6.0.0)
@@ -354,6 +355,8 @@ GEM
     snaky_hash (2.0.1)
       hashie
       version_gem (~> 1.1, >= 1.1.1)
+    spreadsheet (1.3.0)
+      ruby-ole
     sprockets (4.2.0)
       concurrent-ruby (~> 1.0)
       rack (>= 2.2.4, < 4)
@@ -406,7 +409,6 @@ PLATFORMS
   x86_64-linux
 
 DEPENDENCIES
-  ajax-datatables-rails (~> 1.4)
   apipie-rails (~> 1.2)
   bootsnap
   bootstrap-datepicker-rails (~> 1.10)
@@ -423,7 +425,7 @@ DEPENDENCIES
   delayed_job_mongoid (~> 3.0)
   devise (~> 4.9)
   font-awesome-rails (~> 4.7)
-  handlebars_assets (~> 0.23.9)
+  handlebars_assets!
   importmap-rails
   jbuilder
   jquery-datatables-rails (~> 3.4)
@@ -445,6 +447,7 @@ DEPENDENCIES
   rest-client (~> 2.1)
   sassc-rails (~> 2.1)
   select2-rails (~> 4.0)
+  spreadsheet (~> 1.3)
   sprockets-rails
   stimulus-rails
   tag-it-rails (~> 2.0)

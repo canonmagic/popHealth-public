@@ -1,3 +1,187 @@
+<div data-controller="patients" class="col-md-12">
+
+    <div class="col-md-12">
+
+                <div class="panel panel-primary">
+
+                    <div class="panel-heading">
+                        <h3 class="panel-title"><span class="glyphicon glyphicon-user" aria-hidden="true"></span> Data Patients</h3>
+                    </div>
+
+                <div class="panel-body">
+
+                    <table class="table table-bordered">
+                        <thead>
+                            <tr>
+                                <th>Description</th>
+                                <th style="width:10%;">Count</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Patients loaded</td>
+                                <td id="patient_count"><%= @patient_count %></td>
+                            </tr>
+                            <tr>
+                                <td>Providers loaded</td>
+                                <td><%= @provider_count %></td>
+                            </tr>
+                            <% if !APP_CONFIG["use_opml_structure"] %>
+                            <tr>
+                                <td>Practices</td>
+                                <td><%= @practice_count %></td>
+                            </tr>
+                            <% end %>
+                            <tr>
+                                <td>Query cache count</td>
+                                <td><%= @query_cache_count %></td>
+                            </tr>
+                            <tr>
+                                <td>Patients cache count</td>
+                                <td><%= @patient_cache_count %></td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+                <div class="panel-footer panel-primary">
+                
+                    <!--
+                    <%= link_to practices_path, class: "btn btn-primary" do %>
+                        <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit Practices
+                    <% end %>
+                    -->
+
+                    <button type="button" class="btn btn-danger" data-action="click->patients#deletePatients">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete Patients
+                    </button>
+
+                    <button type="button" class="btn btn-warning" data-action="click->patients#deleteProviders">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete Providers
+                    </button>
+
+                    <button type="button" class="btn btn-danger" data-action="click->patients#deleteCaches">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete Caches
+                    </button>
+
+                </div>
+            </div>
+
+    </div>
+
+    <div class="col-md-12">
+
+            <div class="panel panel-primary">
+
+                <div class="panel-heading">
+                    <h3 class="panel-title"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Options</h3>
+                </div>
+
+                <div class="panel-body">
+
+                    <%= form_tag("/admin/upload_patients", method: :put, multipart: true, id:"uploadForm") do %>
+                        <% if !APP_CONFIG["use_opml_structure"] %>
+                            <div class="form-group">
+                                <%= label_tag "Choose Practice" %>
+                                <%= select_tag "practice", options_for_select(@practices), include_blank: true, class: "form-control" %>
+                            </div>
+                        <% end %>
+                        <div class="form-group">
+                            <label>Choose Patient File</label>
+                            <%= file_field_tag(:file) %>
+                            <p class="help-block">Please upload a ZIP file.</p>
+                        </div>
+                </div>
+                <div class="panel-footer">
+
+                    <%= button_to "#", class: "btn btn-success", id: "uploadButton" do %>
+                    <span class="glyphicon glyphicon-upload" aria-hidden="true"></span> Upload Patients
+                <% end %>
+                </div>
+                <% end %>
+            </div>
+    </div>
+
+</div>
+
+
+
+<script>
+
+document.addEventListener('DOMContentLoaded', function() {
+    const uploadButton = document.getElementById('uploadButton');
+    const uploadForm = document.getElementById('uploadForm');
+
+    if (uploadButton && uploadForm) {
+        uploadButton.addEventListener('click', function(event) {
+            event.preventDefault();
+
+            Swal.fire({
+                title: 'Confirmation',
+                text: 'Are you sure you want to upload patients?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Yes, upload patients'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    uploadForm.submit();
+                }
+            });
+        });
+    }
+});
+</script>
+
+
+<!--
+
+<table class="table table-bordered">
+    <caption>Actions</caption>
+    <thead>
+      <tr>
+        <th>Action</th>
+        <th>Status</th>
+        <th>Options</th>
+      </tr>
+    </thead>
+    <tbody>
+    <%= form_tag("/admin/upload_patients", method: :put, multipart:"true", class:"file-upload") do%>
+
+      <% if !APP_CONFIG["use_opml_structure"] %>
+      <tr>
+        <td><%= label_tag "Choose Practice" %></td>
+        <td><%= select_tag "practice", options_for_select(@practices), include_blank: true, class:"form-control"%></td>	
+      </tr>
+      <% end %>
+      <tr>
+        <td>Uplodad Patient (zip file)</td>
+        <td><%= file_field_tag(:file, id:"filePatient") %></td>
+        <td><%= submit_tag "Upload", class:"btn btn-success btn-block" %></td>
+      </tr>
+    <% end %>
+
+      <% if APP_CONFIG['use_opml_structure'] %>
+        <tr>      
+        <%= form_tag("/admin/upload_providers", :method => "put", :multipart=>true, :class=>"file-upload") do %>
+            <td>Uplodad Providers (OPML file)</td>
+            <td><%= file_field_tag(:file, id: "fileProvider")%></td>
+            
+        </tr>
+        <% end %>
+      <% end %>
+    </tbody>
+  </table>
+
+    <div class="btn-patients">
+        <%= button_to "Delete Patients", "/admin/remove_patients", method: :delete, class:"btn btn-danger", style:"margin-right: 5px;" %>
+        <%= button_to "Delete Providers", "/admin/remove_providers", method: :delete, class:"btn btn-danger", style:"margin-right: 5px;" %>
+        <%= button_to "Delete Caches", "/admin/remove_caches", method: :delete, class:"btn btn-danger", style:"margin-right: 5px;" %>
+        <%= link_to "Edit Practices", practices_path, :class => "btn btn-primary" %>
+    </div>
+
 <div id="pageContent" style="padding:20px;">
 <h3>Patients</h3>
 
@@ -77,7 +261,12 @@
 
   </table>
 
-</div> <!-- pageContent -->
+</div>
+
+-->
+<!-- pageContent -->
+
+<!--
 <script>
   window.addEventListener("DOMContentLoaded", function(){
     $(".file-upload").submit(function(e) {
@@ -108,3 +297,6 @@
     })();
   });
 </script>
+-->
+
+

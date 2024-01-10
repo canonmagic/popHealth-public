@@ -12,7 +12,10 @@
  *
 *= require select2
 *= require select2-bootstrap
+*= require bootstrap-datepicker
+
  */
+
 
 // Bootstrap theme
 @import "bootstrap-sprockets";
@@ -24,11 +27,14 @@
 
 // Styles by page
 @import "login";
+@import "loginForm";
 @import "patient";
 @import "register";
 @import "styles";
 @import "vis";
 @import "filters";
-
+@import "new_styles";
 // Bootstrap theme
 @import "bootstrap3";
+
+

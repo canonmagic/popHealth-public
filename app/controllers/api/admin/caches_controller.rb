@@ -30,7 +30,9 @@ module Api
         render :json => json
       end
 
-      #api :GET, "/admin/caches/staticmeasures", "Return static measure"
+      #Edit Jose Melendez (descomentar)
+      api :GET, "/admin/caches/staticmeasures", "Return static measure"
+      #
       def static_measure
         measure_definition = nil
         cql_element = nil

@@ -1,186 +1,338 @@
-<%= render partial: "shared/header" %>
+<%= render 'shared/header' %>
 
-<div class="container">
-  <div class="register-body">
-    <h1>Account Information</h1>
-      <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {name: "register_form", class: "registration"}) do |f| %>
-    <div class="accountError">
-      <%= devise_error_messages! %>
-      <%= alert %>
-    </div>
-    <div class="form-group row">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg required">
-          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
-          <%= f.text_field :first_name, class: "form-control", placeholder: "first name*" %>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group input-group-lg required">
-          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
-          <%= f.text_field :last_name, class: "form-control", placeholder: "last name*" %>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg required">
-          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
-          <%= f.text_field :username, class: "form-control", placeholder: "username*" %>
-        </div>
-        <p class="help-block">Must be at least 3 characters long.</p>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group input-group-lg required">
-          <span class="input-group-addon"><i class="fa fa-envelope fa-lg fa-fw"></i></span>
-          <%= f.email_field :email, class: "form-control", placeholder: "email@example.com*" %>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-user fa-lg fa-fw"></i></span>
-          <%= f.text_field :company, class: "form-control", placeholder: "company" %>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-link fa-lg fa-fw"></i></span>
-          <%= f.text_field :company_url, class: "form-control", placeholder: "www.company.com" %>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-h-square fa-lg fa-fw"></i></span>
-          <%= f.text_field :registry_name, class: "form-control", placeholder: "registry name" %>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-archive fa-lg fa-fw"></i></span>
-          <%= f.text_field :registry_id, class: "form-control", placeholder: "registry identifier" %>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-hospital-o fa-lg fa-fw"></i></span>
-          <%= f.text_field :npi, class: "form-control", placeholder: "national provider id" %>
-        </div>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-folder fa-lg fa-fw"></i></span>
-          <%= f.text_field :tin, class: "form-control", placeholder: "tax id number" %>
-        </div>
-      </div>
-    </div>
+<div data-controller="devise" class="col-md-12">
 
-    <div class="form-group row">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg">
-          <span class="input-group-addon"><i class="fa fa-lock fa-lg fa-fw"></i></span>
-          <%= f.password_field :password, class: "form-control", placeholder: "password" %>
-        </div>
-        <p class="help-block">Leave blank if you don't wish to change.</p>
-      </div>
-      <div class="col-md-6">
-        <div class="input-group input-group-lg hidden-toggle required">
-          <span class="input-group-addon"><i class="fa fa-lock fa-lg fa-fw"></i></span>
-          <%= f.password_field :password_confirmation, class: "form-control", placeholder: "confirm password*" %>
-        </div>
-      </div>
-    </div>
-    <div class="form-group row hidden-toggle" style="margin-top: 30px">
-      <div class="col-md-6">
-        <div class="input-group input-group-lg required">
-          <span class="input-group-addon"><i class="fa fa-lock fa-lg fa-fw"></i></span>
-          <%= f.password_field :current_password, class: "form-control", placeholder: "current password*" %>
-        </div>
-        <p class="help-block">Please provide your old password.</p>
-      </div>
-    </div>
+    <div class="col-md-12">
 
-    <fieldset>
-      <legend>Preferences</legend>
-      <div class="input-group-lg form-group form-horizontal row">
-        <div class="col-md-9">
-          <label class="control-label"><i class="fa fa-square"></i> Mask the Personal Health Information (PHI)</label>
+    <div class="panel panel-primary">
+
+        
+        
+
+        <div class="panel-heading">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit Account</h3>
+
+            <% if alert.present? %>
+                <div class="alert alert-warning" role="alert">
+                    <%= devise_error_messages! %>
+                    <%= alert %>
+                </div>
+            <% end %>
         </div>
 
-        <div class="btn-group btn-group-md col-md-3" data-toggle="buttons">
-          <%= f.fields_for :preferences do |t| %>
-          <label class="btn btn-default col-md-6<%= ' active' if t.object.mask_phi_data %>">
-            <%= t.radio_button :mask_phi_data, true, checked: t.object.mask_phi_data %> Yes
-          </label>
-          <label class="btn btn-default col-md-6<%= ' active' unless t.object.mask_phi_data %>">
-            <%= t.radio_button :mask_phi_data, false, checked: !t.object.mask_phi_data %> No
-          </label>
-          <% end %>
-        </div>
-      </div>
-      <div class="input-group-lg form-group form-horizontal row">
-        <div class="col-md-9">
-          <label class="control-label"><i class="fa fa-square"></i> Display Percentage Visuals on Measure Performance</label>
-        </div>
+        <div class="panel-body">
 
-        <div class="btn-group btn-group-md col-md-3" data-toggle="buttons">
-          <%= f.fields_for :preferences do |t| %>
-          <label class="btn btn-default col-md-6<%= ' active' if t.object.should_display_circle_visual %>">
-            <%= t.radio_button :should_display_circle_visual, true, checked: t.object.should_display_circle_visual %> Yes
-          </label>
-          <label class="btn btn-default col-md-6<%= ' active' unless t.object.should_display_circle_visual %>">
-            <%= t.radio_button :should_display_circle_visual, false, checked: !t.object.should_display_circle_visual %> No
-          </label>
-          <% end %>
-        </div>
-      </div>
-      <div class="input-group-lg form-group form-horizontal row">
-        <div class="col-md-9">
-          <label class="control-label"><i class="fa fa-square"></i> Display Provider Tree on Dashboard</label>
-        </div>
-        <div class="btn-group btn-group-md col-md-3" data-toggle="buttons">
-          <%= f.fields_for :preferences do |t| %>
-          <label class="btn btn-default col-md-6<%= ' active' if t.object.should_display_provider_tree %>">
-            <%= t.radio_button :should_display_provider_tree, true, checked: t.object.should_display_provider_tree %> Yes
-          </label>
-          <label class="btn btn-default col-md-6<%= ' active' unless t.object.should_display_provider_tree %>">
-            <%= t.radio_button :should_display_provider_tree, false, checked: !t.object.should_display_provider_tree %> No
-          </label>
-          <% end %>
-        </div>
-      </div>    
-    </fieldset>
+            <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {name: "register_form", class: "registration"}) do |f| %>
+
+            <div class="form-group">
+
+                        <label for="firstName">First Name</label>
+                        <%= f.text_field :first_name, class:"form-control", placeholder: "First Name", id:"firstName" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="lastName">Last Name</label>
+                        <%= f.text_field :last_name, class:"form-control", placeholder: "Last Name", id:"lastName" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="username">Username</label>
+                        <%= f.text_field :username, class:"form-control", placeholder: "Username", id:"username", autocomplete:"username" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="email">Email</label>
+                        <%= f.email_field :email, class:"form-control", placeholder: "email@example.com", id:"email", autocomplete:"email" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="company">Company</label>
+                        <%= f.text_field :company, class:"form-control", placeholder: "Company", id:"company", autocomplete:"off" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+                    
+                        <label for="urlCompany">Url Company</label>
+                        <%= f.text_field :company_url, class: "form-control", placeholder: "www.company.com" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+                    
+                        <label for="registryName">Registry Name</label>
+                        <%= f.text_field :registry_name, class:"form-control", placeholder: "Registry Name", id:"registryName" %>
+                    
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label for="registryIdentifier">Registry Identifier</label>
+                        <%= f.text_field :registry_id, class:"form-control", placeholder: "Registry Identifier", id:"registryIdentifier" %>
+                    
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="npi">National Provider Id</label>
+                        <%= f.text_field :npi, class:"form-control", placeholder: "National Provider Id", id:"npi" %>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="taxIdNumber">Tax Id Number</label>
+                        <%= f.text_field :tin, class:"form-control", placeholder: "Tax Id Number", id:"taxIdNumber" %>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="currentPassword">Current Password</label>
+                        <%= f.password_field :current_password, class:"form-control", placeholder: "Current Password", id:"currentPassword" %>
+                        <p class="help-block">Please provide your old password.</p>
+
+                    </div>
+
+                    <div class="form-group">
+
+                        <label for="password">New Password</label>
+                        <%= f.password_field :password, class:"form-control", placeholder: "Password", id:"password" %>
+
+                    </div>
+
+                    <div class="form-group">
+                    
+                        <label for="confirmPassword">Confirm Password</label>
+                        <%= f.password_field :password_confirmation, class:"form-control", placeholder: "Confirm Password", id:"confirmPassword" %>
+
+                    </div>
 
 
 
-    <hr>
+                    <div class="form-group">
 
-    <div class="form-group row">
-      <div class="col-md-6 col-md-offset-6">
-        <div class="row">
-        <div class="col-xs-6"><a class="btn btn-default btn-block btn-lg" href="/">Cancel</a></div>
-        <div class="col-xs-6"><%= f.submit "Save", class: "btn btn-primary btn-block btn-lg" %></div>
-      </div>
+                        <label>Mask the Personal Health Information (PHI)</label>
+
+                        <div class="radio">
+
+                            <%=  f.fields_for :preferences do |t|  %>
+                                <label class="<%= ' active' if t.object.mask_phi_data %>">
+                                    <%= t.radio_button :mask_phi_data, true, checked: t.object.mask_phi_data %> Yes</label>
+                                <label class="<%= ' active' unless t.object.mask_phi_data %>">
+                                    <%= t.radio_button :mask_phi_data, false, checked: !t.object.mask_phi_data %> No
+                                </label>
+                            <% end %>
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="form-group">
+
+                        <label class="control-label">Display Percentage Visuals on Measure Performance</label>
+
+                        <div class="radio">
+
+                            <%= f.fields_for :preferences do |t| %>
+                                <label class="<%= ' active' if t.object.should_display_circle_visual %>">
+                                    <%= t.radio_button :should_display_circle_visual, true, checked: t.object.should_display_circle_visual %> Yes
+                                </label>
+                                <label class="<%= ' active' unless t.object.should_display_circle_visual %>">
+                                    <%= t.radio_button :should_display_circle_visual, false, checked: !t.object.should_display_circle_visual %> No
+                                </label>
+                            <% end %>
+                        
+                        
+                        </div>
+
+                    </div>
+
+                    <div class="form-group">
+                    
+                        <label>Display Provider Tree on Dashboard</label>
+
+                        <div class="radio">
+
+                            <%= f.fields_for :preferences do |t| %>
+
+                                <label class="<%= ' active' if t.object.should_display_provider_tree %>">
+                                    <%= t.radio_button :should_display_provider_tree, true, checked: t.object.should_display_provider_tree %> Yes
+                                </label>
+                                <label class="<%= ' active' unless t.object.should_display_provider_tree %>">
+                                    <%= t.radio_button :should_display_provider_tree, false, checked: !t.object.should_display_provider_tree %> No
+                                </label>
+
+                            <% end %>
+                        
+                        </div>
+
+                    </div>
+
+            
+        </div>
+
+        <div class="panel-footer">
+        
+            <!--<%= f.submit "Save", class: "btn btn-success", data: { action: "click->devise#saveConfirm" } %>-->
+
+            <%= button_tag(type: 'button', class: 'btn btn-success', data: { action:"click->devise#saveConfirm"}) do %>
+                <span class="glyphicon glyphicon-save" aria-hidden="true"></span> Save
+            <% end %>
+
+
+            <button type="button" class="btn btn-danger" data-action="click->devise#confirmCancel">
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                Cancel
+            </button>
+
+
+        </div>
+    
+    <% end %>
+
     </div>
-    <% end -%>
-  </div>
+
+    </div>
+
 </div>
 
-<script>
-  $(function() {
-    $('.hidden-toggle').hide();
-    $('#user_password').on('keyup', function(e) {
-      if($(this).val().length > 0) {
-        $('.hidden-toggle').show();
-      }
-      else {
-        $('.hidden-toggle').val('').hide();
-      }
-    });
-  });
-</script>
+
+<!--
+<div data-controller="devise" class="col-md-12">
+
+    <ul class="nav nav-tabs nav-justified" id="tabs-data-user">
+        <li role="presentation" class="active"><a data-toggle="tab" href="#accountinformationtab">Account Information</a></li>
+        <li role="presentation"><a data-toggle="tab" href="#accountpreferencestab">Account Preferences</a></li>
+    </ul>
+    
+    <%= form_for(resource, :as => resource_name, :url => registration_path(resource_name), :html => {name: "register_form"}) do |f| %>
+        <div class="tab-content">
+            <br/>
+            <div id="accountinformationtab" class="tab-pane fade in active">
+                <div class="accountError">
+                    <%= devise_error_messages! %>
+                    <%= alert %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="firstName">First Name</label>
+                    <%= f.text_field :first_name, class:"form-control", placeholder: "First Name", id:"firstName" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="lastName">Last Name</label>
+                    <%= f.text_field :last_name, class:"form-control", placeholder: "Last Name", id:"lastName" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="username">Username</label>
+                    <%= f.text_field :username, class:"form-control", placeholder: "Username", id:"username", autocomplete:"username" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="email">Email</label>
+                    <%= f.email_field :email, class:"form-control", placeholder: "email@example.com", id:"email", autocomplete:"email" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="company">Company</label>
+                    <%= f.text_field :company, class:"form-control", placeholder: "Company", id:"company", autocomplete:"off" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="urlCompany">Url Company</label>
+                    <%= f.text_field :company_url, class:"form-control", placeholder: "Url Company", id:"urlCompany" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="registryName">Registry Name</label>
+                    <%= f.text_field :registry_name, class:"form-control", placeholder: "Registry Name", id:"registryName" %>
+                </div>
+                    <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="registryIdentifier">Registry Identifier</label>
+                    <%= f.text_field :registry_id, class:"form-control", placeholder: "Registry Identifier", id:"registryIdentifier" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="npi">National Provider Id</label>
+                    <%= f.text_field :npi, class:"form-control", placeholder: "National Provider Id", id:"npi" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="taxIdNumber">Tax Id Number</label>
+                    <%= f.text_field :tin, class:"form-control", placeholder: "Tax Id Number", id:"taxIdNumber" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="password">Password</label>
+                    <%= f.password_field :password, class:"form-control", placeholder: "Password", id:"password" %>
+                </div>
+                <div class="col-xs-4" style="margin-bottom:1rem;">
+                    <label for="confirmPassword">Confirm Password</label>
+                    <%= f.password_field :password_confirmation, class:"form-control", placeholder: "Confirm Password", id:"confirmPassword" %>
+                </div>
+                <div class="col-xs-12" style="margin-bottom:1rem;">
+                    <label for="currentPassword">Current Password</label>
+                    <%= f.password_field :current_password, class:"form-control", placeholder: "Current Password", id:"currentPassword" %>
+                    <p class="help-block">Please provide your old password.</p>
+                    
+                </div>
+            </div>
+            <div id="accountpreferencestab" class="tab-pane fade">
+                <br/>
+                <div>
+                    <div class="col-lg-12" style="margin-bottom:1rem;">
+                        <label class="control-label">Mask the Personal Health Information (PHI)</label>
+                        <div class="btn-group" role="group">
+                            <%=  f.fields_for :preferences do |t|  %>
+                                <label class="btn btn-default col-md-6<%= ' active' if t.object.mask_phi_data %>">
+                                <%= t.radio_button :mask_phi_data, true, checked: t.object.mask_phi_data %> Yes</label>
+                                <label class="btn btn-default col-md-6<%= ' active' unless t.object.mask_phi_data %>">
+                                <%= t.radio_button :mask_phi_data, false, checked: !t.object.mask_phi_data %> No
+                                </label>
+                            <% end %>
+                        </div>
+                    </div>
+                    <div class="col-xs-9" style="margin-bottom:1rem;">
+                        <label class="control-label">Display Percentage Visuals on Measure Performance</label>
+                        <div class="btn-group">
+                            <%= f.fields_for :preferences do |t| %>
+                                <label class="btn btn-default col-md-6<%= ' active' if t.object.should_display_circle_visual %>">
+                                <%= t.radio_button :should_display_circle_visual, true, checked: t.object.should_display_circle_visual %> Yes
+                                </label>
+                                <label class="btn btn-default col-md-6<%= ' active' unless t.object.should_display_circle_visual %>">
+                                <%= t.radio_button :should_display_circle_visual, false, checked: !t.object.should_display_circle_visual %> No
+                                </label>
+                            <% end %>
+                        </div>
+                    </div>
+                    <div class="col-xs-9" style="margin-bottom:1rem;">
+                        <label class="control-label">Display Provider Tree on Dashbo</label>
+                        <div class="btn-group">
+                            <%= f.fields_for :preferences do |t| %>
+                                <label class="btn btn-default col-md-6<%= ' active' if t.object.should_display_provider_tree %>">
+                                <%= t.radio_button :should_display_provider_tree, true, checked: t.object.should_display_provider_tree %> Yes
+                                </label>
+                                <label class="btn btn-default col-md-6<%= ' active' unless t.object.should_display_provider_tree %>">
+                                <%= t.radio_button :should_display_provider_tree, false, checked: !t.object.should_display_provider_tree %> No
+                                </label>
+                            <% end %>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+    
+    <div class="btn-practices pull-right">
+        <%= f.submit "Save", class: "btn btn-primary", data: { action: "click->devise#saveConfirm" } %>
+        <button type="button" class="btn btn-default">Cancel</button>
+    </div>
+
+    <% end %>
+
+</div>
+
+-->

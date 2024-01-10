@@ -1,0 +1,157 @@
+<div data-controller="dashboard" class="container">
+hola
+    <div class="nav-sidebar" id="measureSidebar">
+
+        <ul class="list-sidebar">
+        
+        <!--<input type="text" id="search-input" placeholder="Search CMS ID">-->
+
+        <button onclick="measure_close()">Close</button>
+
+            <% @categories_cms_ids.each do |category, measures| %>
+
+                <li class="list-item">
+
+                    <div class="list-button list-button-click">
+
+                        <a href="#" class="nav-link">
+
+                            <%= category %><span class="caret span-icon"></span>
+
+                        </a>
+
+                    </div>
+
+                    <ul class="list-show">
+
+                        <% measures.each do |measure| %>
+
+                            <li class="list-inside">
+
+                                <a href="#" class="nav-link nav-link-inside" data-action="click->dashboard#addMeasureToTable" data-cms-id="<%= measure[:cms_id] %>" data-measure-title="<%= measure[:title] %>" data-measure-id="<%= measure[:id] %>"><%= measure[:cms_id] %> <%= measure[:title] %></a>
+
+                            </li>
+
+                        <% end %>
+
+                    </ul>
+
+                </li>
+
+            <% end %>
+        
+        </ul>
+    
+    </div>
+
+    <button onclick="measure_open()">Open</button>
+
+    <div class="main-measure-dashboard">
+
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel 1</h3>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel 2</h3>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel 3</h3>
+                </div>
+                <div class="panel-body">
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-12">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Panel Measures</h3>
+                </div>
+                <div class="panel-body">
+                    <table class="table table-bordered table-hover">
+                        <thead>
+                            <tr>
+                                <th>CMS</th>
+                                <th>Measure Name</th>
+                                <th>Percentage</th>
+                                <th>Numerator/Denominator</th>
+                                <th>Options</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr data-row-id="1"></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+<script>
+
+function measure_open() {
+    document.getElementById("measureSidebar").style.width = "250px";
+
+}
+
+function measure_close() {
+    document.getElementById("measureSidebar").style.width = "20px";
+
+};
+
+
+</script>
+
+
+<!--
+<hr/>
+        <h4 style="text-align:center !important;">Measure Categories</h4>
+        <div class="input-group search-measure">
+            <input type="text" id="searchMeasure" data-action="input->dashboard#filterMeasures" placeholder="Search..." class="form-control" />
+        </div>
+        <hr/>
+
+            <% collapse_id_counter = 1 %>
+            <% @categories_cms_ids.each do |category, measures| %>
+            <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+                <div class="panel panel-default">
+                    <div class="panel-heading" role="tab" id="heading<%= collapse_id_counter %>">
+                        <h4 class="panel-heading" role="tab" id="heading<%= collapse_id_counter %>"><a role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne<%= collapse_id_counter %>" aria-expanded="false" aria-controls="collapseOne<%= collapse_id_counter %>"><%= category %></a></h4>
+                    </div>
+                    <div id="collapseOne<%= collapse_id_counter %>" class="panel-collapse collapse panel-measures-filters" role="tabpanel" aria-labelledby="heading<%= collapse_id_counter %>">
+                        <div class="panel-body">
+                            <ul class="ul-measure">
+                            <% measures.each do |measure| %>
+                                <li class="list-inside">
+                                <button type="button" href="#" class="nav-link nav-link-inside" data-action="click->dashboard#extractHqmf" data-measure-hqmf-id="<%= measure[:hqmf_id] %>" data-cms-id="<%= measure[:cms_id] %>" data-measure-title="<%= measure[:title] %>" data-measure-id="<%= measure[:id] %>" id="btn-measure-<%= measure[:cms_id] %>"><%= measure[:cms_id] %> <%= measure[:title] %></button>
+                                </li>
+                            <% collapse_id_counter += 1 %>
+                            <% end %>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <% end %>
+
+
+
+
+-->

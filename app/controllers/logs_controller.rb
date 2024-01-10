@@ -38,7 +38,7 @@ class LogsController < ApplicationController
       where[:created_at].merge!('$lt' => end_date.next_day) # becomes less than midnight the next day
     end
 
-    @logs = Log.where(where).order_by(order).paginate(:page => params[:page], :per_page => 20)
+    @logs = Log.where(where).order_by(order).paginate(:page => params[:page], :per_page => 10)
 
   end
 

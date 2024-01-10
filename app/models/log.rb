@@ -9,5 +9,6 @@ class Log
   field :medical_record_number, :type => String
   field :affected_user, :type => String
   field :checksum, :type => String
+
   
 end

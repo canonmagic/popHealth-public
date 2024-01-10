@@ -116,3 +116,8 @@ gem "csv", "~> 3.2"
 
 #API DOCUMENTATION
 gem "apipie-rails", "~> 1.2"
+
+
+#API SPREADSHEET
+
+gem 'spreadsheet', '~> 1.3'

@@ -7,7 +7,18 @@ $footnote-size: 0.8em;
 
 // Custom styles that are part of the theme
 
-.dropdown, div.datepicker {
+.container {
+  position: relative !important;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+// .dropdown, div.datepicker {
+//   position: relative;
+//   z-index: 2000 !important;
+// }
+
+.dropdown {
   position: relative;
   z-index: 2000 !important;
 }
@@ -47,10 +58,11 @@ $footnote-size: 0.8em;
   width: 30px;
   padding-left: 5px;
 }
-
+/*
 body {
   margin-bottom: 40px;
 }
+*/
 
 #measureSelectors {
   word-wrap: break-word;
@@ -132,6 +144,8 @@ body {
 
 // Dashboard
 
+
+
 .nav {
   font-weight: 500;
 
@@ -142,11 +156,14 @@ body {
     margin-top: 14px;
   }
 }
+
+
 .header-actions {
   margin-top: 24px;
   margin-right: $grid-gutter-width/2;
 }
 
+/*
 .category {
   background-color: $gray-lighter;
   margin-top: 1em;
@@ -183,6 +200,8 @@ body {
     }
   }
 }
+
+*/
 
 .selection-pull-out {
   @extend .pull-right;
@@ -326,7 +345,7 @@ body {
   font-size: 20px;
   padding: 2px 8px;
 }
-
+/*
 $table-border-color: white;
 .table {
   thead {
@@ -345,6 +364,7 @@ $table-border-color: white;
     }
   }
 }
+*/
 
 .col-patient-medical-record-id {
   max-width: 115px;
@@ -552,3 +572,4 @@ $table-border-color: white;
 #gototop:hover {
   background-color: #555;
 }
+

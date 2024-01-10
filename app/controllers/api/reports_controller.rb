@@ -1,6 +1,7 @@
 require 'c4_helper'
 require 'cypress/expected_results_calculator'
 require 'cypress/scoop_and_filter'
+require 'spreadsheet' #ADD BY JOSE MELENDEZ. REQUIRE TO GENERATE EXCEL
 
 module Api
   class ReportsController < ApplicationController
@@ -25,6 +26,9 @@ module Api
     param :provider_id, String, :desc => 'The Provider ID for CATIII generation'
     param :cms_program, String, :desc => 'CMS Program Name NONE/MIPS',
           :required => false
+    #Add Jose Melendez (falta este argumento para que se pueda generar el reporte)
+    param :filter_preferences, Array, :desc => '', :required => false
+    #
     description <<-CDESC
       This action will generate a QRDA Category III document. If measure_ids and effective_date are not provided,
       the values from the user's dashboard will be used.
@@ -75,8 +79,9 @@ module Api
         filter = measure_ids=="all" ? {} : {:hqmf_id.in => measure_ids}
         effective_date = params["effective_date"] || current_user.effective_date || Time.gm(2020, 12, 31)
         start_time = params["effective_start_date"] || current_user.effective_start_date || Time.gm(2019, 12, 31)
+        filter_preferences = params["filter_preferences"] || c4_filters
         correlation_id = IndividualResult.where('measure_id' => @msrs.first.id).first.correlation_id
-        erc = Cypress::ExpectedResultsCalculator.new(@patients,correlation_id,effective_date,start_time)
+        erc = Cypress::ExpectedResultsCalculator.new(@patients,correlation_id,effective_date,start_time, filter_preferences)
         @results = erc.aggregate_results_for_measures(@msrs)
         prov = Provider.where(id: provider_id).first
 

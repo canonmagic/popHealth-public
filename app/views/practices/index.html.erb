@@ -1,42 +1,91 @@
-<div class="practices">
-  <h1>Practices</h1>
-  <br/>  
-  <%= render 'edit_practice' %>
-	<br />
-	<h4> Current Practices </h4>
-	<table class="table">
-    <thead>
-      <tr>
-        <th>Name</th>
-        <th>Organization</th>
-        <th>Address</th>
-        <th>User(s)</th>
-        <th>Patients</th>
-        <th>Providers</th>
-        <th></th>
-        <th></th>
-        <th></th>
-        <th></th>
-      </tr>
-    </thead>
-  <% @practices.each do |practice| %>
-    <tbody>
-      <tr>
-        <td><%= practice.name %></td>
-        <td><%= practice.organization %></td>
-        <td><%= practice.address %></td> 
-        <td><%= practice.users ? practice.users.map {|u| u.username}.join(", ") : 'N/A' %></td>                
-        <td><%= practice.cqmPatient ? practice.cqmPatient.count : 0 %></td>
-        <td><%= practice.provider ? practice.provider.descendants.count : 'N/A'%></td>
-        <td><%= link_to "Edit Practice", practice_path(practice.id), :class => "btn btn-primary" %></td>
-        <td><%= link_to "Delete Providers", practices_remove_providers_path(id: practice.id), method: :delete, data: { confirm: 'Are you sure you want to delete all providers for ' + "#{practice.name}?"} %></td>
-        <td><%= link_to "Delete Patients", practices_remove_patients_path(id: practice.id), method: :delete, data: { confirm: 'Are you sure you want to delete all patients for ' + "#{practice.name}?"} %></td>
-        <td><%= link_to 'Delete Practice', practice, method: :delete, data: { confirm: 'Are you sure? There may be patients tied to this practice' } %></td>
-      </tr>
-    </tbody>
-  <% end %>
-  </table>
-	<br />
-  <%= link_to 'Back to Users', "/admin/users", class: 'btn btn-success' %>
-  <%= link_to 'Back to Patients', "/admin/patients", class: 'btn btn-info' %>
+<div data-controller="practices" class="col-md-12">
+    <div class="form-group">
+        <input type="text" class="form-control" id="inputSearchPractice"  placeholder="Search practice..."></input>
+    </div>
+    <div class="panel panel-primary">
+
+        <div class="panel-heading" id="headingTeams">
+            <h3 class="panel-title"><span class="glyphicon glyphicon-paperclip" aria-hidden="true"></span> Current Practices</h3>
+        </div>
+
+        <div class="panel-body">
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th style="width:5%;"></th>
+                        <th>Name</th>
+                        <th>Organization</th>
+                        <th>Address</th>
+                        <th>User(s)</th>
+                        <th>Patients</th>
+                        <th>Providers</th>
+                        <th style="width:10%;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="practiceTable">
+                    <% @practices.each do |practice| %>
+                    <tr>
+                        <td>
+                            <div class="btn-teams-options">
+                                <%= link_to edit_practice_path(practice.id), class: "btn btn-primary btn-sm" do %>
+                                    <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span>
+                                <% end %>
+                                <%= link_to practice, method: :delete, data: { confirm: 'Are you sure? There may be patients tied to this practice' }, class: "btn btn-danger btn-sm" do %>
+                                    <span class="glyphicon glyphicon-trash" aria-hidden="true"></span>
+                                <% end %>
+                            </div>
+                        </td>
+                        <td><%= practice.name %></td>
+                        <td><%= practice.organization %></td>
+                        <td><%= practice.address %></td>
+                        <td><%= practice.users ? practice.users.map {|u| u.username}.join(", ") : 'N/A' %></td>
+                        <td><%= practice.cqmPatient ? practice.cqmPatient.count : 0 %></td>
+                        <!--<td><%= practice.providers ? practice.providers.descendants.count : 0 %></td>-->
+                        <td><%= @practices_with_provider %></td>
+                        
+                        <td>
+                            <div class="btn-teams-options">
+                                <%= link_to practices_remove_providers_path(id: practice.id), method: :delete, data: { confirm: 'Are you sure you want to delete all providers for ' + "#{practice.name}?"}, class: "btn btn-warning" do %>
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete Providers
+                                <% end %>
+
+                                <%= link_to practices_remove_patients_path(id: practice.id), method: :delete, data: { confirm: 'Are you sure you want to delete all patients for ' + "#{practice.name}?"}, class: "btn btn-danger" do %>
+                                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Delete Patients
+                                <% end %>
+                            </div>
+                        </td>
+                    </tr>
+                    <% end %>
+                </tbody>
+            </table>
+        </div>
+        <!--
+        <div class="panel-footer panel-primary">
+            <%= link_to '/admin/users', class: 'btn btn-primary' do %>
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to Users
+            <% end %>
+
+            <%= link_to '/admin/patients', class: 'btn btn-primary' do %>
+                <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to Patients
+            <% end %>
+        </div>
+        -->
+    </div>
 </div>
+
+<script>
+
+    $(document).ready(function(){
+        $("#inputSearchPractice").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+    $("#practiceTable tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+
+  });
+
+});
+</script>
+
+
