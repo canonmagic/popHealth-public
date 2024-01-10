@@ -28,7 +28,7 @@ export default class extends Controller {
 
         this.filterPreference = filterPreference;
 
-        console.log(window.serverData)
+        //console.log(window.serverData)
 
         this.loadDataCurrentUser();
 
@@ -129,7 +129,7 @@ export default class extends Controller {
 
         buttonBackDashboard.href = `/dashboard/${this.providerId}`;
 
-        console.log(this.measureHqmfId, this.providerId, this.startDate, this.endDate);
+        //console.log(this.measureHqmfId, this.providerId, this.startDate, this.endDate);
 
         this.checkAutho();
 
@@ -149,7 +149,7 @@ export default class extends Controller {
 
                 } else {
 
-                    console.log('false')
+                    //console.log('false')
 
                 }
             })
@@ -209,7 +209,7 @@ export default class extends Controller {
 
             if (response.ok) {
 
-                console.log(response)
+                //console.log(response)
 
                 const responseData = await response.json();
 
@@ -388,11 +388,11 @@ export default class extends Controller {
 
             if (response.status === 302) {
 
-                console.log('Status 302 - Redirection');
+                //console.log('Status 302 - Redirection');
 
             } else if (response.ok) {
 
-                console.log('OK');
+                //console.log('OK');
 
             } else {
 
@@ -516,7 +516,7 @@ export default class extends Controller {
 
                         this.applyFilterPatient(filteredOptions);
 
-                        console.log(filteredOptions)
+                        //console.log(filteredOptions)
 
                     }, 2000);
 
@@ -597,11 +597,11 @@ export default class extends Controller {
 
             if (response.status === 302) {
 
-                console.log('Status 302 - Redirection');
+                //console.log('Status 302 - Redirection');
 
             } else if (response.ok) {
 
-                console.log('OK');
+                //console.log('OK');
 
             } else {
 
@@ -840,7 +840,7 @@ export default class extends Controller {
 
                 this.setDataPatients(data, population)
 
-                console.log(data)
+                //console.log(data)
 
             } else {
 
@@ -1380,7 +1380,7 @@ export default class extends Controller {
 
                 this.teamNameTarget.textContent = `${data.name}`
 
-                console.log(data)
+                //console.log(data)
 
             } else {
 

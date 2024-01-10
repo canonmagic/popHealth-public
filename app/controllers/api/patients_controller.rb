@@ -109,7 +109,7 @@ module Api
       else
         practice = nil
       end
-
+      
       success = BulkRecordImporter.import(params[:file], {}, practice)
       
       if success

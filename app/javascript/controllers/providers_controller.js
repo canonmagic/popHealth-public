@@ -25,7 +25,7 @@ export default class extends Controller {
 
                 this.renderTable(data);
 
-                console.log(data)
+                //console.log(data)
 
             } else {
 

@@ -26,13 +26,22 @@ Rails.application.routes.draw do
   # devise_for :users, :controllers => {:registrations => "registrations"}
   devise_for :users, :controllers => {
     :registrations => "registrations",
-    :omniauth_callbacks => 'azure_auth/omniauth_callbacks'  
+
+    #change by Jose Melendez:
+    #before:
+    #:omniauth_callbacks => 'azure_auth/omniauth_callbacks'
+    #after:
+    :omniauth_callbacks => 'azure/omniauth_callbacks'  
+    
     #:omniauth_callbacks => 'users/omniauth_callbacks' 
   }
 
   devise_scope :user do
     get '/users/sign_out' => 'devise/sessions#destroy' # This was neccesary, DELETE method is not working as intended
-    get 'azure_auth/processLogin', to: 'azure_auth/omniauth_callbacks#logout_from_ad'
+    #change by Jose Melendez:
+    # get 'azure_auth/processLogin', to: 'azure_auth/omniauth_callbacks#logout_from_ad'
+    get 'azure/processLogin', to: 'azure/omniauth_callbacks#logout_from_ad'
+
   end
 
   resources :practices

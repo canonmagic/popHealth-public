@@ -72,7 +72,7 @@
 .login-container {
     background-color: #133C55;
     width: 100vw;
-    height: 100vh !important;
+    height: 100vh;
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -91,7 +91,9 @@
 }
 
 .form-login-container {
-    background-color: #EFEFEF; 
+    background-color: #EFEFEF;
+    padding: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
 .form-sign-up-container {
@@ -139,11 +141,4 @@
 
 }
 
-.form-login-container {
-    background-color: #fff;
-    padding: 5px;
-    border-radius: 8px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-
-}
 

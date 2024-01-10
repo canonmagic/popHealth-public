@@ -46,7 +46,7 @@ export default class extends Controller {
 
             const segmentsName = pathName.split('/');
 
-            console.log(pathName, segmentsName);
+            //console.log(pathName, segmentsName);
 
             if (segmentsName.length > 2 && providerIds.includes(segmentsName[2])) {
 
@@ -219,7 +219,7 @@ export default class extends Controller {
 
         const segmentsName = pathName.split('/');
 
-        console.log(pathName, segmentsName)
+        //console.log(pathName, segmentsName)
 
         if (segmentsName.length > 2 && providerIds.includes(segmentsName[2])) {
 
@@ -332,7 +332,7 @@ export default class extends Controller {
             
         }
         
-        console.log(this.dataListChecked);
+        //console.log(this.dataListChecked);
 
         this.verifyButtonExport();
 
@@ -475,7 +475,7 @@ export default class extends Controller {
             });
         };
 
-        console.log(this.dataListChecked);
+        //console.log(this.dataListChecked);
 
         this.verifyButtonExport();
 
@@ -507,7 +507,7 @@ export default class extends Controller {
 
             const endDateFormat = this.changeDateFormat(endDate);
 
-            console.log(startDate, endDate);
+            //console.log(startDate, endDate);
       
             let listOfMeasure = JSON.parse(localStorage.getItem('tableData'));
             
@@ -517,13 +517,13 @@ export default class extends Controller {
                 
                 listOfMeasure[x].endDate = this.formatDate(endDateFormat);
 
-                console.log('end', listOfMeasure[x].endDate)
+                //console.log('end', listOfMeasure[x].endDate)
                 
             }
             
             localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
             
-            console.log(listOfMeasure);
+            //console.log(listOfMeasure);
 
             this.queryReportinRecord(startDateFormat, endDateFormat);
 
@@ -565,7 +565,7 @@ export default class extends Controller {
 
             const response = await fetch(url, options);
 
-            console.log(response)
+            //console.log(response)
 
             if (response.ok) {
 
@@ -819,7 +819,7 @@ export default class extends Controller {
 
                 const data = await response.json();
 
-                console.log(data)
+                //console.log(data)
 
                 this.providerId = data._id;
 
@@ -908,7 +908,7 @@ export default class extends Controller {
 
                 this.dataUserTeamTarget.textContent = `${data.name}`
 
-                console.log(data)
+                //console.log(data)
 
             } else {
 
@@ -938,7 +938,7 @@ export default class extends Controller {
 
                 const data = await response.json();
 
-                console.log(data);
+                //console.log(data);
 
 
             } else {
@@ -1039,7 +1039,7 @@ export default class extends Controller {
 
         //cell4.id = `porcentage-${measureId}`;
 
-        console.log(cell4.id)
+        //console.log(cell4.id)
 
         const spinner = this.createSpinnerLoading();
 
@@ -1185,7 +1185,7 @@ export default class extends Controller {
 
         const table = document.querySelector(".table");
 
-        console.log(table.row)
+        //console.log(table.row)
 
         this.activateMeasure(row.cells[2].innerText);
 
@@ -1195,7 +1195,7 @@ export default class extends Controller {
 
         this.removeMeasureFromLocal(row.cells[2].innerText);
 
-        console.log('hey', this.cmsId)
+        //console.log('hey', this.cmsId)
 
     };
 
@@ -1237,7 +1237,7 @@ export default class extends Controller {
 
         this.addMeasureToTable(this.cmsId, measureTitle, this.measureHqmfId);
 
-        console.log(this.cmsId, measureTitle, this.measureHqmfId)
+        //console.log(this.cmsId, measureTitle, this.measureHqmfId)
 
         this.deactivateMeasure(this.cmsId);
 
@@ -1260,7 +1260,7 @@ export default class extends Controller {
 
         };
 
-        console.log('NewRow', newRowData)
+        //console.log('NewRow', newRowData)
 
         const exists = tableData.some(element => element.measureId === measureId);
 
@@ -1272,7 +1272,7 @@ export default class extends Controller {
 
         };
 
-        console.log(tableData)
+        //console.log(tableData)
 
     }
 
@@ -1322,7 +1322,7 @@ export default class extends Controller {
 
             .then(iconMsg => {
 
-                console.log(iconMsg);
+                //console.log(iconMsg);
 
                 icon.setAttribute('title', iconMsg);
 
@@ -1407,7 +1407,7 @@ export default class extends Controller {
 
         const porcentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
 
-        console.log(numerator,denominator, porcentage)
+        //console.log(numerator,denominator, porcentage)
 
         this.porcentageMeasureResult = porcentage;
 
@@ -1419,7 +1419,7 @@ export default class extends Controller {
 
         porcentCanvas.id = `porcentage-${porcentageMeasureId}`;
 
-        console.log(porcentCanvas.id)
+        //console.log(porcentCanvas.id)
 
         porcentCanvas.width = 80;
 
@@ -1427,7 +1427,7 @@ export default class extends Controller {
 
         cell4.innerHTML = "";
 
-        console.log(cell4)
+        //console.log(cell4)
 
         cell4.appendChild(porcentCanvas);
 
@@ -1466,7 +1466,7 @@ export default class extends Controller {
 
                 const responseData = await response.json();
 
-                console.log(responseData);
+                //console.log(responseData);
 
                 let listOfMeasure = JSON.parse(localStorage.getItem('tableData'))
 
@@ -1478,7 +1478,7 @@ export default class extends Controller {
 
                         localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
 
-                        console.log(listOfMeasure);
+                        //console.log(listOfMeasure);
 
                         this.addResultToTable(responseData);
                         
@@ -1491,12 +1491,12 @@ export default class extends Controller {
 
             } else if(response.status === 200) {
 
-                console.log(`Respuesta distinta de JSON: ${response}`)
+                //console.log(`Respuesta distinta de JSON: ${response}`)
 
 
             }else {
 
-                console.log(`Respuesta else: ${response.statusText}`);
+                //console.log(`Respuesta else: ${response.statusText}`);
 
 
             }
@@ -1520,7 +1520,7 @@ export default class extends Controller {
 
                 } else {
 
-                    console.log('false')
+                    //console.log('false')
                     
                 }
             })
@@ -1605,7 +1605,7 @@ export default class extends Controller {
 
                 //fName += `&filter_preferences=null` 
 
-                console.log(fName)
+                //console.log(fName)
 
                 this.downloadReportXML(fName, data.cmsId);
 
@@ -1844,13 +1844,13 @@ export default class extends Controller {
 
             this.checkAutho();
 
-            console.log('button',cmsId)
+            //console.log('button',cmsId)
 
             this.deactivateMeasure(cmsId);
 
         });
 
-        console.log(`Table Data: ${tableData2}`)
+        //console.log(`Table Data: ${tableData2}`)
 
     };
 
@@ -1858,7 +1858,7 @@ export default class extends Controller {
 
         let listOfMeasures = JSON.parse(localStorage.getItem('tableData'));
 
-        console.log('Result1', listOfMeasures)
+        //console.log('Result1', listOfMeasures)
 
         let measureToRemove = measureId;
 
@@ -1870,7 +1870,7 @@ export default class extends Controller {
 
         localStorage.setItem('tableData', JSON.stringify(listOfMeasures));
 
-        console.log('Result', listOfMeasures)
+        //console.log('Result', listOfMeasures)
 
         /*
         let listOfMeasures = JSON.parse(localStorage.getItem('tableData'));

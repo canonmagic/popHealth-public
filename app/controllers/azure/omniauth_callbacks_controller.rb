@@ -17,13 +17,6 @@ class Azure::OmniauthCallbacksController < Devise::OmniauthCallbacksController
         end
     end
 
-    def azure_auth
-
-        super()
-
-
-    end
-
     def logout
         
         abort request.env['omniauth.auth'].inspect
