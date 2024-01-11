@@ -11,6 +11,7 @@ namespace :admin do
                      :email =>          "provideadmin@providemycompanyname.com",
                      :approved =>       true,
                      :admin =>          true,
+                     :staff_role =>     true,
                      :agree_license =>  true)
     admin_account.save!
     
