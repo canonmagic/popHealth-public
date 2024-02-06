@@ -59,8 +59,9 @@
                 </tbody>
             </table>
         </div>
-        <!--
         <div class="panel-footer panel-primary">
+
+            <!--
             <%= link_to '/admin/users', class: 'btn btn-primary' do %>
                 <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to Users
             <% end %>
@@ -68,9 +69,85 @@
             <%= link_to '/admin/patients', class: 'btn btn-primary' do %>
                 <span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span> Back to Patients
             <% end %>
+            -->
+
+            <button data-toggle="modal" data-target="#newPracticeModal" class="btn btn-success"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New</button>
+
+
+
         </div>
-        -->
     </div>
+
+    <!-- Create Practice Modal -->
+
+    <div class="modal fade" id="newPracticeModal" role="dialog" aria-labelledby="newPracticeModal">
+    
+        <div class="modal-dialog" role="document">
+        
+            <div class="modal-content">
+            
+                <div class="modal-header">
+
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                    
+                    <h4 class="modal-title" id="newPracticeModalLabel">Create New Practice</h4>
+                
+                </div>
+
+                <%= form_for @practice do |f| %>
+                    <div class="modal-body">
+
+                    <% if @practice.errors.any? %>
+
+                            <div id="error_explanation">
+                            
+                                <h2><%= pluralize(@practice.errors.count, "error") %> prohibited this practice from being saved:</h2>
+
+                                <ul>
+                                    <% @practice.errors.full_messages.each do |msg| %>
+
+                                        <li><%= msg %></li>
+                                    <% end %>
+                                </ul>
+                            </div>
+
+                    <% end %>
+
+                    <div class="form-group">
+                        <label for="practiceId">Name</label>
+                        <%= f.text_field :name, class:"form-control", id:"practiceId", required: true%>
+                    </div>
+
+                    <div class="form-group">
+                            <label for="organizationPractice">Organization</label>
+                            <%= f.text_field :organization, class:"form-control", id:"organizationPractice", required: true %>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="addressPractice">Address</label>
+                        <%= f.text_area :address, class:"form-control",id:"addressPractice" %>
+                    </div>
+
+                    <% if @practice.new_record? %>
+                        <div class="form-group">
+                            <label for="userPractice">User</label>
+                            <%= select_tag :user, options_for_select(@users), include_blank: true,class:"form-control", id:"userPractice" %>
+                        </div>
+                    <% end %>
+
+                    </div>
+
+                    <div class="modal-footer">
+
+                        <%= f.submit "Save", class:"btn btn-success pull-left" %>
+
+                    </div>
+                <% end %>
+            </div>
+        </div>
+    
+    </div>
+
 </div>
 
 <script>

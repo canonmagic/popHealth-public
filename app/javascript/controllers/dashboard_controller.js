@@ -174,7 +174,7 @@ export default class extends Controller {
 
                     return {
                         id: provider._id,
-                        fullName: provider.givenNames.join(' ') + ' ' + provider.familyName
+                        fullName: provider.givenNames ? provider.givenNames.join(' ') + ' ' + provider.familyName : 'N/A'
                     };
                 });
 

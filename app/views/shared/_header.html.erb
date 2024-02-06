@@ -55,8 +55,10 @@
                 <% if current_user.admin? && !APP_CONFIG['use_opml_structure']%> 
                   <li><%= link_to raw('<i class="glyphicon glyphicon-th-large"></i> Practices'), practices_path %></li> 
                 <% end %>
+                <!--
                 <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> Providers'), '/#providers'%></li>
-                <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> New Providers'), '/providers'%></li>
+                -->
+                <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> Providers'), '/providers'%></li>
                 <li><%= link_to raw('<i class="glyphicon glyphicon-list"></i> Manage Teams'), '/teams'%></li>
                 <% if current_user.admin? %>
                   <% if (APP_CONFIG['patient_management_enabled']) %>
@@ -67,8 +69,10 @@
                   <% end %>
                   <li><%= link_to raw('<i class="glyphicon glyphicon-user"></i> Users'), admin_users_path%></li>
                   <li><%= link_to raw('<i class="glyphicon glyphicon-list-alt"></i> Logs'), logs_index_path%></li>
-                  <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> New Measures'), measures_path%></li>
+                  <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> Measures'), measures_path%></li>
+                  <!--
                   <li><%= link_to raw('<i class="glyphicon glyphicon-plus"></i> Measures'), '/#admin/measures'%></li>
+                  -->
                 <% end %>
               <% end %>
             </ul>

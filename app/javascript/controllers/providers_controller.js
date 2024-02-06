@@ -53,7 +53,11 @@ export default class extends Controller {
                 <td>${provider.npi ? provider.npi : 'N/A'}</td>
                 <td>${provider.specialty ? provider.specialty : 'N/A'}</td>
                 <td><a href="../dashboard/${provider._id}">${provider.cda_identifiers[0].extension ? provider.cda_identifiers[0].extension : 'N/A'}</a></td>
-                <td><a href="../dashboard/${provider._id}">${provider.givenNames[0] && provider.familyName ? provider.familyName + ' ' + provider.givenNames[0] : 'N/A'}<a/></td>
+                <td>
+                    <a href="../dashboard/${provider._id}">
+                    ${provider.givenNames && provider.givenNames[0] && provider.familyName ? provider.familyName + ' ' + provider.givenNames[0] : 'N/A'}
+                    </a>
+                </td>
                 <td>${provider.tax_id ? provider.tax_id : 'N/A'}</td>
                 <td>${provider.phone ? provider.phone : 'N/A'}</td>
                 <td>${provider.practiceName ? provider.practiceName : 'N/A' }</td>
