@@ -1,8 +1,7 @@
 require 'measure/loader.rb'
-#require 'hds/measure.rb'
-require 'cql_bundle_importer.rb'# Añadido por yockler
-require './contrib/measure_dates.rb' # Añadido por yockler
-require './app/models/tracker.rb' # Añadido por yockler
+require 'cql_bundle_importer.rb'
+require './contrib/measure_dates.rb'
+require './app/models/tracker.rb'
 
 module Api
 
@@ -99,8 +98,7 @@ module Api
     api :POST, "/measures", "Load a measure into popHealth"
     description "The uploaded measure must be in the popHealth JSON measure format. This will not accept HQMF definitions of measures."
     def create
-      authorize! :create, CQM::Measure
-      # Added by yockler (We can now import bundles using this)
+      authorize! :create, Measure
       bundle_file = File.new(params[:measure_file].tempfile.path)
       importer = CqlBundle::CqlBundleImporter
       @bundle = importer.import(bundle_file, Tracker.new, false)
@@ -139,8 +137,8 @@ module Api
     param :id, String, :desc => 'The HQMF id for the CQM to calculate', :required => true
     description "Removes the measure from popHealth. It also removes any calculations for that measure."
     def destroy
-      authorize! :delete, CQM::Measure
-      measure = CQM::Measure.where({"hqmf_id" => params[:id]})
+      authorize! :delete, Measure
+      measure = Measure.where({"hqmf_id" => params[:id]})
       #delete all of the pateint and query cache entries for the measure
       #HealthDataStandards::CQM::PatientCache.where({"value.measure_id" => params[:id]}).destroy
       #HealthDataStandards::CQM::QueryCache.where({"measure_id" => params[:id]}).destroy
@@ -150,8 +148,8 @@ module Api
     end
 
     def update_metadata
-      authorize! :update, CQM::Measure
-      measures = CQM::Measure.where({ hqmf_id: params[:hqmf_id]})
+      authorize! :update, Measure
+      measures = Measure.where({ hqmf_id: params[:hqmf_id]})
       measures.each do |m|
         m.update_attributes(params[:measure])
         m.save
@@ -172,7 +170,7 @@ module Api
 
        }
       Measures::Loader.finalize_measure(params[:hqmf_id],params[:vsac_username],params[:vsac_password],measure_details)
-      measure = CQM::Measure.where({hqmf_id: params[:hqmf_id]}).first
+      measure = Measure.where({hqmf_id: params[:hqmf_id]}).first
       log_api_call LogAction::UPDATE, "Finalize measure"
       render json: measure, serializer: HealthDataStandards::CQM::MeasureSerializer
       rescue => e
@@ -183,7 +181,7 @@ module Api
   private
 
     def validate_authorization!
-      authorize! :read, CQM::Measure
+      authorize! :read, Measure
     end
 
     def create_filter

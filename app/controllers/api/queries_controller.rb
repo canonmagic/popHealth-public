@@ -222,7 +222,6 @@ module Api
           end
 
         else
-
           #CQM::QualityReport.where('measure_id' => params[:measure_id]).destroy_all
           #CQM::IndividualResult.where('measure_id' => params[:measure_id]).destroy_all
           qc = QualityReport.new('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "status" => {"state"=> "pending"}, "filters" => options[:filters], 'filter_preferences' => current_user.preferences['c4filters'])
@@ -276,7 +275,7 @@ module Api
 
             @results = erc.aggregate_results_for_measures(@msrs)
 
-            qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "sub_id" => params[:sub_id], "filters.providers" => {'$in': params[:providers]},'filter_preferences' => current_user.preferences['c4filters']).first
+              qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "sub_id" => params[:sub_id], "filters.providers" => {'$in': params[:providers]},'filter_preferences' => current_user.preferences['c4filters']).first
 
             if qc.status["state"] == "completed" && (qc.filter_preferences == current_user.preferences['c4filters'] || (qc.filter_preferences.nil? && current_user.preferences['c4filters']))
 
@@ -513,6 +512,7 @@ module Api
 
     api :GET, '/queries/:id/patient_results[?population=true|false]',"Retrieve patients relevant to a clinical quality measure calculation"
     param :id, String, :desc => 'The id of the quality measure calculation', :required => true
+    param :population_set, String, :desc => 'The Population set to be used during filtering', :required => false
     param :ipp, /true|false/, :desc => 'Ensure patients meet the initial patient population for the measure', :required => false
     param :denom, /true|false/, :desc => 'Ensure patients meet the denominator for the measure', :required => false
     param :numer, /true|false/, :desc => 'Ensure patients meet the numerator for the measure', :required => false
@@ -532,7 +532,7 @@ module Api
       qr = QualityReport.find(params[:id])
       authorize! :read, qr
       # this returns a criteria object so we can filter it additionally as needed
-      results = qr.patient_results
+      results = qr.patient_results(params[:population_set])
       log_api_call LogAction::VIEW, "Get patient results for measure calculation", true
       render json: paginate(patient_results_api_query_url(qr), results.where(build_patient_filter))
     end

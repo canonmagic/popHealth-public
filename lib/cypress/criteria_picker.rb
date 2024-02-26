@@ -12,7 +12,7 @@ module Cypress
     end
 
     def self.genders(patient, _options = {})
-      if patient.gender.nil?# Yockler added this, when gender is nil, just assume as unknown for further reference and filtering
+      if patient.gender.nil?
         ["UNK"]
       else
         [patient.gender]

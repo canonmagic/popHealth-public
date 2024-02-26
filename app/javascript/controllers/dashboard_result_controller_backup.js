@@ -4,7 +4,7 @@ import { Controller } from "@hotwired/stimulus";
 
 export default class extends Controller {
     
-    static targets = ['dataPercentage', 'dataFraction', 'measureId', 'measureName', 'measurePeriod', 'measureDescription', 'initialPatientProp', 'numerator', 'denominator', 'exclusions', 'exceptions', 'measurePopulation','resultsFilterProviders', 'providerNpi', 'providerTin', 'providerType', 'providerAddress', 'patientPayer', 'patientAge', 'patientAgeFrom', 'patientGender', 'patientRace', 'patientEthnicity', 'patientProblems', 'teamName'];
+    static targets = ['dataPercentage', 'dataFraction', 'measureId', 'measureName', 'measurePeriod', 'measureDescription', 'initialPatientProp', 'numerator', 'denominator', 'exclusions', 'exceptions', 'resultsFilterProviders', 'providerNpi', 'providerTin', 'providerType', 'providerAddress', 'patientPayer', 'patientAge', 'patientAgeFrom', 'patientGender', 'patientRace', 'patientEthnicity', 'patientProblems', 'teamName'];
 
     providerId = null;
 
@@ -173,11 +173,14 @@ export default class extends Controller {
 
         let listOfMeasure = JSON.parse(localStorage.getItem('tableData'));
 
+
+
         for (let i = 0; i < listOfMeasure.length; i++) {
 
             let element = listOfMeasure[i];
 
             if (element.measureId === this.measureHqmfId) {
+
                 this.submitQueryCalculate(element.measureId, element.providers, element.startDate, element.endDate);
             }
 
@@ -190,6 +193,7 @@ export default class extends Controller {
         this.showLoadingMessage();
 
         try {
+
             const url = '/api/queries';
 
             const requestData = {
@@ -215,29 +219,47 @@ export default class extends Controller {
 
             if (response.ok) {
 
+                ////console.log(response)
+
                 const responseData = await response.json();
 
-                this.setQualityMetrics(responseData[measureId]);
+                //console.log(responseData)
+
+                this.setQualityMetrics(responseData);
 
                 this.measureIdResult = responseData._id;
 
-                let populationSetKeys = Object.keys(responseData[measureId]);
+                let populationSetKeys = Object.keys(responseData).filter(key => key.startsWith('PopulationSet'));
 
                 this.buildPopulationFilter(populationSetKeys);
 
-                let default_population = this.population ?? (populationSetKeys.includes('PopulationSet_1') ? 'PopulationSet_1' : populationSetKeys[0]);
-                let default_data = responseData[measureId][default_population];
+                //console.log(populationSetKeys)
 
-                this.buildMeasureFilters([
+                if (Object.values(responseData)[0] && Object.values(responseData)[0]["PopulationSet_1"]) {
 
-                    { name: 'Initial Patient Pop.', value: default_data.IPP, code: 'ipp' },
-                    { name: 'Numerator', value: default_data.NUMER, code: 'numer' },
-                    { name: 'Denominator', value: default_data.DENOM, code: 'denom' },
-                    { name: 'Exclusions', value: default_data.DENEX, code: 'denex' },
-                    { name: 'Exceptions', value: default_data.DENEXCEP, code: 'denexcep' },
-                    { name: 'Measure Population', value: default_data.MSRPOPL, code: 'msrpopl' }
+                    this.buildMeasureFilters([
 
-                ]);
+                        { name: 'Initial Patient Pop.', value: responseData.IPP, code: 'ipp' },
+                        { name: 'Numerator', value: responseData.NUMER, code: 'numer' },
+                        { name: 'Denominator', value: responseData.DENOM, code: 'denom' },
+                        { name: 'Exclusions', value: responseData.DENEX, code: 'denex' },
+                        { name: 'Exceptions', value: responseData.DENEXCEP, code: 'denexcep' }
+
+                    ]);
+
+                } else if(responseData[`${this.population}`]) {
+
+                    const populationSet = responseData[`${this.population}`];
+
+                    this.buildMeasureFilters([
+                        { name: 'Initial Patient Pop.', value: populationSet.IPP, code: 'ipp' },
+                        { name: 'Numerator', value: populationSet.NUMER, code: 'numer' },
+                        { name: 'Denominator', value: populationSet.DENOM, code: 'denom' },
+                        { name: 'Exclusions', value: populationSet.DENEX, code: 'denex' },
+                        { name: 'Exceptions', value: populationSet.DENEXCEP, code: 'denexcep' }
+                    ]);
+
+                }
 
                 this.loadPatients(this.populationCriteria);
 
@@ -688,27 +710,54 @@ export default class extends Controller {
     };
     */
 
-    setQualityMetrics(data) {
+    setQualityMetrics(dataResult) {
 
-        let populationSetKeys = Object.keys(data);
+        //console.log(dataResult)
 
-        let numerator, denominator, percentage;
+        if (Object.values(dataResult)[0] && Object.values(dataResult)[0]["PopulationSet_1"]) {
 
-        // Take set 1 or first population as default
-        let default_population = this.population ?? (populationSetKeys.includes('PopulationSet_1') ? 'PopulationSet_1' : populationSetKeys[0]);
-        let default_data = data[default_population];
-        denominator = default_data.DENEX ? (parseInt(default_data.DENOM) - parseInt(default_data.DENEX)) : parseInt(default_data.DENOM);
-        denominator = default_data.DENEXCEP ? (denominator - parseInt(default_data.DENEXCEP)) : denominator;
-        numerator = default_data.NUMER;
-        percentage = (numerator / denominator) * 100;
+            let denominator = dataResult.DENEX !== null ? (parseInt(dataResult.DENOM) - parseInt(dataResult.DENEX)) : parseInt(dataResult.DENOM);
 
-        this.drawPercentageCircle('canvasQualityMetrics', percentage.toFixed(2))
+            denominator = dataResult.DENEXCEP !== null ? (denominator - parseInt(dataResult.DENEXCEP)) : denominator;
 
-        const numeratorTarget = document.querySelector('[data-dashboard-result-target="numerator"]');
-        const denominatorTarget = document.querySelector('[data-dashboard-result-target="denominator"]');
+            const numerator = dataResult.NUMER;
 
-        numeratorTarget.textContent = numerator;
-        denominatorTarget.textContent = denominator;
+            const percentage = (numerator / denominator) * 100;
+
+            this.drawPercentageCircle('canvasQualityMetrics', percentage.toFixed(2))
+
+            const numeratorTarget = document.querySelector('[data-dashboard-result-target="numerator"]');
+
+            const denominatorTarget = document.querySelector('[data-dashboard-result-target="denominator"]');
+
+            numeratorTarget.textContent = numerator;
+
+            denominatorTarget.textContent = denominator;
+
+        } else if (dataResult[`${this.population}`]) {
+
+            const populationSet = dataResult[`${this.population}`];
+
+            let denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined ) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM);
+
+            denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
+
+            const numerator = populationSet.NUMER;
+
+            const percentage = (numerator / denominator) * 100;
+
+            this.drawPercentageCircle('canvasQualityMetrics', percentage.toFixed(2))
+
+            const numeratorTarget = document.querySelector('[data-dashboard-result-target="numerator"]');
+
+            const denominatorTarget = document.querySelector('[data-dashboard-result-target="denominator"]');
+
+            numeratorTarget.textContent = numerator;
+
+            denominatorTarget.textContent = denominator;
+
+        }
+
     };
 
     buildMeasureFilters(filterData) {
@@ -836,7 +885,8 @@ export default class extends Controller {
 
         const population = populationCriteria;
 
-        try {            
+        try {
+            
             const response = await fetch(`/api/queries/${this.measureIdResult}/patient_results?${population}=true&provider_id=${this.providerId}&population_set=${this.population}`);
 
             if(response.ok) {
@@ -996,6 +1046,7 @@ export default class extends Controller {
         });
 
         if (result.isConfirmed) {
+
             const default_provider_id = this.providerId;
 
             try {
@@ -1419,6 +1470,7 @@ export default class extends Controller {
         filterPopulationList.innerHTML = '';
 
         filterPopulationSelect.forEach((filter) => {
+
             const listItem = document.createElement('li');
 
             listItem.classList.add('list-inside');
@@ -1440,9 +1492,12 @@ export default class extends Controller {
             filterPopulationList.appendChild(listItem);
 
             button.setAttribute('data-action', 'click->dashboard-result#changePopulation')
+
         });
 
         this.verifyPopulation();
+
+
     }
 
     async changePopulation(event) {

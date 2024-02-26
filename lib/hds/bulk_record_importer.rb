@@ -101,7 +101,7 @@ class BulkRecordImporter
       #elsif doc.at_xpath("/cda:ClinicalDocument/cda:templateId[@root='2.16.840.1.113883.10.20.24.1.2']")
         begin
           patient_data, _warnings, codes  = QRDA::Cat1::PatientImporter.instance.parse_cat1(doc)
-          patient_data = self.update_mrn(patient_data, doc)#Yockler has been here
+          patient_data = self.update_mrn(patient_data, doc)
           patient_data = self.update_address(patient_data, doc)
           patient_data.bundleId = Bundle.all.first.id
           bundle = Bundle.all.first
@@ -278,7 +278,7 @@ class BulkRecordImporter
   def self.checkdedup(patient_data, practice_id=nil)
     db = Mongoid.default_client
     #mrn = qdm_patient.extendedData['medical_record_number']
-    mrn = patient_data.medical_record_number#Yockler has been here
+    mrn = patient_data.medical_record_number
     first = patient_data.givenNames[0]
     last = patient_data.familyName
     street = patient_data.addresses.first.street.first
@@ -289,7 +289,7 @@ class BulkRecordImporter
     
     demochange_pipeline = []
     demochange_pipeline << {'$match' => { '$or' => [
-      {givenNames: first, familyName: last, medical_record_number: mrn},#Yockler has been here
+      {givenNames: first, familyName: last, medical_record_number: mrn},
       {givenNames: first, familyName: last, 'addresses.street': street, 'addresses.city': city, 'addresses.state': state, 'addresses.zip': zip, 'qdmPatient.birthDatetime': dob},
       {givenNames: first, 'addresses.street': street, 'addresses.city': city, 'addresses.state': state, 'addresses.zip': zip, 'qdmPatient.birthDatetime': dob},
       {familyName: last, 'addresses.street': street, 'addresses.city': city, 'addresses.state': state, 'addresses.zip': zip, 'qdmPatient.birthDatetime': dob},

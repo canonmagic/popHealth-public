@@ -46,6 +46,8 @@ export default class extends Controller {
 
             const segmentsName = pathName.split('/');
 
+            ////console.log(pathName, segmentsName);
+
             if (segmentsName.length > 2 && providerIds.includes(segmentsName[2])) {
 
                 try {
@@ -178,6 +180,7 @@ export default class extends Controller {
 
             } else {
 
+                //console.log('Error');
             }
         } catch (error) {
 
@@ -215,6 +218,8 @@ export default class extends Controller {
         const pathName = window.location.pathname;
 
         const segmentsName = pathName.split('/');
+
+        ////console.log(pathName, segmentsName)
 
         if (segmentsName.length > 2 && providerIds.includes(segmentsName[2])) {
 
@@ -327,6 +332,8 @@ export default class extends Controller {
             
         }
         
+        ////console.log(this.dataListChecked);
+
         this.verifyButtonExport();
 
     };
@@ -468,6 +475,8 @@ export default class extends Controller {
             });
         };
 
+        ////console.log(this.dataListChecked);
+
         this.verifyButtonExport();
 
     };
@@ -497,6 +506,8 @@ export default class extends Controller {
             const startDateFormat = this.changeDateFormat(startDate);
 
             const endDateFormat = this.changeDateFormat(endDate);
+
+            ////console.log(startDate, endDate);
       
             let listOfMeasure = JSON.parse(localStorage.getItem('tableData'));
             
@@ -505,11 +516,15 @@ export default class extends Controller {
                 listOfMeasure[x].startDate = this.formatDate(startDateFormat);
                 
                 listOfMeasure[x].endDate = this.formatDate(endDateFormat);
+
+                ////console.log('end', listOfMeasure[x].endDate)
                 
             }
             
             localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
             
+            ////console.log(listOfMeasure);
+
             this.queryReportinRecord(startDateFormat, endDateFormat);
 
         }
@@ -549,6 +564,8 @@ export default class extends Controller {
             };
 
             const response = await fetch(url, options);
+
+            ////console.log(response)
 
             if (response.ok) {
 
@@ -802,6 +819,8 @@ export default class extends Controller {
 
                 const data = await response.json();
 
+                ////console.log(data)
+
                 this.providerId = data._id;
 
                 this.addDataProvider(data);
@@ -865,6 +884,7 @@ export default class extends Controller {
 
             } else {
 
+                //console.log(error);
             }
 
         } catch (error) {
@@ -887,8 +907,11 @@ export default class extends Controller {
 
                 this.dataUserTeamTarget.textContent = `${data.name}`
 
+                ////console.log(data)
+
             } else {
 
+                //console.log('error')
             }
 
             
@@ -914,9 +937,12 @@ export default class extends Controller {
 
                 const data = await response.json();
 
+                ////console.log(data);
+
 
             } else {
 
+                //console.log(error);
             }
 
         } catch (error) {
@@ -1015,6 +1041,8 @@ export default class extends Controller {
         const cell4 = newRow.insertCell(4);
 
         //cell4.id = `porcentage-${measureId}`;
+
+        ////console.log(cell4.id)
 
         const spinner = this.createSpinnerLoading();
 
@@ -1165,6 +1193,8 @@ export default class extends Controller {
 
         const table = document.querySelector(".table");
 
+        ////console.log(table.row)
+
         this.activateMeasure(row.cells[2].innerText);
 
         table.deleteRow(row.rowIndex);
@@ -1172,6 +1202,8 @@ export default class extends Controller {
         //this.deactivateButtonExportReport();
 
         this.removeMeasureFromLocal(row.cells[2].innerText);
+
+        ////console.log('hey', this.cmsId)
 
     };
 
@@ -1213,6 +1245,8 @@ export default class extends Controller {
 
         this.addMeasureToTable(this.cmsId, measureTitle, this.measureHqmfId);
 
+        ////console.log(this.cmsId, measureTitle, this.measureHqmfId)
+
         this.deactivateMeasure(this.cmsId);
 
     };
@@ -1235,6 +1269,8 @@ export default class extends Controller {
 
         };
 
+        ////console.log('NewRow', newRowData)
+
         const exists = tableData.some(element => element.measureId === measureId);
 
         if (!exists) {
@@ -1244,6 +1280,9 @@ export default class extends Controller {
             localStorage.setItem('tableData', JSON.stringify(tableData));
 
         };
+
+        ////console.log(tableData)
+
     }
 
     extractStartDate() {
@@ -1292,6 +1331,8 @@ export default class extends Controller {
 
             .then(iconMsg => {
 
+                ////console.log(iconMsg);
+
                 icon.setAttribute('title', iconMsg);
 
             })
@@ -1313,11 +1354,17 @@ export default class extends Controller {
 
         // NUMERATOR/DENOMINATOR
 
+        //console.log('Here')
+
         let numerator;
 
         let denominator;
 
+        //console.log(dataResult);
+
         const populationSetKeys = Object.keys(dataResult).filter(key => key.startsWith('PopulationSet'))
+
+        //console.log(populationSetKeys)
 
         if (dataResult[`${measureIdResult}`] && dataResult[`${measureIdResult}`]["PopulationSet_1"]) {
 
@@ -1386,6 +1433,8 @@ export default class extends Controller {
 
             const populationSet = dataResult["PopulationSet_1"];
 
+            //console.log(populationSet.DENEX)
+
             denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
             
             denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ?  (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
@@ -1394,7 +1443,13 @@ export default class extends Controller {
             
         } else if (populationSetKeys.length > 1) {
 
+            //Esto sirve
+
+            //console.log("Mas de un population")
+
             const populationSet = dataResult["PopulationSet_1"];
+
+            //console.log(populationSet.DENEX)
 
             denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
 
@@ -1409,6 +1464,18 @@ export default class extends Controller {
 
         
         const cell3 = targetRow.cells[5];
+
+        /*
+
+        const numeratorDenominator = document.createElement("span");
+
+        numeratorDenominator.innerHTML = `${numerator}/${denominator}`;
+
+        cell3.innerHTML = "";
+
+        cell3.appendChild(numeratorDenominator);
+
+        */
 
         const numeratorDenominator = document.createElement("div");
         numeratorDenominator.classList.add("fraction");
@@ -1431,7 +1498,28 @@ export default class extends Controller {
         cell3.innerHTML = "";
         cell3.appendChild(numeratorDenominator);
 
+
+        //PORCENTAGE
+
+        /*
+
+        const porcentage = (numerator / denominator)*100;
+
+        const cell4 = targetRow.cells[2];
+
+        const porcent = document.createElement("td");
+
+        porcent.innerHTML = `<h2>${porcentage}%</h2>`;
+
+        cell4.innerHTML = "";
+
+        cell4.appendChild(porcent);
+
+        */
+
         const porcentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
+
+        //console.log(numerator,denominator, porcentage)
 
         this.porcentageMeasureResult = porcentage;
 
@@ -1443,11 +1531,15 @@ export default class extends Controller {
 
         porcentCanvas.id = `porcentage-${porcentageMeasureId}`;
 
+        //console.log(porcentCanvas.id)
+
         porcentCanvas.width = 80;
 
         porcentCanvas.height = 80;
 
         cell4.innerHTML = "";
+
+        //console.log(cell4)
 
         cell4.appendChild(porcentCanvas);
 
@@ -1496,22 +1588,52 @@ export default class extends Controller {
 
             const response = await fetch(url, options);
 
+            //console.log('RESPONSE')
+
+            //console.log(response)
+
             let reloadPage = true;
 
             if (response.ok && response.headers.get('Content-Type')?.includes('application/json')) {
 
                 const responseData = await response.json();
 
+                //console.log(responseData);
+
                 let listOfMeasure = JSON.parse(localStorage.getItem('tableData'))
 
                 for(let x = 0; x < listOfMeasure.length; x++) {
 
-                    let measureId = listOfMeasure[x].measureId;
-                    let data = responseData[measureId];
-                    localStorage.setItem(`${measureId}-responseData`, JSON.stringify(data));
-                    listOfMeasure[x].status = 'completed';
-                    localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
-                    this.addResultFromLocalStorage(measureId);
+                    //console.log(listOfMeasure);
+
+                    //Correción de bug: cuando se trata con mas de una estratificación, la estructura de la respuesta cambia, entonces el ID del measure se ubica en un campo distinto y no en responseData[0]
+
+                    const populationSetKeys = Object.keys(responseData).filter(key => key.startsWith('PopulationSet'))
+
+                    //console.log(populationSetKeys)
+
+                    if (listOfMeasure[x].measureId === Object.keys(responseData)[0] || (listOfMeasure[x].measureId === responseData.PopulationSet_1.measure_id && populationSetKeys.length > 0))
+                    
+                    {
+                        let measureIdResult = listOfMeasure[x].measureId;
+
+                        localStorage.setItem(`${measureIdResult}-responseData`, JSON.stringify(responseData));
+
+                        listOfMeasure[x].status = 'completed';
+
+                        localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
+
+                        //console.log(listOfMeasure);
+
+                        //console.log('Se añaden los resultados a la tabla')
+                        
+                        this.addResultFromLocalStorage(measureIdResult);
+
+                        //this.addResultToTable(responseData, measureIdResult);
+
+                        
+                    }
+
                 }
                 
 
@@ -1520,7 +1642,12 @@ export default class extends Controller {
 
             } else if(response.status === 200) {
 
+                //console.log(`Respuesta distinta de JSON: ${response}`)
+
+
             }else {
+
+                //console.log(`Respuesta else: ${response.statusText}`);
 
                 if(reloadPage) {
 
@@ -1539,6 +1666,26 @@ export default class extends Controller {
                             window.location.reload();
                         }
                     });
+
+
+                    
+
+                    /*
+
+
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Errror',
+                        text: 'An error occurred. Please reload page.'
+                    });
+
+                    setTimeout(() => {
+
+                        window.location.reload();
+
+                    }, 2000);
+
+                    */
                 }
             }
 
@@ -1560,6 +1707,8 @@ export default class extends Controller {
                     return response.json();
 
                 } else {
+
+                    ////console.log('false')
                     
                 }
             })
@@ -1740,9 +1889,12 @@ export default class extends Controller {
 
             } else {
 
+                //console.log('error')
             }
 
         } catch (error) {
+
+            //console.log(error)
             
         }
 
@@ -1878,14 +2030,21 @@ export default class extends Controller {
 
             this.checkAutho();
 
+            ////console.log('button',cmsId)
+
             this.deactivateMeasure(cmsId);
 
         });
+
+        ////console.log(`Table Data: ${tableData2}`)
+
     };
 
     removeMeasureFromLocal(measureId) {
 
         let listOfMeasures = JSON.parse(localStorage.getItem('tableData'));
+
+        ////console.log('Result1', listOfMeasures)
 
         let measureToRemove = measureId;
 
@@ -1896,6 +2055,8 @@ export default class extends Controller {
         });
 
         localStorage.setItem('tableData', JSON.stringify(listOfMeasures));
+
+        ////console.log('Result', listOfMeasures)
 
         /*
         let listOfMeasures = JSON.parse(localStorage.getItem('tableData'));
@@ -1913,161 +2074,386 @@ export default class extends Controller {
 
     };
 
-    addResultFromLocalStorage(measureId, population = null) {
+    addResultFromLocalStorage(measureIdResult, population = null) {
 
         //Load data from localStorage:
-        let data = JSON.parse(localStorage.getItem(`${measureId}-responseData`));
-        let populationSetKeys = Object.keys(data);
+
+        let dataResult = JSON.parse(localStorage.getItem(`${measureIdResult}-responseData`));
+
+        //console.log('Melendez Here')
+
+        let populationSetKeys = Object.keys(dataResult).filter(key => key.startsWith('PopulationSet')) ? Object.keys(dataResult).filter(key => key.startsWith('PopulationSet')) : null;
+
+        //console.log(populationSetKeys)
 
         //Update tooltip-message:
-        let icon = document.getElementById(`icon-${measureId}`);
 
-        this.loadMeasureDetail(`${measureId}`)
-            .then(iconMsg => icon.setAttribute('title', iconMsg))
-            .catch(error => console.error(error));
+        if(population === null) {
 
-        let targetRowId = `data-${measureId}`;
+            //console.log('Es null')
 
-        const targetRow = document.getElementById(targetRowId);
+            let icon = document.getElementById(`icon-${measureIdResult}`);
 
-        if (!targetRow)
-            return;
+            this.loadMeasureDetail(`${measureIdResult}`)
 
-        let numerator, denominator;
+                .then(iconMsg => {
 
-        // Take set 1 or first population as default
-        let default_population = population ?? (populationSetKeys.includes('PopulationSet_1') ? 'PopulationSet_1' : populationSetKeys[0]);
-        let default_data = data[default_population];
-        denominator = default_data.DENEX ? (parseInt(default_data.DENOM) - parseInt(default_data.DENEX)) : parseInt(default_data.DENOM);
-        denominator = default_data.DENEXCEP ? (denominator - parseInt(default_data.DENEXCEP)) : denominator;
-        numerator = default_data.NUMER;
+                    ////console.log(iconMsg);
 
-        //Add Population Button
-        const buttonGroup = document.createElement("div");
-        buttonGroup.id = `btn-group-${measureId}`;
-        buttonGroup.classList.add("btn-group");
+                    icon.setAttribute('title', iconMsg);
 
-        const mainButton = document.createElement("button");
-        mainButton.setAttribute("type", "button");
-        mainButton.classList.add("btn", "btn-warning");
-        mainButton.id = 'btn-population'
+                })
 
-        mainButton.textContent = default_population;
-        
-        const dropdownMenu = document.createElement("ul");
+                .catch(error => console.error(error));
 
-        // Let's ensure there is at least 1 additional population
-        if(!populationSetKeys.length > 1)
-        {
-            mainButton.disabled = true;
-            mainButton.classList.remove('active')
-        }else
-        {
-            mainButton.classList.add("dropdown-toggle");
-            mainButton.setAttribute("data-toggle", "dropdown");
-            mainButton.setAttribute("aria-haspopup", "true");
-            mainButton.setAttribute("aria-expanded", "false");
+            //const tableBody = document.getElementById('measureResultTable');
 
+            let targetRowId = `data-${measureIdResult}`;
+
+            const targetRow = document.getElementById(targetRowId);
+
+            if (!targetRow) {
+
+                return;
+            }
+
+            //const newRow = tableBody.rows[tableBody.rows.length - 1];
+
+            // NUMERATOR/DENOMINATOR
+
+            //console.log('Here')
+
+            let numerator;
+
+            let denominator;
+
+            //console.log(dataResult);
+
+            //Specific Population
+
+            //console.log(`Populations: ${populationSetKeys}`)
+
+
+            if (dataResult[`${measureIdResult}`] && dataResult[`${measureIdResult}`]["PopulationSet_1"]) {
+
+                denominator = dataResult.DENEX !== null ? (parseInt(dataResult.DENOM) - parseInt(dataResult.DENEX)) : parseInt(dataResult.DENOM);
+
+                denominator = dataResult.DENEXCEP !== null ? (denominator - parseInt(dataResult.DENEXCEP)) : denominator;
+
+                numerator = dataResult.NUMER;
+
+                //Add Population Button
+
+                const buttonGroup = document.createElement("div");
+                buttonGroup.classList.add("btn-group");
+
+                const mainButton = document.createElement("button");
+                mainButton.setAttribute("type", "button");
+                mainButton.classList.add("btn", "btn-warning");
+                mainButton.id = 'btn-population'
+
+                mainButton.textContent = "PopulationSet_1"
+                mainButton.disabled = true;
+                mainButton.classList.remove('active')
+
+
+                buttonGroup.appendChild(mainButton);
+
+                // Obtener el elemento td donde deseas agregar el botón
+                const td = document.getElementById("population-set");
+
+                // Agregar el botón desplegable al td
+                td.appendChild(buttonGroup);
+
+
+
+
+
+            } else if (dataResult["PopulationSet_1"]) {
+
+                //añadir && populationSetKeys.length === 1`
+
+                const buttonGroup = document.createElement("div");
+                buttonGroup.classList.add("btn-group");
+
+                const mainButton = document.createElement("button");
+                mainButton.setAttribute("type", "button");
+                mainButton.classList.add("btn", "btn-warning", "dropdown-toggle");
+                mainButton.id = 'btn-population'
+                mainButton.setAttribute("data-toggle", "dropdown");
+                mainButton.setAttribute("aria-haspopup", "true");
+                mainButton.setAttribute("aria-expanded", "false");
+                mainButton.textContent = "Population Set 1 "
+
+                const caretSpan = document.createElement("span");
+                caretSpan.classList.add("caret");
+
+                mainButton.appendChild(caretSpan);
+
+                const dropdownMenu = document.createElement("ul");
+                dropdownMenu.classList.add("dropdown-menu");
+                dropdownMenu.style.left = "50%";
+                dropdownMenu.style.transform = "translateX(-50%)";
+
+                populationSetKeys.forEach(name => {
+
+                    const dropdownItem = document.createElement("li");
+
+                    const dropdownLink = document.createElement("a");
+
+                    dropdownLink.setAttribute("href", "#");
+
+                    dropdownLink.setAttribute("data-action", "click->dashboard#changePopulation")
+
+                    dropdownLink.setAttribute("data-population", `${name}`)
+
+                    dropdownLink.setAttribute("data-resultid", `${measureIdResult}`)
+
+                    dropdownLink.textContent = name;
+
+                    dropdownItem.appendChild(dropdownLink);
+
+                    dropdownMenu.appendChild(dropdownItem);
+
+                });
+
+                buttonGroup.appendChild(mainButton);
+
+                buttonGroup.appendChild(dropdownMenu);
+
+                // Establecer margen izquierdo al botón
+                buttonGroup.style.marginLeft = "10px";
+
+                // Obtener el elemento td donde deseas agregar el botón
+                const td = document.getElementById("population-set");
+
+                // Agregar el botón desplegable al td
+                td.appendChild(buttonGroup);
+
+
+                const populationSet = dataResult["PopulationSet_1"];
+
+                //console.log(populationSet.DENEX)
+
+                denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
+
+                denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
+
+                numerator = parseInt(populationSet.NUMER)
+
+            } else if (populationSetKeys.length > 1) {
+
+                //Esto sirve
+
+                //console.log("Mas de un population")
+
+                const populationSet = dataResult["PopulationSet_1"];
+
+                //console.log(populationSet.DENEX)
+
+                denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
+
+                denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
+
+                numerator = parseInt(populationSet.NUMER)
+
+            }
+
+
+            const cell3 = targetRow.cells[5];
+
+            /*
+    
+            const numeratorDenominator = document.createElement("span");
+    
+            numeratorDenominator.innerHTML = `${numerator}/${denominator}`;
+    
+            cell3.innerHTML = "";
+    
+            cell3.appendChild(numeratorDenominator);
+    
+            */
+
+            const numeratorDenominator = document.createElement("div");
+            numeratorDenominator.classList.add("fraction");
+
+            const numeratorElement = document.createElement("span");
+            numeratorElement.classList.add("numerator");
+            numeratorElement.innerHTML = numerator;
+
+            const fractionLine = document.createElement("span");
+            fractionLine.classList.add("fraction-line");
+
+            const denominatorElement = document.createElement("span");
+            denominatorElement.classList.add("denominator");
+            denominatorElement.innerHTML = denominator;
+
+            numeratorDenominator.appendChild(numeratorElement);
+            numeratorDenominator.appendChild(fractionLine);
+            numeratorDenominator.appendChild(denominatorElement);
+
+            cell3.innerHTML = "";
+            cell3.appendChild(numeratorDenominator);
+
+
+            //PORCENTAGE
+
+            /*
+    
+            const porcentage = (numerator / denominator)*100;
+    
+            const cell4 = targetRow.cells[2];
+    
+            const porcent = document.createElement("td");
+    
+            porcent.innerHTML = `<h2>${porcentage}%</h2>`;
+    
+            cell4.innerHTML = "";
+    
+            cell4.appendChild(porcent);
+    
+            */
+
+            const porcentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
+
+            //console.log(numerator, denominator, porcentage)
+
+            this.porcentageMeasureResult = porcentage;
+
+            const cell4 = targetRow.cells[4];
+
+            const porcentCanvas = document.createElement("canvas");
+
+            let porcentageMeasureId = Object.keys(dataResult)[0];
+
+            porcentCanvas.id = `porcentage-${porcentageMeasureId}`;
+
+            //console.log(porcentCanvas.id)
+
+            porcentCanvas.width = 80;
+
+            porcentCanvas.height = 80;
+
+            cell4.innerHTML = "";
+
+            //console.log(cell4)
+
+            cell4.appendChild(porcentCanvas);
+
+            this.drawPercentageCircle(porcentCanvas.id, porcentage.toFixed(2));
+
+            let linkToMeasureDetails = document.getElementById('link-to-measure-details');
+
+            let currentHref = linkToMeasureDetails.getAttribute('href');
+
+            let newHref = `${currentHref}&population_set=PopulationSet_1`;
+
+            linkToMeasureDetails.setAttribute('href', newHref);
+
+
+        } else if (populationSetKeys.includes(population)) {
+
+            //console.log('Si está')
+
+            //console.log(dataResult)
+
+            //console.log(dataResult[`${population}`])
+
+            let populationSet = dataResult[`${population}`];
+
+            let targetRowId = `data-${measureIdResult}`;
+
+            const targetRow = document.getElementById(targetRowId);
+
+            if (!targetRow) {
+
+                return;
+            }
+
+            let numerator;
+
+            let denominator;
+
+            denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
+
+            denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
+
+            numerator = parseInt(populationSet.NUMER);
+
+            const cell3 = targetRow.cells[5];
+
+            const numeratorDenominator = document.createElement("div");
+            numeratorDenominator.classList.add("fraction");
+
+            const numeratorElement = document.createElement("span");
+            numeratorElement.classList.add("numerator");
+            numeratorElement.innerHTML = numerator;
+
+            const fractionLine = document.createElement("span");
+            fractionLine.classList.add("fraction-line");
+
+            const denominatorElement = document.createElement("span");
+            denominatorElement.classList.add("denominator");
+            denominatorElement.innerHTML = denominator;
+
+            numeratorDenominator.appendChild(numeratorElement);
+            numeratorDenominator.appendChild(fractionLine);
+            numeratorDenominator.appendChild(denominatorElement);
+
+            cell3.innerHTML = "";
+            cell3.appendChild(numeratorDenominator);
+
+            const porcentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
+
+            //console.log(numerator, denominator, porcentage)
+
+            this.porcentageMeasureResult = porcentage;
+
+            const cell4 = targetRow.cells[4];
+
+            const porcentCanvas = document.createElement("canvas");
+
+            let porcentageMeasureId = Object.keys(dataResult)[0];
+
+            porcentCanvas.id = `porcentage-${porcentageMeasureId}`;
+
+            //console.log(porcentCanvas.id)
+
+            porcentCanvas.width = 80;
+
+            porcentCanvas.height = 80;
+
+            cell4.innerHTML = "";
+
+            //console.log(cell4)
+
+            cell4.appendChild(porcentCanvas);
+
+            this.drawPercentageCircle(porcentCanvas.id, porcentage.toFixed(2));
+
+
+            //Add Population Buttons:
+
+            const btnPopulation = document.getElementById('btn-population');
+
+            btnPopulation.textContent = `${population} `;
+            
             const caretSpan = document.createElement("span");
             caretSpan.classList.add("caret");
 
-            mainButton.appendChild(caretSpan);
+            btnPopulation.appendChild(caretSpan);
 
-            dropdownMenu.classList.add("dropdown-menu");
-            dropdownMenu.style.left = "50%";
-            dropdownMenu.style.transform = "translateX(-50%)";
+            //Edit link to measure details
 
-            populationSetKeys.forEach(population => {
+            let linkToMeasureDetails = document.getElementById('link-to-measure-details');
 
-                const dropdownItem = document.createElement("li");
+            let url = new URL(linkToMeasureDetails.href);
 
-                const dropdownLink = document.createElement("a");
+            url.searchParams.set('population_set', population);
 
-                dropdownLink.setAttribute("href", "#");
+            linkToMeasureDetails.href = url.href;
 
-                dropdownLink.setAttribute("data-action", "click->dashboard#changePopulation")
-
-                dropdownLink.setAttribute("data-population", `${population}`)
-
-                dropdownLink.setAttribute("data-resultid", `${measureId}`)
-
-                dropdownLink.textContent = population;
-
-                dropdownItem.appendChild(dropdownLink);
-
-                dropdownMenu.appendChild(dropdownItem);
-
-            });
         }
-
-        buttonGroup.appendChild(mainButton);
-
-        if(populationSetKeys.length > 1)
-        {
-            $(`#btn-group-${measureId}`).remove();
-            buttonGroup.appendChild(dropdownMenu);
-            // Establecer margen izquierdo al botón
-            buttonGroup.style.marginLeft = "10px";
-        }
-
-        // Obtener el elemento td donde deseas agregar el botón
-        const td = document.getElementById("population-set");
-
-        // Agregar el botón desplegable al td
-        td.appendChild(buttonGroup);
-
-        const cell3 = targetRow.cells[5];
-
-        const numeratorDenominator = document.createElement("div");
-        numeratorDenominator.classList.add("fraction");
-
-        const numeratorElement = document.createElement("span");
-        numeratorElement.classList.add("numerator");
-        numeratorElement.innerHTML = numerator;
-
-        const fractionLine = document.createElement("span");
-        fractionLine.classList.add("fraction-line");
-
-        const denominatorElement = document.createElement("span");
-        denominatorElement.classList.add("denominator");
-        denominatorElement.innerHTML = denominator;
-
-        numeratorDenominator.appendChild(numeratorElement);
-        numeratorDenominator.appendChild(fractionLine);
-        numeratorDenominator.appendChild(denominatorElement);
-
-        cell3.innerHTML = "";
-        cell3.appendChild(numeratorDenominator);
-
-        const porcentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
-
-        this.porcentageMeasureResult = porcentage;
-
-        const cell4 = targetRow.cells[4];
-
-        const porcentCanvas = document.createElement("canvas");
-
-        let porcentageMeasureId = default_population;
-
-        porcentCanvas.id = `porcentage-${porcentageMeasureId}`;
-
-        porcentCanvas.width = 80;
-
-        porcentCanvas.height = 80;
-
-        cell4.innerHTML = "";
-
-        cell4.appendChild(porcentCanvas);
-
-        this.drawPercentageCircle(porcentCanvas.id, porcentage.toFixed(2));
-
-        let linkToMeasureDetails = document.getElementById('link-to-measure-details');
-
-        let currentHref = linkToMeasureDetails.getAttribute('href');
-
-        let newHref = `${currentHref}&population_set=${default_population}`;
-
-        linkToMeasureDetails.setAttribute('href', newHref);
     };
  
 }

@@ -20,12 +20,11 @@ module Cypress
           filters.delete("asOf")
         end
       end
-      # Yockler edited this, changed to any so it support multiple conditions, also removed any Return to avoid breaking loop
+
       return filters.any? {|k, v| 
       # return true if patient is missing any filter item
         # TODO: filter for age and problem (purposefully no prng)
         if k == 'age'
-          # {}"age"=>{"min"=>70}}
           # TODO: compare integers?? or dates?
           true if check_age(v, patient, params)
         elsif k == 'payers'
@@ -39,18 +38,18 @@ module Cypress
         elsif k == "provider_ids"
           provider_id = v
           if get_provider_info(provider_id, patient)
-             false #Yockler fixed this, it was inverse logic
+             false
           else
-             true #Yockler fixed this, it was inverse logic
+             true
           end  
-        elsif k == "providerTypeTags"#Yockler added this, for Taxonomies
+        elsif k == "providerTypeTags"
           taxonomies = v
           if search_provider_by_taxonomy(taxonomies, patient)
              false
           else
              true
           end
-        elsif v.instance_of?(Array) # Yockler added this, when multiple options was selected it wasn't working properly
+        elsif v.instance_of?(Array)
           (Cypress::CriteriaPicker.send(k, patient, params) & v).empty?
         elsif v != Cypress::CriteriaPicker.send(k, patient, params)
           # races, ethnicities, genders, providers
@@ -110,7 +109,6 @@ module Cypress
       end
     end
 
-    #Yockler added this
     def self.search_provider_by_taxonomy(taxonomy, patient)
       provider_performances = patient.qdmPatient.extendedData['provider_performances']
       if provider_performances.length > 0

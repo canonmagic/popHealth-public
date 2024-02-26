@@ -64,15 +64,16 @@ class QualityReport
   POSTAL_CODE = 'POSTAL_CODE'
   PAYER   = 'PAYER'
 
-  def patient_results
+  # Yockler: This will be nil just in case another part of code is using the method. Possibly removable
+  def patient_results(sub_id = nil)
     #ex = QME::MapReduce::Executor.new(self.measure_id,self.sub_id, self.attributes)
-    results = CQM::IndividualResult.where(patient_cache_matcher)
+    results = IndividualResult.where(patient_cache_matcher(sub_id))
 
     results
   end
 
   def measure
-    QME::QualityMeasure.where({"hqmf_id"=>self.measure_id, "sub_id" => self.sub_id}).first
+    QualityMeasure.where({"hqmf_id"=>self.measure_id, "sub_id" => self.sub_id}).first
   end
 
   # make sure all filter id arrays are sorted
@@ -82,15 +83,18 @@ class QualityReport
 
   def patient_result(patient_id = nil)
     query = patient_cache_matcher
+    
     if patient_id
       query['value.medical_record_id'] = patient_id
     end
-      QME::PatientCache.where(query).first()
+    
+    PatientCache.where(query).first()
   end
 
-  def patient_cache_matcher
+  # Yockler: id = sub_id
+  def patient_cache_matcher(id = nil)
     measure_id = Measure.where(id: self.measure_id).pluck(:_id).first.to_s
-    sub_id = self.sub_id.present? ? self.sub_id : "PopulationSet_1"
+    sub_id = id ? id : (self.sub_id.present? ? self.sub_id : "PopulationSet_1")
     match = {'measure_id' => measure_id,
             'population_set_key' => sub_id,
               #'qdmpatient.extendedData.effective_date'   => Time.at(self.effective_date).in_time_zone.to_formatted_s(:number),

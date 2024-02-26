@@ -80,7 +80,6 @@ defaults: &defaults
     extension: "Orphans"
   value_sets:
     ticket_url: https://vsac.nlm.nih.gov/vsac/ws/Ticket
-    #Yockler: FIXED THIS URL
     api_url: https://vsac.nlm.nih.gov/vsac/svs/RetrieveValueSet
   cda_header:
     :identifier:

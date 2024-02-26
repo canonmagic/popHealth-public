@@ -29,7 +29,7 @@ module Measures
        #delete old patient cache entries
       existing = HealthDataStandards::CQM::Measure.where({hqmf_id: hqmf_model.hqmf_id}).to_a
       #qcache = HealthDataStandards::CQM::QueryCache.where({hqmf_id: hqmf_model.hqmf_id}).or({measure_id: hqmf_model.hqmf_id})
-      #pcache = HealthDataStandards::CQM::PatientCache.where({"value.hqmf_id" => hqmf_model.hqmf_id}).or({"value.measure_id" => hqmf_model.hqmf_id}) EDITADO POR YOCKLER
+      #pcache = HealthDataStandards::CQM::PatientCache.where({"value.hqmf_id" => hqmf_model.hqmf_id}).or({"value.measure_id" => hqmf_model.hqmf_id})
       load_valuesets(hqmf_model,nlm_user,nlm_pass,meta_data["force_update"])
       measures = materialize_measures(hqmf_model,meta_data)
       

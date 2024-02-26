@@ -1,4 +1,8 @@
 <div data-controller="measures" class="col-md-12">
+
+    <div class="form-group">
+        <input type="text" class="form-control" id="inputSearchMeasure"  placeholder="Search measure..."></input>
+    </div>
     <div class="panel panel-primary">
 
         <div class="panel-heading">
@@ -16,7 +20,7 @@
                         <th>Description</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody id="measureTableSearch">
                     <% @measures.each do |measure| %>
                         <tr>
                             <td><%= link_to edit_measure_path(measure), class: "btn btn-primary btn-sm" do %>
@@ -41,4 +45,20 @@
 
     
 </div>
+
+<script>
+
+    $(document).ready(function(){
+        $("#inputSearchMeasure").on("keyup", function() {
+        var value = $(this).val().toLowerCase();
+
+    $("#measureTableSearch tr").filter(function() {
+        $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+    });
+
+  });
+
+});
+</script>
+
 
