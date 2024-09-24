@@ -177,16 +177,15 @@ Rails.application.routes.draw do
       collection do
         get :search
       end
+      
       resources :patients do
         collection do
           get :manage
           put :update_all
         end
       end
+
     end
-
-
-
 
     resources :measures
 
@@ -237,8 +236,14 @@ Rails.application.routes.draw do
     end
   end
 
+  resources :patients do
+    member do
+      get :results
+    end
+  end
+
   namespace :api do
-    resources :patients, only: [:index, :show]
+    resources :patients#, only: [:index, :show, :create]
   end
 
 

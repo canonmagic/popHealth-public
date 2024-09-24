@@ -51,16 +51,19 @@ defaults: &defaults
       code: "854901"
       codeSystem: "2.16.840.1.113883.6.88"
   default_practice_npi: 12345
-  default_practice_tin: 
+  default_practice_tin: 12345
   default_practice_ccn: 12345
   # QRDA CMS program
-    # VALUES:
-    # CMS REPORTING PROGRAM (DEFAULT): NONE
-    # MIPS INDIVIDUAL: MIPS
-    # CPC +: CPCPLUS
-    # FOR EH PROGRAM : EH_PROGRAM
-    # Specify the EH PROGRAM Code in Information Recipient Extension 
-  qrda_cms_program: MIPS_INDIV
+    # PCF: PCF
+    # MIPS Individual: MIPS_INDIV
+    # MIPS Group: MIPS_GROUP
+    # MIPS Virtual Group: MIPS_VIRTUALGROUP
+    # MIPS APM Entity: MIPS_APMENTITY
+    # MIPS APP Individual Reporting: MIPS_APP1_INDIV
+    # MIPS APP Group Reporting: MIPS_APP1_GROUP
+    # MIPS APP APM Entity Reporting: MIPS_APP1_APMENTITY
+    # MIPS Subgroup Reporting: MIPS_SUBGROUP
+  qrda_cms_program: MIPS_GROUP
   # These eCQMs store a list of "Results" within the statement_results of an Individual Result
   result_measures:
     # CMS529
@@ -148,8 +151,8 @@ defaults: &defaults
 
     :information_recipient:
       :identifier:
-        :root: "2.16.840.1.113883.3.249.14.101"
-        :extension: HQR_EHR
+        :root: "2.16.840.1.113883.3.249.14.103"
+        :extension: HQR_PI
     :custodian:
       :ids:
       - :root: "2.16.840.1.113883.3.1234.3"

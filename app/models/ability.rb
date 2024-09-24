@@ -28,13 +28,13 @@ class Ability
       # can [:create,:delete], HealthDataStandards::CQM::Measure
     elsif user.staff_role?
       can :read, MeasureBaseline
-      can :read, CQM::Measure
+      can :read, Measure
       if opml
-        can :read, CQM::Patient
+        can :read, Patient
         can :manage, Provider
         can :manage, :providers
       else
-        can :read, CQM::Patient do |patient|
+        can :read, Patient do |patient|
           # todo: the || is a hack because patient.practice_id is _never_ initialized
           (user.practice_id == patient.practice_id) ||
             (patient[:provider_performances] && user.practice && patient[:provider_performances].map {|pp| pp['provider_id']}.include?(user.practice['provider_id']))
@@ -54,7 +54,7 @@ class Ability
         team.user_id == user._id
       end
       cannot :manage, User unless APP_CONFIG['allow_user_update']
-      can [:read, :delete, :recalculate,:create] , QME::QualityReport do |qr|
+      can [:read, :delete, :recalculate,:create], QualityReport do |qr|
         if !opml
           filters = qr.try('filters')
           if filters.present? && filters['providers'].present?
@@ -68,7 +68,7 @@ class Ability
       end
     elsif user.id
       can :read, MeasureBaseline
-      can :read, CQM::Patient do |patient|
+      can :read, Patient do |patient|
         if opml
           patient.providers.map(&:npi).include?(user.npi)
         else
@@ -76,11 +76,11 @@ class Ability
           prov.try(:parent).try(:practice) && prov.parent.practice.id == patient.practice_id
         end
       end
-      can [:read,:delete, :recalculate, :create], QME::QualityReport do |qr|
+      can [:read,:delete, :recalculate, :create], QualityReport do |qr|
          provider = Provider.by_npi(user.npi).first
          provider ? (qr.filters || {})["providers"].include?(provider.id) : false
       end
-      can :read, HealthDataStandards::CQM::Measure
+      can :read, Measure
       can :read, Provider do |pv|
         if opml
           user.npi && (pv.npi == user.npi)

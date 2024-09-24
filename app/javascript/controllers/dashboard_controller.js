@@ -473,6 +473,7 @@ export default class extends Controller {
     };
 
     async setReportinRecord(event) {
+        console.log("Set Reporting Record...")
 
         event.preventDefault();
 
@@ -928,7 +929,6 @@ export default class extends Controller {
     };
 
     addMeasureToTable(cmsId, measureTitle, measureId) {
-
         const tableBody = document.getElementById('measureResultTable');
 
         const newRow = tableBody.insertRow(0);
@@ -1209,7 +1209,7 @@ export default class extends Controller {
         
         this.addMeasureToLocalStorage(this.cmsId, measureTitle, this.measureHqmfId);
 
-        this.checkAutho();
+        this.checkAutho(this.providerId);
 
         this.addMeasureToTable(this.cmsId, measureTitle, this.measureHqmfId);
 
@@ -1218,6 +1218,7 @@ export default class extends Controller {
     };
 
     addMeasureToLocalStorage(cmsId, measureTitle, measureId) {
+        console.log("addMeasureToLocalStorage...")
 
         const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
 
@@ -1231,7 +1232,6 @@ export default class extends Controller {
             status: 'pending',
             providers: this.providerId,
             onTable: true,
-
 
         };
 
@@ -1320,13 +1320,12 @@ export default class extends Controller {
         const populationSetKeys = Object.keys(dataResult).filter(key => key.startsWith('PopulationSet'))
 
         if (dataResult[`${measureIdResult}`] && dataResult[`${measureIdResult}`]["PopulationSet_1"]) {
-
-            denominator = dataResult.DENEX !== null ? (parseInt(dataResult.DENOM) - parseInt(dataResult.DENEX)) : parseInt(dataResult.DENOM);
-
-            denominator = dataResult.DENEXCEP !== null ? (denominator - parseInt(dataResult.DENEXCEP)) : denominator;
-
-            numerator = dataResult.NUMER; 
-
+            // <!-- Yockler Code 06/12/2024 -->
+            denominator = parseInt(dataResult.DENOM)
+            denominator = dataResult.DENEX ? (denominator - parseInt(dataResult.DENEX)) : ( denominator ? denominator : 0 );
+            denominator = dataResult.DENEXCEP ? (denominator - parseInt(dataResult.DENEXCEP)) : denominator;
+            numerator = parseInt(dataResult.NUMER);
+            numerator = numerator ? numerator : 0;
         } else if (dataResult["PopulationSet_1"]){
 
             //añadir && populationSetKeys.length === 1`
@@ -1386,24 +1385,23 @@ export default class extends Controller {
 
             const populationSet = dataResult["PopulationSet_1"];
 
-            denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
-            
-            denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ?  (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
-            
-            numerator = parseInt(populationSet.NUMER)
+            // <!-- Yockler Code 06/12/2024 -->
+            denominator = parseInt(populationSet.DENOM)
+            denominator = populationSet.DENEX ? (denominator - parseInt(populationSet.DENEX)) : ( denominator ? denominator : 0 );
+            denominator = populationSet.DENEXCEP ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
+            numerator = parseInt(populationSet.NUMER);
+            numerator = numerator ? numerator : 0;
             
         } else if (populationSetKeys.length > 1) {
 
             const populationSet = dataResult["PopulationSet_1"];
 
-            denominator = (populationSet.DENEX !== null && populationSet.DENEX !== undefined) ? (parseInt(populationSet.DENOM) - parseInt(populationSet.DENEX)) : parseInt(populationSet.DENOM)
-
-            denominator = (populationSet.DENEXCEP !== null && populationSet.DENEXCEP !== undefined) ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
-
-            numerator = parseInt(populationSet.NUMER)
-
-
-
+            // <!-- Yockler Code 06/12/2024 -->
+            denominator = parseInt(populationSet.DENOM)
+            denominator = populationSet.DENEX ? (denominator - parseInt(populationSet.DENEX)) : ( denominator ? denominator : 0 );
+            denominator = populationSet.DENEXCEP ? (denominator - parseInt(populationSet.DENEXCEP)) : denominator;
+            numerator = parseInt(populationSet.NUMER);
+            numerator = numerator ? numerator : 0;
 
         }
 
@@ -1468,9 +1466,8 @@ export default class extends Controller {
 
     }
 
-   
-
     async submitQueryCalculate(measureId, endDate, startDate, providers) {
+        console.log("submitQueryCalculate...")
 
         try {
 
@@ -1506,12 +1503,21 @@ export default class extends Controller {
 
                 for(let x = 0; x < listOfMeasure.length; x++) {
 
-                    let measureId = listOfMeasure[x].measureId;
-                    let data = responseData[measureId];
-                    localStorage.setItem(`${measureId}-responseData`, JSON.stringify(data));
-                    listOfMeasure[x].status = 'completed';
-                    localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
-                    this.addResultFromLocalStorage(measureId);
+                    if(listOfMeasure[x].providers && listOfMeasure[x].providers === this.providerId) {
+
+                        let measureId = listOfMeasure[x].measureId;
+
+                        let data = responseData[measureId];
+
+                        localStorage.setItem(`${measureId}-responseData`, JSON.stringify(data));
+
+                        listOfMeasure[x].status = 'completed';
+                        localStorage.setItem('tableData', JSON.stringify(listOfMeasure));
+                        this.addResultFromLocalStorage(measureId);
+
+                    }
+                    
+                    
                 }
                 
 
@@ -1520,7 +1526,9 @@ export default class extends Controller {
 
             } else if(response.status === 200) {
 
-            }else {
+                reloadPage = false;
+
+            } else {
 
                 if(reloadPage) {
 
@@ -1541,7 +1549,7 @@ export default class extends Controller {
                     });
                 }
             }
-
+            
         } catch (error) {
 
             console.error(`Console error: ${error}`);
@@ -1549,40 +1557,23 @@ export default class extends Controller {
         }
     };
 
-    checkAutho() {
-
+    checkAutho(provider) {
+        console.log("Checking Autho")
         fetch(`../home/check_authorization/?id=${this.providerId}`)
-
             .then(response => {
-
-                if(response.ok) {
-
+                if(response.ok)
                     return response.json();
-
-                } else {
-                    
-                }
-            })
-            .then(data => {
-
-            })
-
-            .catch(error => {
-
+            }).catch(error => {
                 console.error(error)
-
             });
 
             let listOfMeasure = JSON.parse(localStorage.getItem('tableData'))
 
-            for(let i=0; i < listOfMeasure.length ; i++) {
-
+            for( let i=0; i < listOfMeasure.length ; i++ ) {
                 let element = listOfMeasure[i];
 
-                this.submitQueryCalculate(element.measureId, element.endDate, element.startDate, this.providerId);
-
-                //if(element.status === 'pending') {}
-
+                if( element.providers === provider )
+                    this.submitQueryCalculate(element.measureId, element.endDate, element.startDate, this.providerId);
             }
             
     };
@@ -1872,19 +1863,22 @@ export default class extends Controller {
 
         const tableData = JSON.parse(localStorage.getItem('tableData')) || [];
 
-        tableData.forEach(({ cmsId, measureTitle, measureId }) => {
+        tableData.forEach(({ cmsId, measureTitle, measureId, providers }) => {
 
-            this.addMeasureToTable(cmsId, measureTitle, measureId);
+            if(providers && providers === this.providerId) {
 
-            this.checkAutho();
+                this.addMeasureToTable(cmsId, measureTitle, measureId);
 
-            this.deactivateMeasure(cmsId);
+                this.checkAutho(providers);
 
+                this.deactivateMeasure(cmsId);
+
+            }
         });
     };
 
     removeMeasureFromLocal(measureId) {
-
+        console.log("removeMeasureFromLocal");
         let listOfMeasures = JSON.parse(localStorage.getItem('tableData'));
 
         let measureToRemove = measureId;
@@ -1938,9 +1932,12 @@ export default class extends Controller {
         // Take set 1 or first population as default
         let default_population = population ?? (populationSetKeys.includes('PopulationSet_1') ? 'PopulationSet_1' : populationSetKeys[0]);
         let default_data = data[default_population];
-        denominator = default_data.DENEX ? (parseInt(default_data.DENOM) - parseInt(default_data.DENEX)) : parseInt(default_data.DENOM);
+        // <!-- Yockler Code 06/12/2024 -->
+        denominator = parseInt(default_data.DENOM)
+        denominator = default_data.DENEX ? (denominator - parseInt(default_data.DENEX)) : ( denominator ? denominator : 0 );
         denominator = default_data.DENEXCEP ? (denominator - parseInt(default_data.DENEXCEP)) : denominator;
-        numerator = default_data.NUMER;
+        numerator = parseInt(default_data.NUMER);
+        numerator = numerator ? numerator : 0;
 
         //Add Population Button
         const buttonGroup = document.createElement("div");
@@ -1956,7 +1953,6 @@ export default class extends Controller {
         
         const dropdownMenu = document.createElement("ul");
 
-        // Let's ensure there is at least 1 additional population
         if(!populationSetKeys.length > 1)
         {
             mainButton.disabled = true;
@@ -2006,14 +2002,11 @@ export default class extends Controller {
         {
             $(`#btn-group-${measureId}`).remove();
             buttonGroup.appendChild(dropdownMenu);
-            // Establecer margen izquierdo al botón
             buttonGroup.style.marginLeft = "10px";
         }
 
-        // Obtener el elemento td donde deseas agregar el botón
         const td = document.getElementById("population-set");
 
-        // Agregar el botón desplegable al td
         td.appendChild(buttonGroup);
 
         const cell3 = targetRow.cells[5];

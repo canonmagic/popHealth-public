@@ -61,10 +61,11 @@ module CQM
     end
 
     # This method returns the subset of population keys used in a specific measure
+    # <!-- Yockler Code 06/11/2024 -->
+    # Is neccesary to loop over all population sets, since is not mandatory that every set population has all keys, this could cause further errors
     def population_keys
-      %w[IPP DENOM NUMER NUMEX DENEX DENEXCEP MSRPOPL MSRPOPLEX].keep_if { |pop| (population_sets.first.populations[pop] && population_sets.first.populations[pop]['hqmf_id']) }
+      %w[IPP DENOM NUMER NUMEX DENEX DENEXCEP MSRPOPL MSRPOPLEX].keep_if { |pop| (population_sets.any? { |population_set| ( population_set.populations[pop] && population_set.populations[pop]['hqmf_id'] ) }) }
     end
-
 
     def self.categories(measure_properties = [])
       measure_properties = Array(measure_properties).map(&:to_s) | %w(

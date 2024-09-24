@@ -2,7 +2,6 @@ class Azure::OmniauthCallbacksController < Devise::OmniauthCallbacksController
 
     def azure_activedirectory_v2
 
-        puts 'AJA!!!!'
         response_params = request.env['omniauth.auth']['info']
         @user = User.find_by(email: response_params['email'])
 

@@ -1,3 +1,4 @@
+
 class Log
   include Mongoid::Document
   include Mongoid::Timestamps
@@ -10,5 +11,4 @@ class Log
   field :affected_user, :type => String
   field :checksum, :type => String
 
-  
 end

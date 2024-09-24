@@ -174,8 +174,9 @@ module CQM
     def add_encounter_ids_to_events
       encounter_times = {}
       qdmPatient.get_data_elements('encounter', 'performed').each do |ep|
+        # <!-- Yockler Code 06/13/2024 -->
         # Only use inpatient encounter
-        next if (ep.dataElementCodes.map(&:code) & bundle.value_sets.where(oid: '2.16.840.1.113883.3.666.5.307').first.concepts.map(&:code)).empty?
+        next if (ep.dataElementCodes.map { |dataElementCode| dataElementCode["code"] } & bundle.value_sets.where(oid: '2.16.840.1.113883.3.666.5.307').first.concepts.map(&:code)).empty?
         rel_time = ep.relevantPeriod
         # 1 day before and 1 day after
         rel_time.low -= 86_400

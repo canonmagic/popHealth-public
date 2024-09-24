@@ -53,24 +53,27 @@ module Api
             end
           end
 
-    measure_ids.each do |measure|
-      @msr = Measure.where(_id: measure).first
-      if @msr.present?
-       @msrs << @msr
-      else
-       @msr = Measure.where(hqmf_id: measure).first
-        if @msr.present?
+        measure_ids.each do |measure|
+          @msr = Measure.where(_id: measure).first
+          if @msr.present?
           @msrs << @msr
+          else
+          @msr = Measure.where(hqmf_id: measure).first
+            if @msr.present?
+              @msrs << @msr
+            end
+          end
         end
-      end
-    end
+
         # C4-mods : should we flag them so they can be conditional?
         fname=''
         cms_measures=nil
+
         if !measure_ids.nil?
           cms_measures= Measure.in(:hqmf_id => measure_ids).collect { |m| m.cms_id }.uniq
           fname=cms_measures.join('_')+'_'
         end
+        
         c4_filters=current_user.preferences['c4filters']
         fname = fname+c4_filters.join('_')+'_' if !c4_filters.nil?
         # end C4-mods

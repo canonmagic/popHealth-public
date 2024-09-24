@@ -235,8 +235,9 @@ export default class extends Controller {
                     { name: 'Denominator', value: default_data.DENOM, code: 'denom' },
                     { name: 'Exclusions', value: default_data.DENEX, code: 'denex' },
                     { name: 'Exceptions', value: default_data.DENEXCEP, code: 'denexcep' },
-                    { name: 'Measure Population', value: default_data.MSRPOPL, code: 'msrpopl' }
-
+                    { name: 'Measure Population', value: default_data.MSRPOPL, code: 'msrpopl' },
+                    // <!-- Yockler Code 06/12/2024 -->
+                    { name: 'Measure Population Exclusions', value: default_data.MSRPOPLEX, code: 'msrpoplex' }
                 ]);
 
                 this.loadPatients(this.populationCriteria);
@@ -697,10 +698,14 @@ export default class extends Controller {
         // Take set 1 or first population as default
         let default_population = this.population ?? (populationSetKeys.includes('PopulationSet_1') ? 'PopulationSet_1' : populationSetKeys[0]);
         let default_data = data[default_population];
-        denominator = default_data.DENEX ? (parseInt(default_data.DENOM) - parseInt(default_data.DENEX)) : parseInt(default_data.DENOM);
+
+        // <!-- Yockler Code 06/12/2024 -->
+        denominator = parseInt(default_data.DENOM)
+        denominator = default_data.DENEX ? (denominator - parseInt(default_data.DENEX)) : ( denominator ? denominator : 0 );
         denominator = default_data.DENEXCEP ? (denominator - parseInt(default_data.DENEXCEP)) : denominator;
-        numerator = default_data.NUMER;
-        percentage = (numerator / denominator) * 100;
+        numerator = parseInt(default_data.NUMER);
+        numerator = numerator ? numerator : 0;
+        percentage = denominator === 0 ? 0 : (numerator / denominator) * 100;
 
         this.drawPercentageCircle('canvasQualityMetrics', percentage.toFixed(2))
 

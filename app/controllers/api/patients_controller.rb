@@ -99,26 +99,28 @@ module Api
     description "Upload a QRDA Category I document for a patient into popHealth."
     def create
       authorize! :create, Patient
-      
+
       if params[:practice_id]
         ext = Practice.where(id: params[:practice_id]).first
-        practice =  ext.try(:_id).to_s
-      elsif params[:practice_name]
-        ext = Practice.where(name: params[:practice_name]).first
-        practice =  ext.try(:_id).to_s
+
+        if ext
+          practice =  ext.try(:_id).to_s
+          success = BulkRecordImporter.import(params[:file], {}, practice)
+          
+          if success
+            log_api_call LogAction::ADD, "Patient record import", true
+            render status: 201, json: 'Patient Imported'
+          else
+            log_api_call LogAction::ADD, "Patient record import failed", true
+            render status: 500, json: 'Patient record did not save properly'
+          end
+        else
+          render status: 500, json: 'Practice not found'
+        end
       else
-        practice = nil
+        render status: 500, json: 'Practice not found'
       end
       
-      success = BulkRecordImporter.import(params[:file], {}, practice)
-      
-      if success
-        log_api_call LogAction::ADD, "Patient record import", true
-        render status: 201, json: 'Patient Imported'
-      else
-        log_api_call LogAction::ADD, "Patient record import failed", true
-        render status: 500, json: 'Patient record did not save properly'
-      end
     end
 
     def toggle_excluded
@@ -133,7 +135,7 @@ module Api
 
     def patient_count
 
-      patient_count = CQM::Patient.count
+      patient_count = Patient.count
       respond_to do |format|
         format.json { render json: { patient_count: patient_count } }
       end

@@ -598,6 +598,8 @@ module Api
       patient_filter["DENEX"]= {"$gt" => 0} if params[:denex] == "true"
       patient_filter["DENEXCEP"]= {"$gt" => 0} if params[:denexcep] == "true"
       patient_filter["MSRPOPL"]= {"$gt" => 0} if params[:msrpopl] == "true"
+      # <!-- Yockler Code 06/12/2024 -->
+      patient_filter["MSRPOPLEX"]= {"$gt" => 0} if params[:msrpoplex] == "true"
       # jb addition
       #patient_filter["value.manual_exclusion"] = {"$exists" => 0}
       #patient_filter["value.antinumerator"]= {"$gt" => 0} if params[:antinumerator] == "true"

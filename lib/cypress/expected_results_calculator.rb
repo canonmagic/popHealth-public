@@ -55,6 +55,7 @@ module Cypress
         end
 
         @measure_result_hash[measure.hqmf_id][psk]['supplemental_data'] = {}
+        @measure_result_hash[measure.hqmf_id][psk]['observations'] = {}
       end
     end
 
@@ -84,12 +85,11 @@ module Cypress
            Delayed::Worker.logger.info(e.backtrace.inspect)
       end
 
-      observ_values = {}
+      observation_hash = {}
 
       # Increment counts for each measure_populations in each individual_result
       individual_results.each do |individual_result|
         key = individual_result['population_set_key']
-        observ_values[key] = [] unless observ_values[key]
 
         measure.population_keys.each do |pop|
           next if individual_result[pop].nil? || individual_result[pop].zero?
@@ -100,18 +100,19 @@ module Cypress
 
         # extract the observed value from an individual results.  Observed values are in the 'episode result'.
         # Each episode will have its own observation
-        observ_values[key].concat get_observ_values(individual_result['episode_results']) if individual_result['episode_results']
+        next unless individual_result['episode_results']
+
+        # <!-- Yockler Code 06/12/2024 -->
+        individual_result.collect_observations(observation_hash, agg_results: true)
       end
       
-      # TODO: Observations may not always be the median
       @measure_result_hash[measure.hqmf_id].keys.each do |key|
-        @measure_result_hash[measure.hqmf_id][key]['OBSERV'] = observ_values[key] ? median(observ_values[key].reject(&:nil?)) : 0.0
+        calculate_observation(observation_hash, measure, key)
         @measure_result_hash[measure.hqmf_id][key]['measure_id'] = measure.hqmf_id
         @measure_result_hash[measure.hqmf_id][key]['pop_set_hash'] = measure.population_set_hash_for_key(key)
       end
 
       if @callingfor
-
         begin
           qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => @effective_date,'start_date' => @start_date, "filters" => @filters, "status.state" => {'$in': ["pending", "completed"]}, 'filter_preferences' => @filter_preferences).first
 
@@ -127,6 +128,47 @@ module Cypress
         rescue Exception => e
           Delayed::Worker.logger.info(e.message)
           Delayed::Worker.logger.info(e.backtrace.inspect)
+        end
+      end
+    end
+
+    # Calculate the aggregate observation totals for the values in an observation_hash
+    # these aggregate totals will be added to the appropriate measure/popuation in the @measure_result_hash
+    # rubocop:disable Metrics/CyclomaticComplexity
+    # rubocop:disable Metrics/MethodLength
+    def calculate_observation(observation_hash, measure, population_set_key)
+      key = population_set_key
+      return unless observation_hash[key]
+
+      # calculate the aggregate observation based on the aggregation type
+      # aggregation type is looked up using the statement_name
+      observation_hash[key].each do |population, observation_map|
+        next unless observation_map[:statement_name]
+
+        pop_set = measure.population_set_for_key(key).first
+
+        popset_index = measure.population_sets_and_stratifications_for_measure.find_index do |population_set|
+          pop_set[:population_set_id] == population_set[:population_set_id]
+        end
+        
+        # find observation that matches the statement_name
+        observation = pop_set.observations.select { |obs| obs.observation_parameter.statement_name == observation_map[:statement_name] }[popset_index]
+        # Guidance for calculations can be found here
+        # https://www.hl7.org/documentcenter/public/standards/vocabulary/vocabulary_tables/infrastructure/vocabulary/ObservationMethod.html#_ObservationMethodAggregate
+        case observation.aggregation_type
+        when 'COUNT'
+          @measure_result_hash[measure.hqmf_id][key]['observations'][population] = { value: count(observation_map[:values].map{ |obs| obs[:value] }),
+                                                                                     method: 'COUNT', hqmf_id: observation.hqmf_id }
+        when 'MEDIAN'
+          median_value = median(observation_map[:values].map{ |obs| obs[:value] }.compact)
+          @measure_result_hash[measure.hqmf_id][key]['observations'][population] = { method: 'MEDIAN', hqmf_id: observation.hqmf_id,
+                                                                                     value: median_value }
+        when 'SUM'
+          @measure_result_hash[measure.hqmf_id][key]['observations'][population] = { value: sum(observation_map[:values].map{ |obs| obs[:value] }),
+                                                                                     method: 'SUM', hqmf_id: observation.hqmf_id }
+        when 'AVERAGE'
+          @measure_result_hash[measure.hqmf_id][key]['observations'][population] = { value: mean(observation_map[:values].map{ |obs| obs[:value] }),
+                                                                                     method: 'AVERAGE', hqmf_id: observation.hqmf_id }
         end
       end
     end
@@ -186,13 +228,21 @@ module Cypress
 
     private
 
+    def sum(array)
+      array.inject(0.0) { |sum, elem| sum + elem }
+    end
+
+    def count(array)
+      array.compact.size
+    end
+
     def mean(array)
       return 0.0 if array.empty?
 
       array.inject(0.0) { |sum, elem| sum + elem } / array.size
     end
 
-    def median(array, already_sorted = false)
+    def median(array, already_sorted: false)
       return 0.0 if array.empty?
 
       array = array.sort unless already_sorted
