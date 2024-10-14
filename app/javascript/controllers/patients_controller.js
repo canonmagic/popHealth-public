@@ -38,7 +38,6 @@ export default class extends Controller {
 
         if (confirmed.isConfirmed) {
 
-
             try {
 
                 const url = 'remove_caches';
@@ -58,7 +57,7 @@ export default class extends Controller {
 
                 const response = await fetch(url, options);
 
-                if(response.ok) {
+                if (response.ok) {
 
                     Swal.fire({
                         icon: 'success',
@@ -69,9 +68,9 @@ export default class extends Controller {
                     });
 
                     setTimeout(() => {
-                        
+
                         window.location.reload();
-                        
+
                     }, 1500);
 
 
@@ -87,7 +86,7 @@ export default class extends Controller {
                         timerProgressBar: true
                     });
 
-                } 
+                }
 
             } catch (error) {
 
@@ -100,14 +99,8 @@ export default class extends Controller {
                     timer: 1500,
                     timerProgressBar: true
                 });
-                
             }
         }
-
-
-
-
-
     }
 
     async deleteProviders(event) {
@@ -266,10 +259,71 @@ export default class extends Controller {
         }
     };
 
+    async deleteAll(event) {
+        event.preventDefault();
+
+        const confirmed = await Swal.fire({
+            title: "Caution!",
+            text: "Are you sure you want to delete everything? (Patients, Providers, Cache)",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#3085d6",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, delete everything"
+        });
+
+        if (confirmed.isConfirmed) {
+            try {
+                const url = 'remove_all';
+                const formData = new URLSearchParams();
+                formData.append('_method', 'delete');
+
+                const options = {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8',
+                        'X-CSRF-Token': document.querySelector("meta[name='csrf-token']").content
+                    },
+                    body: formData.toString()
+                };
+
+                const response = await fetch(url, options);
+
+                if (response.ok) {
+                    Swal.fire({
+                        icon: 'success',
+                        title: 'Success',
+                        text: 'All records deleted!',
+                        timer: 1500,
+                        timerProgressBar: true
+                    });
+
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 1500);
+                } else {
+                    console.error(response.statusText);
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Failed to delete records. Please try again.'
+                    });
+                }
+            } catch (error) {
+                console.error(error);
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Error',
+                    text: 'Failed to delete records. Please try again.'
+                });
+            }
+        }
+    }
+
     async loadPatientCount() {
 
         try {
-            
+
             const response = await fetch('/api/admin/patients/count');
 
             const data = await response.json();
@@ -283,7 +337,7 @@ export default class extends Controller {
         } catch (error) {
 
             console.error(error);
-  
+
         }
 
     }
@@ -293,10 +347,10 @@ export default class extends Controller {
         this.refreshInterval = setInterval(() => {
 
             this.loadPatientCount()
-            
+
         }, 5000);
     }
-    
+
     uploadFilePatient(event) {
 
         event.preventDefault();
@@ -305,7 +359,7 @@ export default class extends Controller {
 
         const file = input.files[0];
 
-        if(file) {
+        if (file) {
 
             Swal.fire({
                 title: 'Upload Confirmation',
@@ -361,6 +415,6 @@ export default class extends Controller {
 
     };
 
-   
+
 }
 

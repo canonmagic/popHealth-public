@@ -96,6 +96,24 @@ class AdminController < ApplicationController
     redirect_to action: 'patients'
   end
 
+  def remove_all
+    log_admin_controller_call LogAction::DELETE, "Remove all patients, providers, and caches", true
+
+    # Remove patients
+    Patient.delete_all
+
+    # Remove providers
+    Provider.ne('cda_identifiers.root' => "Organization").delete
+    Team.update_all(providers: [])
+
+    # Remove caches
+    QualityReport.delete_all
+    IndividualResult.delete_all
+    Mongoid.default_client["rollup_buffer"].drop()
+
+    redirect_to action: 'patients'
+  end
+
   def upload_patients
     log_admin_controller_call LogAction::ADD, "Upload patients", true
     file = params[:file]

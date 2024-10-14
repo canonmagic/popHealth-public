@@ -71,6 +71,7 @@ Rails.application.routes.draw do
   delete "admin/remove_patients"
   delete "admin/remove_caches"
   delete "admin/remove_providers"
+  delete "admin/remove_all"
   delete "admin/remove_jobs"
   get "admin/user_profile"
   delete "admin/delete_user"
