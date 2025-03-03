@@ -119,5 +119,4 @@ gem "apipie-rails", "~> 1.2"
 
 
 #API SPREADSHEET
-
 gem 'spreadsheet', '~> 1.3'

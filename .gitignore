@@ -21,6 +21,7 @@
 
 # Ignore all logfiles and tempfiles.
 /log/*
+/log_history/*
 /tmp/*
 !/log/.keep
 !/tmp/.keep
@@ -48,5 +49,3 @@
 
 # Ignore results
 /results
-
-/CHANGES.md

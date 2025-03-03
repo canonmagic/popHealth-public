@@ -22,7 +22,6 @@ module Api
       formats ['json']
       example '{"patient_count":56}'
       def count
-        log_admin_api_call LogAction::VIEW, "Get patient count"
         json = {}
         json['patient_count'] = CQM::Patient.count
         render :json => json
@@ -35,7 +34,8 @@ module Api
 
       def create
         begin
-          log_admin_api_call LogAction::ADD, "Upload patient ZIP file", true
+          log_call LogAction::IMPORT, "API Admin Patients Controller - Import a ZIP file with QRDA CAT I files"
+
           file = params[:file]
       
             practice = get_practice_parameter(params[:practice_id], params[:practice_name])
@@ -57,17 +57,22 @@ module Api
       api :DELETE, "/admin/patients/deletePatientsFromPractice", "Delete all the patients from a practice (practice_id)"
       param :practice_id, String, :desc => "Practice ID", :required => true
       def deletePatientsFromPractice
+        log_call LogAction::DELETE, "API Admin Patients Controller - Remove all patients from a practice"
+
         Delayed::Worker.logger.info("********** Im in deletePatientsFromPractice *************")
-         log_admin_api_call LogAction::DELETE, "Removed patients from practice" + params[:practice_id], true
+         #log_admin_api_call LogAction::DELETE, "Removed patients from practice" + params[:practice_id], true
          remove_patients_from_practice(params[:practice_id]) #see ApplicationHelper module
+
          render status: 200, plain: "Patients removed from practice: " + params[:practice_id]
       end
       
 
       api :DELETE, "/admin/patients", "Delete all patients in the database."
       def destroy
-        log_admin_api_call LogAction::DELETE, "Delete all patients", true
+        log_call LogAction::DELETE, "API Admin Patients Controller - Remove all patients"
+
         CQM::Patient.delete_all
+
         render status: 200, plain: 'Patient records successfully removed from database.'
       end
 
@@ -78,7 +83,9 @@ module Api
       param :practice_name, String, :desc => "Name for the patient's Practice", :required => false
       description "Upload a single XML file for a patient into popHealth."
       def upload_single_patient
-        log_admin_api_call LogAction::ADD, "Upload single patient", true
+
+        log_call LogAction::IMPORT, "API Admin Patients Controller - Import a QRDA CAT I file"
+
         begin
          filedata = request.body.read
         xml_filedata_index = filedata.index('<?xml version="1.0" encoding="utf-8"?>')

@@ -37,7 +37,7 @@ module Api
 
     def measureslight
 
-      log_api_call LogAction::VIEW, "View list of measures"
+      #log_api_call LogAction::READ, "View list of measures"
       
       measures = Measure.where(@filter)
  
@@ -73,7 +73,8 @@ module Api
     
     def index
 
-      log_api_call LogAction::VIEW, "View list of measures"
+      log_call LogAction::SEARCH, "API Measures Controller - List measures"
+
       measures = Measure.where(@filter)
       #m = Measure.first
       #Delayed::Worker.logger.info("************** what is M **************")
@@ -89,8 +90,8 @@ module Api
 
     def show
       
-      log_api_call LogAction::VIEW, "View measure"
-      #measure = Measure.where({"hqmf_id" => params[:id], "sub_id"=>params[:sub_id]}).first
+      log_call LogAction::READ, "API Measures Controller - View measures"
+      
       measure = Measure.where({"hqmf_id" => params[:id]}).first
       render :json => measure
     end
@@ -125,11 +126,11 @@ module Api
       else
         Measures::Loader.generate_measures(hqmf_document,params[:vsac_username],params[:vsac_password],measure_details)
       end
-      log_api_call LogAction::UPDATE, "Loaded measure"
+      #log_api_call LogAction::UPDATE, "Loaded measure"
       render json: ret_value
 =end
       rescue => e
-        log_api_call LogAction::UPDATE, "Failed to load measure, with error #{e}"
+        #log_api_call LogAction::UPDATE, "Failed to load measure, with error #{e}"
         render text: e.to_s, status: 500
     end
 
@@ -139,29 +140,40 @@ module Api
     def destroy
       authorize! :delete, Measure
       measure = Measure.where({"hqmf_id" => params[:id]})
-      #delete all of the pateint and query cache entries for the measure
-      #HealthDataStandards::CQM::PatientCache.where({"value.measure_id" => params[:id]}).destroy
-      #HealthDataStandards::CQM::QueryCache.where({"measure_id" => params[:id]}).destroy
-      measure.destroy
-      log_api_call LogAction::DELETE, "Remove measure"
-      render :status=>204, :text=>""
+
+      if(measure)
+        log_call LogAction::DELETE, "API Measures Controller - Delete measure"
+
+        #delete all of the pateint and query cache entries for the measure
+        #HealthDataStandards::CQM::PatientCache.where({"value.measure_id" => params[:id]}).destroy
+        #HealthDataStandards::CQM::QueryCache.where({"measure_id" => params[:id]}).destroy
+        measure.destroy
+        render :status=>204, :text=>""
+      else
+        render :status=>404, :text=>"Not found"
+      end
+
     end
 
     def update_metadata
       authorize! :update, Measure
+
       measures = Measure.where({ hqmf_id: params[:hqmf_id]})
+
+      log_call LogAction::UPDATE, "API Measures Controller - Update measures metadata"
+
       measures.each do |m|
         m.update_attributes(params[:measure])
         m.save
       end
-      log_api_call LogAction::UPDATE, "Update measure metadata"
+
       render json:  measures,  each_serializer: HealthDataStandards::CQM::MeasureSerializer
       rescue => e
-        log_api_call LogAction::UPDATE, "Failed to update measure, with error #{e.to_s}"
         render text: e.to_s, status: 500
     end
 
     def finalize
+
       measure_details = {
           'episode_ids'=>params[:episode_ids],
           'category' => params[:category],
@@ -169,13 +181,22 @@ module Api
           'lower_is_better' => params[:lower_is_better]
 
        }
+
       Measures::Loader.finalize_measure(params[:hqmf_id],params[:vsac_username],params[:vsac_password],measure_details)
+
       measure = Measure.where({hqmf_id: params[:hqmf_id]}).first
-      log_api_call LogAction::UPDATE, "Finalize measure"
-      render json: measure, serializer: HealthDataStandards::CQM::MeasureSerializer
+
+      if(measure)
+        log_call LogAction::UPDATE, "API Measures Controller - Finalize measure"
+
+        render json: measure, serializer: HealthDataStandards::CQM::MeasureSerializer
+      else
+        render text: "Measure not found", status: 404
+      end
+
       rescue => e
-        log_api_call LogAction::UPDATE, "Failed to finalize measure, with error #{e.to_s}"
         render text: e.to_s, status: 500
+      end
     end
 
   private

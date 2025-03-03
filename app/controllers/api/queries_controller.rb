@@ -91,11 +91,13 @@ module Api
     }
 
     def index
+      log_call LogAction::SEARCH, "API Queries Controller - List CQM calculation results"
+
       filter = {}
       filter["hqmf_id"] = {"$in" => params["measure_ids"]} if params["measure_ids"]
       providers = collect_provider_id
       filter["filters.providers"] = {"$in" => providers} if providers
-      log_api_call LogAction::VIEW, "View all queries"
+
       render json: QualityReport.where(filter)
       #render json: QME::QualityReport.where(filter)
     end
@@ -107,6 +109,9 @@ module Api
 
     def show
       @qr = CQM::QualityReport.find(params[:id])
+
+      log_call LogAction::SEARCH, "API Queries Controller - View CQM calculation results"
+
       if current_user.preferences.show_aggregate_result && !@qr.aggregate_result && !APP_CONFIG['use_opml_structure']
         cv = @qr.measure.continuous_variable
         #aqr = QME::QualityReport.where(measure_id: @qr.measure_id, sub_id: @qr.sub_id, 'filters.providers' => [Provider.root._id.to_s], effective_date: @qr.effective_date).first
@@ -121,7 +126,6 @@ module Api
         end
       end
 
-      log_api_call LogAction::VIEW, "View quality measure calculation"
       authorize! :read, @qr
       render json: @qr
     end
@@ -210,10 +214,12 @@ module Api
               qc = QualityReport.where('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], 'sub_id' => params[:sub_id], "filters.providers" => {'$in': params[:providers]}, 'filter_preferences' => current_user.preferences['c4filters'] 
               ).first
 
+              log_call LogAction::READ, "API Queries Controller - View CQM calculation results"
               render json: qc
 
             else
 
+              log_call LogAction::READ, "API Queries Controller - Start new CQM calculation results"
               Delayed::Worker.logger.info("calculation is already available in cache")
               render json: qc
 
@@ -222,8 +228,8 @@ module Api
           end
 
         else
-          #CQM::QualityReport.where('measure_id' => params[:measure_id]).destroy_all
-          #CQM::IndividualResult.where('measure_id' => params[:measure_id]).destroy_all
+          log_call LogAction::CREATE, "API Queries Controller - Start new CQM calculation"
+
           qc = QualityReport.new('measure_id' => measure.id, 'effective_date' => options[:effective_date],'start_date' => options[:start_date], "status" => {"state"=> "pending"}, "filters" => options[:filters], 'filter_preferences' => current_user.preferences['c4filters'])
 
           qc.save!
@@ -287,7 +293,6 @@ module Api
 
             end
 
-            log_api_call LogAction::ADD, "Create a clinical quality calculation"
             #render json: @results
         end
         rescue Exception => e
@@ -307,8 +312,10 @@ module Api
     def destroy
       qr = QME::QualityReport.find(params[:id])
       authorize! :delete, qr
+
+      log_call LogAction::DELETE, "API Queries Controller - Delete CQM calculation"
+
       qr.destroy
-      log_api_call LogAction::DELETE, "Remove clinical quality calculation"
       render :status => 204, :text => ""
     end
 
@@ -318,12 +325,15 @@ module Api
     def recalculate
       prefilter = {}
       qr = QME::QualityReport.find(params[:id])
+
+      log_call LogAction::UPDATE, "API Queries Controller - Recalculate CQM calculation"
+
       authorize! :recalculate, qr
       #prefilter = build_mr_prefilter_qsi(qr.filters['providers']) if APP_CONFIG['use_map_reduce_prefilter']
       #qr.calculate({"oid_dictionary" => OidHelper.generate_oid_dictionary(qr.measure_id),
       #              'recalculate' => true,
       #              "prefilter" => prefilter}, true)
-      log_api_call LogAction::UPDATE, "Force a clinical quality calculation"
+      #log_api_call LogAction::UPDATE, "Force a clinical quality calculation"
       render json: qr
     end
 
@@ -332,6 +342,8 @@ module Api
 
     def filter
       begin
+        log_call LogAction::SEARCH, "API Queries Controller - Filter CQM calculation results"
+
         namekey=[]
         filters={}
         bundle = Bundle.all.sort(:version => :desc).first
@@ -501,7 +513,7 @@ module Api
 
     def delete_patient_cache
 
-      log_admin_controller_call LogAction::DELETE, "Remove caches"
+      log_call LogAction::DELETE, "API Queries Controller - Delete all CQM calculation results"
 
       QualityReport.delete_all
 
@@ -531,19 +543,23 @@ module Api
     def patient_results
       qr = QualityReport.find(params[:id])
       authorize! :read, qr
+
+      log_call LogAction::SEARCH, "API Queries Controller - Query all CQM calculation patients results"
+
       # this returns a criteria object so we can filter it additionally as needed
       results = qr.patient_results(params[:population_set])
-      log_api_call LogAction::VIEW, "Get patient results for measure calculation", true
       render json: paginate(patient_results_api_query_url(qr), results.where(build_patient_filter))
     end
 
     def patients
       qr = QualityReport.find(params[:id])
       authorize! :read, qr
+
+      log_call LogAction::SEARCH, "API Queries Controller - Query all CQM calculation patients results"
+
       # this returns a criteria object so we can filter it additionally as needed
       results = qr.patient_results
       ids = paginate(patients_api_query_url(qr), results.where(build_patient_filter).order_by([:last.asc, :first.asc])).collect { |r| r["extendedData.medical_record_number"] }
-      log_api_call LogAction::VIEW, "Get patients for measure calculation", true
       render :json => Patient.where({:'extendedData.medical_record_number'.in => ids})
     end
 

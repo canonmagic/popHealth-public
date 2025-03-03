@@ -31,16 +31,14 @@ module Cypress
       patient_id = patient.id.to_s
       ps_map[patient_id] = {}
 
-      if patient.qdmPatient.get_data_elements('patient_characteristic', 'gender').first.nil?
-        ps_map[patient_id]['SEX'] = "UNK"
-      else
-        ps_map[patient_id]['SEX'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'gender')[0].dataElementCodes[0]["code"]
-      end
-
       #ps_map[patient_id]['SEX'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'gender')[0].dataElementCodes[0].code Edited by Yockler
-      ps_map[patient_id]['RACE'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'race')[0].dataElementCodes[0]["code"]
-      ps_map[patient_id]['ETHNICITY'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'ethnicity')[0].dataElementCodes[0]["code"]
-      ps_map[patient_id]['PAYER'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'payer')[0].dataElementCodes[0]["code"]
+      #ps_map[patient_id]['RACE'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'race')[0].dataElementCodes[0]["code"]
+      #ps_map[patient_id]['ETHNICITY'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'ethnicity')[0].dataElementCodes[0]["code"]
+      #ps_map[patient_id]['PAYER'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'payer')[0].dataElementCodes[0]["code"]
+      ps_map[patient_id]['SEX'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'gender').first() ? patient.qdmPatient.get_data_elements('patient_characteristic', 'gender').first().dataElementCodes[0]["code"] : "UNK"
+      ps_map[patient_id]['RACE'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'race').first() ? patient.qdmPatient.get_data_elements('patient_characteristic', 'race').first().dataElementCodes[0]["code"] : "UNK"
+      ps_map[patient_id]['ETHNICITY'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'ethnicity').first() ? patient.qdmPatient.get_data_elements('patient_characteristic', 'ethnicity').first().dataElementCodes[0]["code"] : "UNK"
+      ps_map[patient_id]['PAYER'] = patient.qdmPatient.get_data_elements('patient_characteristic', 'payer').first() ? patient.qdmPatient.get_data_elements('patient_characteristic', 'payer').first().dataElementCodes[0]["code"] : "UNK"
     end
 
     def prepopulate_measure_result_hash(measure)

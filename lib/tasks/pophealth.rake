@@ -191,4 +191,58 @@ namespace :pophealth do
     #HealthDataStandards::CQM::QueryCache.delete_all
     #QDM::IndividualResult.delete_all
   end
+
+  desc 'Renews the logs file automatically'
+  task :actions_log_renew => :environment do
+
+    file_contents = File.read("./log/popHealth.log")
+    File.write("./log_history/#{DateTime.now}_popHealth.log", file_contents)
+    File.delete("./log/popHealth.log")
+    File.open("./log/popHealth.log", "w")
+
+    log_version = LogVersion.create()
+  end
+
+  desc 'Creates a copy of logs and verifies for any possible alteration'
+  task :actions_log_verify => :environment do
+
+    file_contents = File.read("./log/popHealth.log")
+
+    # First check for current version hashes
+    log_version = LogVersion.last
+    hashes = []
+    LogHash.where(log_version_id: log_version.id).each { |lh| hashes << lh }
+
+    # If there is not hashes and file is not empty, this is a new log, so let's create the first hash
+    if( hashes.count < 1 && file_contents.length > 0 )
+
+      hash = Digest::MD5.hexdigest(file_contents)
+      LogHash.create( :hash => hash, :log_version_id => log_version.id, :starting_character => 0, :ending_character => ( file_contents.length - 1 ), :created_at => DateTime.now() )
+
+    elsif( hashes.count > 0 )
+      
+      hashes.each { |h| 
+        hash = h[:hash]
+        file_portion = file_contents[h.starting_character..h.ending_character]
+        file_hash = Digest::MD5.hexdigest(file_portion)
+
+        unless( hash == file_hash )
+          PopHealth::Application.config.actions_logger.info "-->> Log alteration detected <<--"
+          next
+        else
+        end
+      }      
+
+      last_h = hashes.last
+      file_portion = file_contents[last_h.ending_character+1..-1]
+
+      if( file_portion.length > 0 )
+        file_hash = Digest::MD5.hexdigest(file_portion)
+        LogHash.create( :hash => file_hash, :log_version_id => log_version.id, :starting_character => last_h.ending_character+1, :ending_character => ( last_h.ending_character + file_portion.length ), :created_at => DateTime.now() )
+      end
+    end
+
+    # This is unnecesary, just for debugging purposes
+    #PopHealth::Application.config.actions_logger.info "-->> Log verified sucessfully <<--"
+  end
 end

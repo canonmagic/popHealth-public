@@ -31,21 +31,11 @@ module LogsHelper
     log_call action, event, "Admin Controller - " + event, true, true, false, is_sensitive
   end
 
-  def log_call(action, event, details, controller, admin, api, is_sensitive)
-    log_config = APP_CONFIG['log_to_database']
-    return if log_config.nil?
-    return unless
-      (log_config["controller"] and controller) or
-      (log_config["admin"] and admin) or
-      (log_config["api"] and api) or
-      (log_config["is_sensitive"] and is_sensitive)
-
+  def log_call(action, event, patient_identifier = "NULL")
     user = get_calling_user
-    Log.create(:username => user.username,
-      :action => action, :event => event,
-      :description => details + (params.nil? ? '' : " Parameters: #{params.except(:action, :controller, :utf8, :authenticity_token).inspect}"),
-      :medical_record_number => (@patient.nil? ? nil : @patient.medical_record_number),
-      :affected_user => (@user.nil? ? nil : @user.username))
+    parameters = params.nil? ? '' : "Parameters: #{params.except(:action, :controller, :utf8, :authenticity_token, :permitted, :_method, :button, :commit).to_json}"
+
+    PopHealth::Application.config.actions_logger.info "[#{action}, #{event}, #{user.username}, #{patient_identifier}, #{parameters}]"
   end
 
   def get_errors_for_log(item)

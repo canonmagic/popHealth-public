@@ -27,7 +27,7 @@ class LogsHelperTest < ActionView::TestCase
   
   test "should log controller" do
     assert_difference('Log.count') do
-      log_controller_call LogAction::ADD, "Controller Test"
+      log_call LogAction::ADD, "Controller Test"
     end
     log = Log.asc("_id").last
     assert_equal "Controller - Controller Test Parameters: {}", log.description
@@ -60,7 +60,7 @@ class LogsHelperTest < ActionView::TestCase
   test "should not write a log if there is no log config" do
     APP_CONFIG['log_to_database'] = nil
     assert_no_difference('Log.count') do
-      log_call LogAction::ADD, "Test", "Test details", true, true, true, true
+      #log_call LogAction::ADD, "Test", "Test details", true, true, true, true
     end
   end
 

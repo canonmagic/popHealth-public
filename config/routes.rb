@@ -78,16 +78,14 @@ Rails.application.routes.draw do
   post 'admin/set_user_practice'
   post 'admin/set_user_practice_provider'
   
-  delete "practices/remove_patients"
-  delete "practices/remove_providers"
+  delete "practices/:id/remove_patients", :to => 'practices#remove_patients', as: :practices_remove_patients
+  delete "practices/:id/remove_providers", :to => 'practices#remove_providers', as: :practices_remove_providers
 
   post "teams/:id/update", :to => 'teams#update'
   post "teams/create"
   post "teams/create_default"
 
   get 'teams/show_by_id/:id', to: 'teams#show_by_id', as: :show_team_by_id
-  
-  resources :practices
 
   namespace :admin do
 

@@ -3,10 +3,19 @@
 # additional actions that may be of interest.
 
 module LogAction
-  ADD = "Add"
-  DELETE = "Delete"
+  CREATE = "Add"
+  READ = "Read"
   UPDATE = "Update"
-  VIEW = "View"
+  DELETE = "Delete"
+  SEARCH = "Query"
+  IMPORT = "Import"
   EXPORT = "Export"
-  AUTH = "Authorization"
+  PRINT = "Print"
+  COPY = "Copy"
+  ACCESS_PATIENT_INFORMATION = "Access to patient information"
+  EMERGENCY_ACCESS_PATIENT_INFORMATION = "Emergency access to patient information"
+  CHANGE_USER_PRIVILEGIES = "Update of user privileges"
+  CHANGE_AUDIT_STATUS = "Audit status changed"
+  CHANGE_ENCRYPT_STATUS = "Encryption status changed"
+  AUTHENTICATION = "Authentication"
 end

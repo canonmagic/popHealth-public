@@ -72,5 +72,15 @@ class ApplicationController < ActionController::Base
         redirect_to "#{root_url}no_ssl_warning.html", :alert => "You should be using ssl"
         end
     end
+
+    # Log login/logout actions (Certification purposes)
+    Warden::Manager.after_authentication do |user,auth,opts|
+        PopHealth::Application.config.actions_logger.info "[#{LogAction::AUTHENTICATION}, Application Controller - User Log-in, #{user.username}, NULL, {}]"
+    end
+
+    Warden::Manager.before_logout do |user,auth,opts|
+        user.forget_me!
+        PopHealth::Application.config.actions_logger.info "[#{LogAction::AUTHENTICATION}, Application Controller - User Log-out, #{user.username}, NULL, {}]"
+    end
 end
   

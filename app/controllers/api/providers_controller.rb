@@ -22,12 +22,13 @@ module Api
     api :GET, "/providers", "Get a list of providers. Returns all providers that the user has access to."
     param_group :pagination, Api::PatientsController
     def index
+
+      log_call LogAction::SEARCH, "API Providers Controller - List providers"
+
       if APP_CONFIG['use_opml_structure']
-        log_api_call LogAction::VIEW, "Get list of providers, using OPML"
         @providers = Provider.all
         authorize_providers(@providers)
       elsif current_user.admin?
-        log_api_call LogAction::VIEW, "Get list of providers for admin"
         providers = Provider.all
         authorize_providers(providers)
         @providers = providers.map do |p|
@@ -36,7 +37,6 @@ module Api
           p_json
         end
       else
-        log_api_call LogAction::VIEW, "Get list of providers"
         if current_user.practice
           my_prid=current_user.practice.provider_id
           other_practices = Practice.only(:provider_id).all.map{|p| p[:provider_id]}.reject{|id| id==my_prid}
@@ -45,6 +45,7 @@ module Api
           authorize_providers(@providers)
         end
       end
+
       render json: @providers
     end
 
@@ -58,30 +59,38 @@ module Api
     def show
       @provider = Provider.find(params[:id])
       
-      if can? :read, @provider
-        provider_json = @provider.as_json
-        provider_json[:parent] = Provider.find(@provider.parent_id) if @provider.parent_id
-        provider_json[:children] = @provider.children if @provider.children.present?
-        provider_json[:patient_count] = @provider.practice.cqmPatient.count if @provider.practice
-        log_api_call LogAction::VIEW, "View provider", true
+      if($provider)
+        log_call LogAction::READ, "API Providers Controller - View provider"
+        
+        if can? :read, @provider
+          provider_json = @provider.as_json
+          provider_json[:parent] = Provider.find(@provider.parent_id) if @provider.parent_id
+          provider_json[:children] = @provider.children if @provider.children.present?
+          provider_json[:patient_count] = @provider.practice.cqmPatient.count if @provider.practice
+        else
+          provider_json = {}
+        end
+
+        render json: provider_json
       else
-        log_api_call LogAction::VIEW, "Failed to view provider", true
-        provider_json = {}
+        render text: "Provider not found", status: 404
       end
-      render json: provider_json
     end
 
     api :POST, "/providers", "Create a new provider"
     def create
-      log_api_call LogAction::ADD, "Create a new provider"
+      log_call LogAction::CREATE, "API Providers Controller - Create new provider"
+
       @provider = Provider.create(params[:provider].to_unsafe_hash)
+
       render json: @provider
     end
 
     api :PUT, "/providers/:id", "Update a provider"
     param :id, String, :desc => "Provider ID", :required => true
     def update
-      log_api_call LogAction::UPDATE, "Update a provider"
+      log_call LogAction::UPDATE, "API Providers Controller - Update provider"
+
       @provider.update_attributes!(params[:provider])
       render json: @provider
     end
@@ -93,8 +102,10 @@ module Api
     api :DELETE, "/providers/:id", "Remove an individual provider"
     param :id, String, :desc => "Provider ID", :required => true
     def destroy
-      log_api_call LogAction::DELETE, "Delete a provider"
+      log_call LogAction::DELETE, "API Providers Controller - Delete provider"
+
       @provider.destroy
+
       render json: nil, status: 204
     end
 
@@ -105,6 +116,8 @@ module Api
     param :taxonomy, String, :desc => "Taxonomy Code", :required => false
     param :address, String, :desc => "Practice address piece", :required => false
     def search
+      log_call LogAction::SEARCH, "API Providers Controller - Search provider"
+
       if ! params[:npi].nil?
         providers = Provider.all({"cda_identifiers" => {"$elemMatch" => {'root' =>"2.16.840.1.113883.4.6", "extension" => /#{params[:npi]}/i }}})
         render json: providers.map {|p| { id: p.id, name: "#{p.full_name} (#{p.npi})", parent_id: p.parent_id} }

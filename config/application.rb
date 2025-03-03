@@ -33,5 +33,18 @@ module PopHealth
 
     # Don't generate system test files.
     config.generators.system_tests = nil
+
+    # Initial rake tasks
+    config.after_initialize do
+      Rails.application.load_tasks
+
+      # Avoid clearing logs during rake tasks
+      unless(File.split($0).last == 'rake')
+        Rake::Task['pophealth:actions_log_renew'].invoke
+      end
+      
+      # Custom Logger for actions (Certification Purposes)
+      config.actions_logger = Logger.new(Rails.root.join('log','popHealth.log'))
+    end
   end
 end

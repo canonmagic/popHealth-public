@@ -38,7 +38,7 @@ module Api
       @patients=[]
       @msrs = []
       begin
-        log_api_call LogAction::EXPORT, "QRDA Category 3 report"
+        log_call LogAction::EXPORT, "API Reports Controller - Generate QRDA CAT III file"
 
         measure_ids = params[:measure_ids] ||current_user.preferences["selected_measure_ids"]
         program = !(params[:cms_program] == nil) ? params[:cms_program].upcase : APP_CONFIG['qrda_cms_program'].upcase
@@ -164,7 +164,8 @@ module Api
     CDESC
 
     def cat1_zip
-      log_api_call LogAction::EXPORT, "QRDA Category 1 report", true
+      log_call LogAction::EXPORT, "API Reports Controller - Generate QRDA CAT I file"
+
       begin
       #qdm_patient_converter = CQM::Converter::QDMPatient.new
       FileUtils.mkdir('results') if !File.exist?('results')
@@ -211,11 +212,13 @@ module Api
     CDESC
 
     def patients
-      log_api_call LogAction::EXPORT, "Patients report", true
       type = params[:patient_type]
       qr = QME::QualityReport.where(:effective_date => params[:effective_date].to_i, :measure_id => params[:id], :sub_id => params[:sub_id], "filters.providers" => params[:provider_id])
 
       authorize! :read, Provider.find(params[:provider_id])
+
+      log_call LogAction::EXPORT, "API Reports Controller - Generate Excel SpreadSheet of relevant QRDA CAT I file"
+
       records = (qr.count > 0) ? qr.first.patient_results : []
 
       book = Spreadsheet::Workbook.new
@@ -281,10 +284,10 @@ module Api
     CDESC
 
     def team_report
-      log_api_call LogAction::EXPORT, "Team report"
       measure_id = params[:measure_id]
       sub_id = params[:sub_id]
       team = Team.find(params[:team_id])
+      log_call LogAction::EXPORT, "API Reports Controller - Generate Excel SpreadSheet of relevant providers for measure"
 
       book = Spreadsheet::Workbook.new
       sheet = book.create_worksheet
@@ -350,7 +353,7 @@ module Api
     CDESC
 
     def measures_spreadsheet
-      log_api_call LogAction::EXPORT, "Measure spreadsheet report"
+      log_call LogAction::EXPORT, "API Reports Controller - Generate Excel SpreadSheet of measure calculations for selected measures"
       book = Spreadsheet::Workbook.new
       sheet = book.create_worksheet
       format = Spreadsheet::Format.new :weight => :bold
@@ -425,9 +428,11 @@ module Api
     CDESC
 
     def cat1
-      log_api_call LogAction::EXPORT, "QRDA Category 1 report", true
       p = CQM::Patient.find(params[:id])
       authorize! :read, p
+
+      log_call LogAction::EXPORT, "API Reports Controller - Generate a patient QRDA CAT I file"
+
       measure_ids = params["measure_ids"].split(',')
       end_date = params["effective_date"] || current_user.effective_date || Time.gm(2020, 12, 31)
       start_date = params["effective_start_date"] || current_user.effective_start_date || end_date.years_ago(1)
