@@ -410,3 +410,49 @@ sudo systemctl start pophealth
 Now you should be able to access to popHealth by the following URL
 
 http://localhost.com
+
+
+
+# Tampering protection and log management
+
+To enable automatic run of logs management and tampering protection tasks, will be required to install a couple of cron jobs as follows
+
+
+Step 1: Access as sudo
+
+```
+
+sudo -i
+
+```
+
+
+Step 2: Access CRON jobs
+
+```
+
+crontab -e
+
+```
+
+
+Step 3: Enable CRON job to restart PopHealth periodically (Modify the timers to match the desired ones)
+
+On the bottom of crontab file you can write the following:
+
+```
+
+0 0 * * * systemctl restart pophealth
+
+```
+
+
+Step 4: Enable CRON job to review logs periodically (Modify the timers to match the desired ones)
+
+On the bottom of crontab file you can write the following:
+
+```
+
+0 1,7,13,18,21 * * * cd /home/pophealth/popHealth && rake pophealth:actions_log_verify
+
+```
